@@ -20,8 +20,10 @@ body.style-2 {
   height: 100%;
 }
 
-body.style-3 {
-  background: #ffffff url(../images/geometry2.png) repeat;
+.style-3 {
+  background: #ffffff url(../images/geometry2.png) repeat;    position: absolute;
+  width: 100%;
+  height: 100%;
 }
 a {
   color: #33cccc;

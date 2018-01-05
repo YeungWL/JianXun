@@ -49,7 +49,7 @@
                     <div class="menu_section">
                         <ul class="nav side-menu">
                             <li><a href="userManagement.html"><i class="fa  fa-group"></i> 用户管理 </a></li>
-                            <li><a ><i class="fa  fa-user"></i> 商户管理 </a></li>
+                            <li><a href="businessManagement.html"><i class="fa  fa-user"></i> 商户管理 </a></li>
                             <li><a><i class="fa fa-dashboard"></i> 营运中心管理</a></li>
                             <li><a><i class="fa  fa-jsfiddle"></i> 财务管理</a></li>
                             <li><a><i class="fa  fa-line-chart"></i>消费管理 </a></li>
@@ -101,7 +101,7 @@
                             <div class="clearfix"></div>
                         </div>
                         <div class="x_content">
-                            <div id="main1" style="height:350px;"></div>
+                            <div id="main1" style="height:450px;"></div>
                         </div>
                     </div>
                 </div>
@@ -116,7 +116,7 @@
                             <div class="clearfix"></div>
                         </div>
                         <div class="x_content">
-                            <div id="main2" style="height:350px;"></div>
+                            <div id="main2" style="height:450px;"></div>
                         </div>
                     </div>
                 </div>
@@ -131,7 +131,7 @@
                             <div class="clearfix"></div>
                         </div>
                         <div class="x_content">
-                            <div id="main3" style="height:350px;"></div>
+                            <div id="main3" style="height:450px;"></div>
                         </div>
                     </div>
                 </div>
@@ -163,150 +163,190 @@
 </body>
 </html>
 <script>
+    $('.toggle').click(function(){
+        init()
+    })
     var ifShowToolbar=false;
     if(/Android|webOS|iPhone|iPod|BlackBerry/i.test(navigator.userAgent)) {
         ifShowToolbar=false;
     } else {
         ifShowToolbar=true;
     }
-    // 基于准备好的dom，初始化echarts实例
-    var myChart1 = echarts.init(document.getElementById('main1'));
-    var myChart2 = echarts.init(document.getElementById('main2'));
-    var myChart3 = echarts.init(document.getElementById('main3'));
-    //    新增用户数数据start
-    var option1 = {
-        tooltip: {},
-        legend: {
-            data:['当天新增用户数','前天新增用户数']
-        },
-        xAxis: {
-            axisLabel: {
-                interval:0,
-                rotate:40
+    init()
+    function init(){
+        // 基于准备好的dom，初始化echarts实例
+        var myChart1 = echarts.init(document.getElementById('main1'));
+        var myChart2 = echarts.init(document.getElementById('main2'));
+        var myChart3 = echarts.init(document.getElementById('main3'));
+        //    新增用户数数据start
+        var option1 = {
+            tooltip: {},
+            legend: {
+                data:['当天新增用户数','前天新增用户数']
             },
-            data: ["2点","4点","6点","8点","10点","12点","14点","16点","18点","20点","22点","24点"]
-        },
-        yAxis: {},
-        series: [
-            {
-            name: '当天新增用户数',
-            type: 'bar',
-            itemStyle:{normal:{
-                color:"#ed7d4d"
-            }},
-            data: [5, 20, 36, 10, 10, 20,1,5, 20, 36, 10, 60]
+            grid:{
+                x:70,
+                x2:70,
             },
-            {
-                name: '前天新增用户数',
+            xAxis: {
+                axisLabel: {
+                    interval:0,
+                    rotate:40
+                },
+                data: ["2点","4点","6点","8点","10点","12点","14点","16点","18点","20点","22点","24点"]
+            },
+            yAxis: {},
+            series: [
+                {
+                    name: '当天新增用户数',
+                    type: 'bar',
+                    itemStyle:{normal:{
+                        color:"#ed7d4d"
+                    }},
+                    data: [5, 20, 36, 10, 10, 20,1,5, 20, 36, 10, 60]
+                },
+                {
+                    name: '前天新增用户数',
+                    type: 'bar',
+                    itemStyle:{normal:{
+                        color:"#86cdf9"
+                    }},
+                    data: [5, 20, 36, 10, 10, 20,9,5, 20, 36, 10, 60]
+                }
+            ]
+        };
+        //     新增用户数数据end
+        //    会员地区数据start
+        var option2 = {
+            title: {
+                text: '会员地区分布',
+                subtext: '数据截止：2017-03，来源：wikipedia',
+                textStyle:{color:"#666"},
+                x:'center'
+            },
+            grid:{
+                x:70,
+                x2:70,
+            },
+            tooltip: {},
+            xAxis: {
+                axisLabel: {
+                    interval:0,
+                    rotate:40
+                },
+                data:  ["上海","北京","深圳","广州","天津","杭州","武汉","重庆","南昌","福州","厦门","苏州"]
+            },
+            yAxis: {},
+            series: [{
+                name: '人口总数',
                 type: 'bar',
                 itemStyle:{normal:{
-                    color:"#86cdf9"
+                    color:"#88c2f5"
                 }},
-                data: [5, 20, 36, 10, 10, 20,9,5, 20, 36, 10, 60]
-            }
-        ]
-    };
-    //     新增用户数数据end
-    //    会员地区数据start
-    var option2 = {
-        title: {
-            text: '会员地区分布',
-            subtext: '数据截止：2017-03，来源：wikipedia',
-            textStyle:{color:"#666"},
-            x:'center'
-        },
-        tooltip: {},
-        xAxis: {
-            axisLabel: {
-                interval:0,
-                rotate:40
-            },
-            data:  ["上海","北京","深圳","广州","天津","杭州","武汉","重庆","南昌","福州","厦门","苏州"]
-        },
-        yAxis: {},
-        series: [{
-            name: '人口总数',
-            type: 'bar',
-            itemStyle:{normal:{
-                color:"#88c2f5"
-            }},
-            label: {
-                normal: {
-                    show: true,
-                    position: 'inside'
-                }
-            },
-            data:  [5550, 2550, 346, 6610, 150, 20,241,5645, 20, 36, 10, 60],
-        }],
-    };
-    //     会员地区数据end
-    //    会员转化数据start
-    var option3 = {
-        title: {
-            text: '会员转化统计',
-            subtext: '数据截止：WorldClimate.com',
-            textStyle:{color:"#666"},
-            x:'center'
-        },
-        color: ['#5793f3', '#d14a61', '#675bba'],
-        tooltip: {
-            trigger: 'none',
-            axisPointer: {
-                type: 'cross'
-            }
-        },
-        legend: {
-            data:['推荐会员', '会员转商家入驻'],
-            bottom:'0'
-        },
-        xAxis: [
-            {
-                type: 'category',
-                axisTick: {
-                    alignWithLabel: true
-                },
-                axisLine: {
-                    onZero: false,
-                    lineStyle: {
-                        color: '#5793f3'
+                label: {
+                    normal: {
+                        show: true,
+                        position: 'inside'
                     }
                 },
-                data: ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "11月", "12月"]
-            }
-        ],
-        yAxis: [
-            {
-                type: 'value'
-            }
-        ],
-        series: [
-            {
-                name:'推荐会员',
-                type:'line',
-                smooth: true,
-                data: [3.9, 5.9, 11.1, 18.7, 48.3, 69.2, 231.6, 46.6, 55.4, 18.4, 10.3, 0.7]
+                data:  [5550, 2550, 346, 6610, 150, 20,241,5645, 20, 36, 10, 60],
+            }],
+        };
+        //     会员地区数据end
+        //    会员转化数据start
+        var option3 = {
+            title: {
+                text: '会员转化统计',
+                subtext: '数据截止：WorldClimate.com',
+                textStyle:{color:"#666"},
+                x:'center'
             },
-            {
-                name:'会员转商家入驻',
-                type:'line',
-                smooth: true,
-                data: [10, 55.9, 141.1, 18.7, 48.3, 69.2, 100.6, 46.6, 55.4, 18.4, 15.3, 10.7]
-            }
-        ],
-        toolbox: {
-            show: ifShowToolbar,
-            feature: {
-                saveAsImage: {
-                    show:true,
-                    excludeComponents :['toolbox'],
-                    pixelRatio: 2
+            grid:{
+                left:'70',
+                right:'70',
+            },
+            color: ['#5793f3', '#d14a61', '#675bba'],
+            tooltip: {
+                trigger: 'none',
+                axisPointer: {
+                    type: 'cross'
+                }
+            },
+            legend: {
+                data:['推荐会员', '会员转商家入驻'],
+                bottom:'0'
+            },
+            xAxis: [
+                {
+                    type: 'category',
+                    axisTick: {
+                        alignWithLabel: true
+                    },
+                    axisLine: {
+                       onZero: false,
+                        lineStyle: {
+                            color: '#5793f3'
+                        }
+                    },
+                    data: ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "11月", "12月"]
+                }
+            ],
+            yAxis: [
+                {
+                    type: 'value'
+                }
+            ],
+            series: [
+                {
+                    name:'推荐会员',
+                    type:'line',
+                    smooth: true,
+                    data: [3.9, 5.9, 11.1, 18.7, 48.3, 69.2, 231.6, 46.6, 55.4, 18.4, 10.3, 0.7]
+                },
+                {
+                    name:'会员转商家入驻',
+                    type:'line',
+                    smooth: true,
+                    data: [10, 55.9, 141.1, 18.7, 48.3, 69.2, 100.6, 46.6, 55.4, 18.4, 15.3, 10.7]
+                }
+            ],
+            toolbox: {
+                show: true,
+                feature : {
+                    mark : {show: true},
+                    dataView : {show: true, readOnly: true,
+                                                optionToContent: function (opt) {
+                            let axisData = opt.xAxis[0].data; //坐标数据
+                            let series = opt.series; //折线图数据
+                            let tdHeads = '<td  style="padding: 0 10px">时间</td>'; //表头
+                            let tdBodys = ''; //数据
+                            series.forEach(function (item) {
+                                //组装表头
+                                tdHeads += `<td style="padding: 0 10px">${item.name}</td>`;
+                            });
+                            let table = `<table border="1" class="table-bordered table-striped" style="width:100%;text-align:center;height:370px"><tbody><tr>${tdHeads} </tr>`;
+                            for (let i = 0, l = axisData.length; i < l; i++) {
+                                for (let j = 0; j < series.length; j++) {
+                                    //组装表数据
+                                    tdBodys += `<td>${ series[j].data[i]}</td>`;
+                                }
+                                table += `<tr><td style="padding: 0 10px">${axisData[i]}</td>${tdBodys}</tr>`;
+                                tdBodys = '';
+                            }
+                            table += '</tbody></table>';
+                            return table;
+                        }
+                    },
+                    magicType : {show: true, type: ['line', 'bar', 'stack', 'tiled']},
+                    restore : {show: true},
+                    saveAsImage : {show: true}
                 }
             }
-        }
 
-    };
-    //     会员转化数据end
-    myChart1.setOption(option1);
-    myChart2.setOption(option2);
-    myChart3.setOption(option3);
+        };
+        //     会员转化数据end
+        myChart1.setOption(option1);
+        myChart2.setOption(option2);
+        myChart3.setOption(option3);
+    }
 </script>

@@ -49,7 +49,7 @@
                     <div class="menu_section">
                         <ul class="nav side-menu">
                             <li><a href="userManagement.html"><i class="fa  fa-group"></i> 用户管理 </a></li>
-                            <li><a><i class="fa  fa-user"></i> 商户管理 </a></li>
+                            <li><a href="businessManagement.html"><i class="fa  fa-user"></i> 商户管理 </a></li>
                             <li><a><i class="fa fa-dashboard"></i> 营运中心管理</a></li>
                             <li><a><i class="fa  fa-jsfiddle"></i> 财务管理</a></li>
                             <li><a><i class="fa  fa-line-chart"></i>消费管理 </a></li>
@@ -201,7 +201,7 @@
                 </div>
             </div>
             <!--&lt;!&ndash; /top tiles &ndash;&gt;-->
-            <div class="row">
+            <div class="row" style="    margin-top: 10px;">
                 <div class="col-md-6 col-sm-6 col-xs-12">
                     <div class="x_panel" style="overflow: hidden">
                         <div class="x_title">
@@ -270,110 +270,116 @@
 </body>
 </html>
 <script>
-    // 基于准备好的dom，初始化echarts实例
-    var myChart1 = echarts.init(document.getElementById('main1'));
-    var myChart2 = echarts.init(document.getElementById('main2'));
-    var myChart3 = echarts.init(document.getElementById('main3'));
+    $('.toggle').click(function(){
+        init()
+    })
+    init()
+    function init(){
+        // 基于准备好的dom，初始化echarts实例
+        var myChart1 = echarts.init(document.getElementById('main1'));
+        var myChart2 = echarts.init(document.getElementById('main2'));
+        var myChart3 = echarts.init(document.getElementById('main3'));
 //    一周订单概览表数据start
-    var option1 = {
-        tooltip: {},
-        legend: {
-            data:['本周','上周']
-        },
-        xAxis: {
-            axisLabel: {
-                interval:0,
-                rotate:40
+        var option1 = {
+            tooltip: {},
+            legend: {
+                data:['本周','上周']
             },
-            data: ["周一","周二","周三","周四","周五","周六","周日"]
-        },
-        yAxis: {},
-        series: [{
-            name: '本周',
-            type: 'bar',
-            itemStyle:{normal:{
-                color:"#ed7d4d"
-            }},
-            data: [5, 20, 36, 10, 10, 20,1]
-        },
-            {
-                name: '上周',
+            xAxis: {
+                axisLabel: {
+                    interval:0,
+                    rotate:40
+                },
+                data: ["周一","周二","周三","周四","周五","周六","周日"]
+            },
+            yAxis: {},
+            series: [{
+                name: '本周',
                 type: 'bar',
                 itemStyle:{normal:{
-                    color:"#d970d5"
+                    color:"#ed7d4d"
                 }},
-                data: [5, 20, 36, 10, 10, 20,15]
-            }
-        ]
-    };
+                data: [5, 20, 36, 10, 10, 20,1]
+            },
+                {
+                    name: '上周',
+                    type: 'bar',
+                    itemStyle:{normal:{
+                        color:"#d970d5"
+                    }},
+                    data: [5, 20, 36, 10, 10, 20,15]
+                }
+            ]
+        };
 //    一周订单概览表数据end
-    //    一周消费概览表数据start
-    var option2 = {
-        tooltip: {},
-        legend: {
-            data:['本周','上周']
-        },
-        xAxis: {
-            axisLabel: {
-                interval:0,
-                rotate:40
+        //    一周消费概览表数据start
+        var option2 = {
+            tooltip: {},
+            legend: {
+                data:['本周','上周']
             },
-            data: ["周一","周二","周三","周四","周五","周六","周日"]
-        },
-        yAxis: {},
-        series: [{
-            name: '本周',
-            type: 'bar',
-            itemStyle:{normal:{
-                color:"#ed7d4d"
-            }},
-            data: [500, 420, 356, 510, 0, 20,1]
-        },
-            {
-                name: '上周',
+            xAxis: {
+                axisLabel: {
+                    interval:0,
+                    rotate:40
+                },
+                data: ["周一","周二","周三","周四","周五","周六","周日"]
+            },
+            yAxis: {},
+            series: [{
+                name: '本周',
                 type: 'bar',
                 itemStyle:{normal:{
-                    color:"#d970d5"
+                    color:"#ed7d4d"
                 }},
-                data: [885, 520, 346, 510, 130, 20,15]
-            }
-        ]
-    };
-    //    一周消费概览表数据end
-    //    一周消费概览表数据start
-    var option3 = {
-        tooltip: {},
-        legend: {
-            data:['本周','上周']
-        },
-        xAxis: {
-            axisLabel: {
-                interval:0,
-                rotate:40
+                data: [500, 420, 356, 510, 0, 20,1]
             },
-            data: ["周一","周二","周三","周四","周五","周六","周日"]
-        },
-        yAxis: {},
-        series: [{
-            name: '本周',
-            type: 'bar',
-            itemStyle:{normal:{
-                color:"#ed7d4d"
-            }},
-            data: [500, 420, 356, 510, 0, 20,1]
-        },
-            {
-                name: '上周',
+                {
+                    name: '上周',
+                    type: 'bar',
+                    itemStyle:{normal:{
+                        color:"#d970d5"
+                    }},
+                    data: [885, 520, 346, 510, 130, 20,15]
+                }
+            ]
+        };
+        //    一周消费概览表数据end
+        //    一周消费概览表数据start
+        var option3 = {
+            tooltip: {},
+            legend: {
+                data:['本周','上周']
+            },
+            xAxis: {
+                axisLabel: {
+                    interval:0,
+                    rotate:40
+                },
+                data: ["周一","周二","周三","周四","周五","周六","周日"]
+            },
+            yAxis: {},
+            series: [{
+                name: '本周',
                 type: 'bar',
                 itemStyle:{normal:{
-                    color:"#d970d5"
+                    color:"#ed7d4d"
                 }},
-                data: [885, 520, 346, 510, 130, 20,15]
-            }
-        ]
-    };
-    //    一周消费概览表数据end
-    myChart1.setOption(option1);
-    myChart2.setOption(option2)
-    myChart3.setOption(option3)
+                data: [500, 420, 356, 510, 0, 20,1]
+            },
+                {
+                    name: '上周',
+                    type: 'bar',
+                    itemStyle:{normal:{
+                        color:"#d970d5"
+                    }},
+                    data: [885, 520, 346, 510, 130, 20,15]
+                }
+            ]
+        };
+        //    一周消费概览表数据end
+        myChart1.setOption(option1);
+        myChart2.setOption(option2)
+        myChart3.setOption(option3)
+    }
 </script>
