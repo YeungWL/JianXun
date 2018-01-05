@@ -262,6 +262,9 @@
 </body>
 </html>
 <script>
+    window.onresize = function(){
+        init()
+    }
     $('.toggle').click(function(){
         init()
     })
@@ -284,7 +287,12 @@
                 },
                 data: ["周一","周二","周三","周四","周五","周六","周日"]
             },
-            yAxis: {},
+            yAxis: {
+                axisLabel: {
+                    interval:0,
+                    rotate:65
+                },
+            },
             series: [{
                 name: '本周',
                 type: 'bar',
@@ -350,7 +358,12 @@
                 },
                 data: ["周一","周二","周三","周四","周五","周六","周日"]
             },
-            yAxis: {},
+            yAxis: {
+                axisLabel: {
+                    interval:0,
+                    rotate:65
+                },
+            },
             series: [{
                 name: '本周',
                 type: 'bar',
@@ -416,14 +429,19 @@
                 },
                 data: ["周一","周二","周三","周四","周五","周六","周日"]
             },
-            yAxis: {},
+            yAxis: {
+                axisLabel: {
+                interval:0,
+                rotate:65
+               },
+            },
             series: [{
                 name: '本周',
                 type: 'bar',
                 itemStyle:{normal:{
                     color:"#ed7d4d"
                 }},
-                data: [500, 420, 356, 510, 0, 20,1]
+                data: [5522400, 420, 356, 510, 0, 20,1]
             },
                 {
                     name: '上周',
@@ -431,7 +449,7 @@
                     itemStyle:{normal:{
                         color:"#d970d5"
                     }},
-                    data: [885, 520, 346, 510, 130, 20,15]
+                    data: [1211885, 520, 346, 510, 130, 20,15]
                 }
             ],
             toolbox: {

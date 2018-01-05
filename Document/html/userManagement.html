@@ -163,6 +163,9 @@
 </body>
 </html>
 <script>
+    window.onresize = function(){
+        init()
+    }
     $('.toggle').click(function(){
         init()
     })
@@ -226,17 +229,17 @@
             },
             legend: {
                 type: 'scroll',
-                orient: 'vertical',
-                right: 10,
-                top: 20,
-                bottom: 20,
+                orient: 'horizontal',
+                left: 0,
+//                top: 20,
+               bottom: 0,
                 data: ["上海","北京","深圳","广州","天津","杭州","武汉","重庆","南昌","福州","厦门","苏州","上海2","北京2","深圳2","广州2","天津2","杭州2","武汉2","重庆2","南昌2","福州2","厦门2","苏州2"]
             },
             series : [
                 {
                     name: '姓名',
                     type: 'pie',
-                    radius : '80%',
+                    radius : '65%',
                     center: ['40%', '50%'],
                     data: [
                         {value:335, name:'上海'},

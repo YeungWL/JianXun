@@ -57,6 +57,9 @@
         padding-top: 8px;
     }
     .x_panel{padding: 0}
+    .x_content {
+     padding: 0;
+    }
 }
 @media screen and (max-width: 320px){
 
