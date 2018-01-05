@@ -1,0 +1,41 @@
+<template>
+  <div class="col-md-3 left_col">
+            <div class="left_col scroll-view">
+                <div class="navbar nav_title" style="border: 0;">
+                    <a href="index.html" class="site_title"><i class="fa fa-paw"></i> <span>数据管理后台</span></a>
+                </div>
+
+                <div class="clearfix"></div>
+
+                <!-- menu profile quick info -->
+                <div class="profile clearfix">
+                    <div class="profile_pic">
+                        <img src="../assets/images/img.jpg" alt="..." class="img-circle profile_img">
+                    </div>
+                    <div class="profile_info">
+                        <span>Welcome,</span>
+                        <h2>John Doe</h2>
+                    </div>
+                </div>
+                <!-- /menu profile quick info -->
+
+                <br />
+
+                <!-- sidebar menu -->
+                <div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
+                    <sidevue close-gap="50px" open-gap="50%" direction="top" sidevue-class="yourCustomClass">
+                    <div class="menu_section">
+                        <ul class="nav side-menu">
+                            <li><a href="userManagement.html"><i class="fa  fa-group"></i> 用户管理 </a></li>
+                            <li><a href="businessManagement.html"><i class="fa  fa-user"></i> 商户管理 </a></li>
+                            <li><a><i class="fa fa-dashboard"></i> 营运中心管理</a></li>
+                            <li><a><i class="fa  fa-jsfiddle"></i> 财务管理</a></li>
+                            <li><a><i class="fa  fa-line-chart"></i>消费管理 </a></li>
+                        </ul>
+                    </div>
+                    </sidevue>
+                </div>
+                <!-- /sidebar menu -->
+            </div>
+        </div>
+</template>

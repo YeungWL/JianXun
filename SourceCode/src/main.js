@@ -3,26 +3,14 @@
 import Vue from 'vue'
 import App from './App'
 import router from './router'
+import 'bootstrap/dist/js/bootstrap.min.js'
+import 'bootstrap/dist/css/bootstrap.min.css'
+import echarts from 'echarts'
+import sidevue from 'sidevue'
 
 Vue.config.productionTip = false
-
-let students = {name: 'gregth', hah: '54563426', ddd: '543654'}
-// let students = {
-//   xiaomin: {
-//     name: 'xiaoming',
-//     grade: 1
-//   },
-//   teemo: {
-//     name: 'teemo',
-//     grade: 3
-//   }
-// }
-if (typeof (students) === 'object' &&
-Object.prototype.toString.call(students).toLowerCase() === '[object object]' && !students.length) {
-  console.log(students)
-} else {
-  console.log(5436524)
-}
+Vue.prototype.$echarts = echarts
+Vue.component('sidevue', sidevue)
 
 /* eslint-disable no-new */
 new Vue({
