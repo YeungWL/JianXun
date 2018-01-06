@@ -6,15 +6,22 @@ import router from './router'
 import 'bootstrap/dist/js/bootstrap.min.js'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import echarts from 'echarts'
-import sidevue from 'sidevue'
+import store from './store'
 
 Vue.config.productionTip = false
 Vue.prototype.$echarts = echarts
-Vue.component('sidevue', sidevue)
+// Vue.prototype.activeState = false
+// Vue.prototype.$isOpen = (value) => {
+//   console.log(value)
+//   this.activeState = value
+//   console.log('activeState:', this.activeState)
+//   return value
+// }
 
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
+  store,
   router,
   template: '<App/>',
   components: { App }

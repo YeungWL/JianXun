@@ -1,9 +1,11 @@
 <template>
-  <!-- top navigation -->
+  <div>
+      <sidebar ></sidebar>
+      <!-- top navigation -->
         <div class="top_nav">
             <div class="nav_menu">
                 <nav>
-                    <div class="nav toggle">
+                    <div class="nav toggle"  @click="toggle">
                         <a id="menu_toggle"><i class="fa fa-bars"></i></a>
                     </div>
 
@@ -14,17 +16,49 @@
                                 <span class=" fa fa-angle-down"></span>
                             </a>
                             <ul class="dropdown-menu dropdown-usermenu pull-right">
-                                <li><a href="login.html"><i class="fa fa-sign-out pull-right"></i> Log Out</a></li>
+                                <li><router-link to="/login"><i class="fa fa-sign-out pull-right"></i>Log Out</router-link> </li>
                             </ul>
                         </li>
                     </ul>
                 </nav>
             </div>
-            <div>
-                <ol class="breadcrumb" style="margin-bottom: 0;background: #EDEDED;    border-bottom: 1px solid #D9DEE4;padding: 8px 30px;">
-                    <li class="active">后台首页</li>
+            <div class="row">
+                <ol class="breadcrumb" style="margin-bottom: 0;background: #EDEDED;    border-bottom: 1px solid #D9DEE4;padding: 8px 30px">
+                    <li ><router-link to="/home">后台首页</router-link></li>
+                    <li class="active"><router-link to="/userManagement">用户管理</router-link></li>
                 </ol>
             </div>
         </div>
         <!-- /top navigation -->
+  </div>
 </template>
+<script type="text/javascript">
+import Sidebar from './Sidebar'
+export default {
+  data () {
+    return {
+      isOpen: false
+    }
+  },
+  components: {
+    Sidebar: Sidebar
+  },
+  methods: {
+    open () {
+      this.isOpen = true
+      this.$store.state.isOpen = this.isOpen
+    },
+    close () {
+      this.isOpen = false
+      this.$store.state.isOpen = this.isOpen
+    },
+    toggle () {
+      if (this.isOpen) {
+        this.close()
+      } else {
+        this.open()
+      }
+    }
+  }
+}
+</script>

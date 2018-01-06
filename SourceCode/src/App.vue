@@ -1,9 +1,8 @@
 <template>
-  <div id="app">
+  <div id="app" :class="$store.state.isOpen ? 'nav-sm' : 'nav-md'" >
     <router-view/>
   </div>
 </template>
-
 <script>
 export default {
   name: 'app'
