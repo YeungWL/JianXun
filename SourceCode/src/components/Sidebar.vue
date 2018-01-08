@@ -37,3 +37,6 @@
             </div>
         </div>
 </template>
+<style scoped>
+@import '../assets/css/custom.min.css';
+</style>

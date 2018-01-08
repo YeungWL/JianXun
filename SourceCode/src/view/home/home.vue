@@ -1,7 +1,6 @@
 <template>
   <div class="container body">
     <div class="main_container">
-        <SideBar></SideBar>
         <TopNav></TopNav>
         <!-- page content -->
         <div class="right_col" role="main">
@@ -165,14 +164,12 @@
 </template>
 <script>
 import TopNav from '../../components/TopNav'
-import SideBar from '../../components/Sidebar'
 export default{
   data () {
     return {}
   },
   components: {
-    TopNav: TopNav,
-    SideBar: SideBar
+    TopNav: TopNav
   },
   mounted () {
     let option1 = {
