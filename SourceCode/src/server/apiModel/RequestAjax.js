@@ -20,11 +20,13 @@ axios.interceptors.response.use(function (res) {
     // Do something with response error
   return Promise.reject(err)
 })
-
+// 请求接口
 export const httpFetch = (url, params) => {
-  axios.post(url, querystring.stringify(params)).then((response) => {
-    Promise.resolve(response.data)
-  }).catch((error) => {
-    Promise.reject(error)
+  return new Promise((resolve, reject) => {
+    axios.post(url, querystring.stringify(params)).then((response) => {
+      resolve(response.data)
+    }).catch((error) => {
+      reject(error)
+    })
   })
 }

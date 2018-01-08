@@ -10,13 +10,9 @@ import store from './store'
 
 Vue.config.productionTip = false
 Vue.prototype.$echarts = echarts
-// Vue.prototype.activeState = false
-// Vue.prototype.$isOpen = (value) => {
-//   console.log(value)
-//   this.activeState = value
-//   console.log('activeState:', this.activeState)
-//   return value
-// }
+
+// 引入mockjs
+require('./mock.js')
 
 /* eslint-disable no-new */
 new Vue({
