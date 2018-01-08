@@ -120,7 +120,6 @@ export default{
 }
 </script>
 <style scoped>
-@import '../../assets/css/custom.min.css';
 @import '../../assets/css/index.css';
 </style>
 

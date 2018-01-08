@@ -8,8 +8,8 @@ export default {
   name: 'app'
 }
 </script>
-
 <style>
+@import './assets/css/custom.min.css';
 @import './assets/font/css/font-awesome.min.css';
 #app {
   margin: 0;

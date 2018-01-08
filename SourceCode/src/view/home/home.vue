@@ -383,7 +383,6 @@ export default{
 }
 </script>
 <style>
-@import '../../assets/css/custom.min.css';
 @import '../../assets/css/index.css';
 </style>
 
