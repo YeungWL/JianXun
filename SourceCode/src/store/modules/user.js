@@ -1,5 +1,6 @@
 import {httpFetch} from '../../server/apiModel/RequestAjax'
 import * as types from '../mutationType'
+import { Toast } from 'mint-ui'
 
 const state = {
   HttpRequestAjax: httpFetch, // 请求接口
@@ -26,11 +27,10 @@ const mutations = {
     // 获取用户信息
   [types.GETUSERINFO] (state, obj) {
     state.HttpRequestAjax('das/userInfo').then((res) => {
-      console.log('userInfo:', res)
       if (res.isSuccess === state.isSuccess && res.code === state.code) {
         state.userInfo = res.resData
       } else {
-        console.log(res)
+        Toast(res.description)
       }
     })
   }

@@ -9,8 +9,8 @@ export default {
 }
 </script>
 <style>
-@import './assets/css/custom.min.css';
 @import './assets/font/css/font-awesome.min.css';
+@import './assets/css/custom.min.css';
 #app {
   margin: 0;
   padding: 0;

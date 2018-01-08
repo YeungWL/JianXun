@@ -3,13 +3,17 @@
 import Vue from 'vue'
 import App from './App'
 import router from './router'
+import { InfiniteScroll } from 'mint-ui'
+import 'mint-ui/lib/style.css'
 import 'bootstrap/dist/js/bootstrap.min.js'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import echarts from 'echarts'
 import store from './store'
-
 Vue.config.productionTip = false
+
+// 引入图形插件
 Vue.prototype.$echarts = echarts
+Vue.use(InfiniteScroll)
 
 // 引入mockjs
 require('./mock.js')

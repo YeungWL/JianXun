@@ -20,6 +20,7 @@ axios.interceptors.response.use(function (res) {
     // Do something with response error
   return Promise.reject(err)
 })
+
 // 请求接口
 export const httpFetch = (url, params) => {
   return new Promise((resolve, reject) => {
