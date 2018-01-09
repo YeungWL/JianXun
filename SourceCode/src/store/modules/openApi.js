@@ -1,7 +1,6 @@
 import * as types from '../mutationType'
 import RequestUrl from '../../server/apiModel/HttpRequestApi'
 import ConstVariable from './common'
-import LocalStorage from '../../utils/localStorage'
 
 const state = {}
 const mutations = {
@@ -10,7 +9,7 @@ const mutations = {
       if (res.isSuccess === ConstVariable.isSuccess && res.code === ConstVariable.code) {
         let publicKey = res.resData.publicKey
             // 本地存储
-        LocalStorage.localSetItem('publicKey', publicKey)
+        ConstVariable.Storage.localSetItem('publicKey', publicKey)
       }
     })
   }
