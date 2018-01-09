@@ -9,7 +9,7 @@ const mutations = {
       if (res.isSuccess === ConstVariable.isSuccess && res.code === ConstVariable.code) {
         let publicKey = res.resData.publicKey
             // 本地存储
-        ConstVariable.Storage.localSetItem('publicKey', publicKey)
+        ConstVariable.Storage.localSetItem(ConstVariable.Utils.stringToBase64('publicKey'), publicKey)
       }
     })
   }

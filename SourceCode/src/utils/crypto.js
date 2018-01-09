@@ -19,5 +19,15 @@ export default{
     let keyParam = {'key': key, padding: crypto.constants.RSA_PKCS1_PADDING}
     let plain = Buffer.from(str)
     return crypto.publicEncrypt(keyParam, plain).toString('base64')
+  },
+  // 字符转base64
+  stringToBase64 (str) {
+    if (str.length === 0) return ''
+    return Buffer.from(str).toString('base64')
+  },
+  // 字符转义
+  baseToString (encryptStr) {
+    if (encryptStr.length === 0) return ''
+    return Buffer.from(encryptStr, 'base64').toString()
   }
 }

@@ -11,7 +11,6 @@ if (!window.Promise) {
 }
 // 添加一个请求拦截器
 axios.interceptors.request.use(function (config) {
-  console.log(config)
     // 在请求发出之前进行一些操作
   return config
 }, function (err) {
@@ -20,6 +19,7 @@ axios.interceptors.request.use(function (config) {
 })
   // 添加一个响应拦截器
 axios.interceptors.response.use(function (res) {
+  console.log('localStorage:', localStorage[Utils.stringToBase64('publicKey')])
     // 在这里对返回的数据进行处理
   return res
 }, function (err) {
@@ -30,6 +30,8 @@ axios.interceptors.response.use(function (res) {
   } else if (err.response.status === 404) { // 404页面不存在
     router.push('/error')
   } else if (err.response.status === 500 || err.response.status === 501 || err.response.status === 502) { // 检查服务器500
+    console.log(11111111111)
+    alert(654365373568765)
     Toast('服务器繁忙 稍后再试')
   } else { // 其他错误
     Toast({
@@ -48,7 +50,7 @@ export const httpFetch = (url, params) => {
       // 需要加密处理的接口
     Config.encryptApi.forEach((res) => {
       if (res.url === url) {
-        let key = localStorage.publicKey || ''
+        let key = localStorage[Utils.stringToBase64('publicKey')] || ''
         res.fields.forEach((v) => {
           if (params[v]) {
             console.log(v)
