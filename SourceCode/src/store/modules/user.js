@@ -45,7 +45,14 @@ const mutations = {
       ClientSource: ConstVariable.clientSource
     }
     ConstVariable.HttpRequestAjax(RequestUrl.login, params).then((res) => {
-      console.log(params)
+      if (res.isSuccess === ConstVariable.isSuccess && res.code === '1000') {
+        // 存储用户信息
+        ConstVariable.Storage.sessionSetItem(ConstVariable.Utils.stringToBase64('userInfo'), JSON.stringify(res.resData))
+        ConstVariable.router.push('/home')
+      } else {
+        Toast(res.description)
+      }
+      console.log(res)
     })
   }
 }
