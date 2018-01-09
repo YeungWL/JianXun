@@ -393,8 +393,14 @@ export default{
     myChart1.setOption(option1)
     myChart2.setOption(option2)
     myChart3.setOption(option3)
+    window.onresize = () => {
+      return (() => {
+        myChart1.resize()
+        myChart2.resize()
+        myChart3.resize()
+      })()
+    }
   }
-
 }
 </script>
 <style>
