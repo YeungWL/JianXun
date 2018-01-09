@@ -25,6 +25,7 @@
         BORDER-BOTTOM: #e1e1e1 1px solid;
         TEXT-ALIGN: center;
         border-radius: 10px;
-        padding-bottom: 15px;
+        box-shadow: 8px 8px 2px #888888;
+        -moz-box-shadow: 8px 8px 2px #888888;
     }
 </style>
