@@ -4,7 +4,7 @@
         <div class="row">
             <div class="mod-notfound grid-98"><img class="img-notfound" src="../../assets/images/notfound.gif">
                 <p >错误页面！</p>
-                <p style="MARGIN-BOTTOM: 30px"><router-link to="">返回</router-link></p>
+                <p style="MARGIN-BOTTOM: 30px" ><router-link to="/home" >返回首页</router-link></p>
         </div>
     </div>
 </div>
@@ -29,3 +29,7 @@
         -moz-box-shadow: 8px 8px 2px #888888;
     }
 </style>
+<script>
+    export default{
+    }
+</script>   
