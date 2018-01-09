@@ -3,6 +3,7 @@ import Router from 'vue-router'
 import UserManagement from '@/view/home/userManagement'
 import Login from '@/view/user/login'
 import Home from '@/view/home/home'
+import NotFount from '@/view/error/noFiles'
 
 Vue.use(Router)
 
@@ -28,6 +29,15 @@ export default new Router({
       path: '/userManagement',
       name: 'UserManagement',
       component: UserManagement
+    },
+    {
+      path: '/error',
+      name: 'NotFount',
+      component: NotFount
+    },
+    {
+      path: '/*',
+      redirect: '/error'
     }
   ]
 })
