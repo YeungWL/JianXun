@@ -3,8 +3,8 @@
     <div class="wrap404">
         <div class="row">
             <div class="mod-notfound grid-98"><img class="img-notfound" src="../../assets/images/notfound.gif">
-                <p >啊~哦~ 您要查看的页面不存在或已删除！</p>
-                <p style="MARGIN-BOTTOM: 30px">请检查您输入的网址是否正确</p>
+                <p >错误页面！</p>
+                <p style="MARGIN-BOTTOM: 30px" ><router-link to="/home" >返回首页</router-link></p>
         </div>
     </div>
 </div>
@@ -19,12 +19,17 @@
     .mod-notfound {
         BORDER-RIGHT: #e1e1e1 1px solid;
         BORDER-TOP: #e1e1e1 1px solid;
-        MARGIN-TOP: 10px;
+        MARGIN-TOP: 50%;
         BACKGROUND: #fff;
         BORDER-LEFT: #e1e1e1 1px solid;
         BORDER-BOTTOM: #e1e1e1 1px solid;
         TEXT-ALIGN: center;
         border-radius: 10px;
-        padding-bottom: 15px;
+        box-shadow: 8px 8px 2px #888888;
+        -moz-box-shadow: 8px 8px 2px #888888;
     }
 </style>
+<script>
+    export default{
+    }
+</script>   

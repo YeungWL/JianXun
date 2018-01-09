@@ -44,8 +44,9 @@ const mutations = {
       DeviceIdentity: '',
       ClientSource: ConstVariable.clientSource
     }
-    // state.HttpRequestAjax(RequestUrl.login, params).then((res) => {})
-    console.log(params)
+    ConstVariable.HttpRequestAjax(RequestUrl.login, params).then((res) => {
+      console.log(params)
+    })
   }
 }
 export default {
