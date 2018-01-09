@@ -1,7 +1,6 @@
 import axios from 'axios'
-import querystring from 'qs'
 import router from '../../router'
-import Toast from 'mint-ui'
+import {Toast} from 'mint-ui'
 import Config from '../common/config'
 import Utils from '../../utils/crypto'
 // import Url from './HttpRequestApi'
@@ -12,6 +11,10 @@ if (!window.Promise) {
 // 添加一个请求拦截器
 axios.interceptors.request.use(function (config) {
     // 在请求发出之前进行一些操作
+  config.headers = {
+    'Content-Type': 'application/json',
+    'clientType': Config.clientType
+  }
   return config
 }, function (err) {
     // Do something with request error
@@ -19,7 +22,7 @@ axios.interceptors.request.use(function (config) {
 })
   // 添加一个响应拦截器
 axios.interceptors.response.use(function (res) {
-  console.log('localStorage:', localStorage[Utils.stringToBase64('publicKey')])
+  // console.log('localStorage:', localStorage[Utils.stringToBase64('publicKey')])
     // 在这里对返回的数据进行处理
   return res
 }, function (err) {
@@ -30,13 +33,14 @@ axios.interceptors.response.use(function (res) {
   } else if (err.response.status === 404) { // 404页面不存在
     router.push('/error')
   } else if (err.response.status === 500 || err.response.status === 501 || err.response.status === 502) { // 检查服务器500
-    console.log(11111111111)
-    alert(654365373568765)
-    Toast('服务器繁忙 稍后再试')
+    Toast({
+      message: '服务器繁忙 稍后再试',
+      duration: 2000
+    })
   } else { // 其他错误
     Toast({
       message: '出错啦! ' + err.response.status + JSON.stringify(err.response.data),
-      duration: 5000
+      duration: 3000
     })
   }
     // Do something with response error
@@ -53,7 +57,6 @@ export const httpFetch = (url, params) => {
         let key = localStorage[Utils.stringToBase64('publicKey')] || ''
         res.fields.forEach((v) => {
           if (params[v]) {
-            console.log(v)
             params[v] = Utils.encrypRsa(key, v)
           }
         })
@@ -61,8 +64,7 @@ export const httpFetch = (url, params) => {
     })
   }
   return new Promise((resolve, reject) => {
-    console.log('params', JSON.stringify(params))
-    axios.post(url, querystring.stringify(params)).then((response) => {
+    axios.post(url, params).then((response) => {
       resolve(response.data)
     }).catch((error) => {
       reject(error)
