@@ -108,6 +108,21 @@
 
                 </div>
 
+                 <div class="row">
+                        <div class="col-md-12 col-sm-12 col-xs-12">
+                            <div class="x_panel" style="overflow: hidden">
+                                <div class="x_title">
+                                    <h2>新增用户年度数柱形图</h2>
+                                    <div class="clearfix"></div>
+                                </div>
+                                <div class="x_content">
+                                    <div id="main2" style="height:450px;"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
                 <div class="row">
                 <div class="col-md-12 col-sm-12 col-xs-12">
                 <div class="x_panel" style="overflow: hidden">
@@ -116,7 +131,7 @@
                 <div class="clearfix"></div>
                 </div>
                 <div class="x_content">
-                <div id="main2" style="height:450px;"></div>
+                <div id="main3" style="min-height:450px;"></div>
                 </div>
                 </div>
                 </div>
@@ -131,7 +146,7 @@
                 <div class="clearfix"></div>
                 </div>
                 <div class="x_content">
-                <div id="main3" style="height:450px;"></div>
+                <div id="main4" style="height:450px;"></div>
                 </div>
                 </div>
                 </div>
@@ -181,6 +196,7 @@
         var myChart1 = echarts.init(document.getElementById('main1'));
         var myChart2 = echarts.init(document.getElementById('main2'));
         var myChart3 = echarts.init(document.getElementById('main3'));
+        var myChart4 = echarts.init(document.getElementById('main4'));
         //    新增用户数数据start
         var option1 = {
             tooltip: {},
@@ -194,7 +210,12 @@
                 },
                 data: ["2点","4点","6点","8点","10点","12点","14点","16点","18点","20点","22点","24点"]
             },
-            yAxis: {},
+            yAxis: {
+                axisLabel: {
+                    interval:0,
+                    rotate:65
+                },
+            },
             series: [
                 {
                     name: '当天新增用户数',
@@ -215,71 +236,129 @@
             ]
         };
         //     新增用户数数据end
-        //    会员地区数据start
+        //    新增用户年度数数据start
         var option2 = {
-            title : {
-                text: '会员地区分布',
-                subtext: '数据截止：2017-03，来源：wikipedia',
-                textStyle:{color:"#666"},
-                x:'left'
-            },
-            tooltip : {
-                trigger: 'item',
-                formatter: "{a} <br/>{b} : {c} ({d}%)"
-            },
+            tooltip: {},
             legend: {
-                type: 'scroll',
-                orient: 'horizontal',
-                left: 0,
-//                top: 20,
-               bottom: 0,
-                data: ["上海","北京","深圳","广州","天津","杭州","武汉","重庆","南昌","福州","厦门","苏州","上海2","北京2","深圳2","广州2","天津2","杭州2","武汉2","重庆2","南昌2","福州2","厦门2","苏州2"]
+                data:['当年新增用户数','前年新增用户数']
             },
-            series : [
+            xAxis: {
+                axisLabel: {
+                    interval:0,
+                    rotate:40
+                },
+                data: ["一月","二月","三月","四月","五月","六月","七月","八月","九月","十月","11月","12月"]
+            },
+            yAxis: {
+                axisLabel: {
+                    interval:0,
+                    rotate:65
+                },
+            },
+            series: [
                 {
-                    name: '姓名',
-                    type: 'pie',
-                    radius : '65%',
-                    center: ['40%', '50%'],
-                    data: [
-                        {value:335, name:'上海'},
-                        {value:310, name:'北京'},
-                        {value:234, name:'深圳'},
-                        {value:135, name:'广州'},
-                        {value:1548, name:'天津'},
-                        {value:335, name:'杭州'},
-                        {value:310, name:'武汉'},
-                        {value:234, name:'重庆'},
-                        {value:135, name:'南昌'},
-                        {value:1548, name:'福州'},
-                        {value:1548, name:'厦门'},
-                        {value:335, name:'苏州'},
-                        {value:310, name:'上海2'},
-                        {value:234, name:'北京2'},
-                        {value:135, name:'深圳2'},
-                        {value:1548, name:'广州2'},
-                        {value:1548, name:'天津2'},
-                        {value:335, name:'杭州2'},
-                        {value:310, name:'武汉2'},
-                        {value:234, name:'重庆2'},
-                        {value:135, name:'南昌2'},
-                        {value:1548, name:'福州2'},
-                        {value:1548, name:'厦门2'},
-                        {value:335, name:'苏州2'},
-                    ],
-                    itemStyle: {
-                        emphasis: {
-                            shadowBlur: 10,
-                            shadowOffsetX: 0,
-                            shadowColor: 'rgba(0, 0, 0, 0.5)'
-                        }
-                    }
+                    name: '当年新增用户数',
+                    type: 'bar',
+                    itemStyle:{normal:{
+                        color:"#ed7d4d"
+                    }},
+                    data: [5, 20, 36, 10, 10, 20,1,5, 20, 36, 10, 60]
+                },
+                {
+                    name: '前年新增用户数',
+                    type: 'bar',
+                    itemStyle:{normal:{
+                        color:"#86cdf9"
+                    }},
+                    data: [5, 20, 36, 10, 10, 20,9,5, 20, 36, 10, 60]
                 }
             ]
         };
+        //     新增用户年度数数据end
+        //    会员地区数据start
+        var option3 = {
+            title: {
+                text: '会员地区分布',
+                subtext: '数据截止：2017-03，来源：wikipedia',
+                textStyle:{color:"#666"},
+                x:'center'
+            },
+            tooltip: {},
+            xAxis: {
+                axisLabel: {
+                    interval:0,
+                    rotate:40
+                },
+                data:  ["上海","北京","深圳","广州","天津","杭州","武汉","重庆","南昌","福州","厦门","苏州","上海2","北京2","深圳2","广州2","天津2","杭州2","武汉2","重庆2","南昌2","福州2","厦门2","苏州2"]
+            },
+            yAxis: {
+                axisLabel: {
+                    interval:0,
+                    rotate:65
+                },
+            },
+            series: [{
+                name: '人口总数',
+                type: 'bar',
+                itemStyle:{normal:{
+                    color:"#88c2f5"
+                }},
+                label: {
+                    normal: {
+                        show: true,
+                        position: 'inside'
+                    }
+                },
+                data:  [18203, 23489, 29034, 104970, 131744, 630230, 23489, 29034, 104970, 131744,18203, 23489, 29034, 104970, 131744, 630230, 23489, 29034, 104970, 131744,23489, 29034, 104970, 131744],
+            }],
+            dataZoom: [
+                {
+                    type: 'slider',
+                    xAxisIndex: [0],
+                    filterMode: 'filter',
+                    start: 1,
+                    end: 20,
+                    bottom: 5,
+                    height: 20,
+                },
+            ],
+            toolbox: {
+                show: true,
+                orient:'vertica',
+                feature : {
+                    mark : {show: true},
+                    dataView : {show: true, readOnly: true,
+                        optionToContent: function (opt) {
+                            let axisData = opt.xAxis[0].data; //坐标数据
+                            let series = opt.series; //折线图数据
+                            let tdHeads = '<td  style="padding: 0 10px">时间</td>'; //表头
+                            let tdBodys = ''; //数据
+                            series.forEach(function (item) {
+                                //组装表头
+                                tdHeads += `<td style="padding: 0 10px">${item.name}</td>`;
+                            });
+                            let table = `<div style="overflow-y:auto;height: 100%;"><table border="1" class="table-bordered table-striped" style="width:100%;text-align:center;height:100%"><tbody><tr>${tdHeads} </tr>`;
+                            for (let i = 0, l = axisData.length; i < l; i++) {
+                                for (let j = 0; j < series.length; j++) {
+                                    //组装表数据
+                                    tdBodys += `<td>${ series[j].data[i]}</td>`;
+                                }
+                                table += `<tr><td style="padding: 0 10px">${axisData[i]}</td>${tdBodys}</tr>`;
+                                tdBodys = '';
+                            }
+                            table += '</tbody></table></div>';
+                            return table;
+                        }
+                    },
+                    magicType : {show: true, type: ['line', 'bar', 'stack', 'tiled']},
+                    restore : {show: true},
+                    saveAsImage : {show: true}
+                }
+            }
+        };
         //     会员地区数据end
         //    会员转化数据start
-        var option3 = {
+        var option4 = {
             title: {
                 text: '会员转化统计',
                 subtext: '数据截止：WorldClimate.com',
@@ -318,6 +397,10 @@
             ],
             yAxis: [
                 {
+                    axisLabel: {
+                        interval:0,
+                        rotate:65
+                    },
                     type: 'value'
                 }
             ],
@@ -350,7 +433,7 @@
                                 //组装表头
                                 tdHeads += `<td style="padding: 0 10px">${item.name}</td>`;
                             });
-                            let table = `<table border="1" class="table-bordered table-striped" style="width:100%;text-align:center;height:370px"><tbody><tr>${tdHeads} </tr>`;
+                            let table = `<table border="1" class="table-bordered table-striped" style="width:100%;text-align:center;height:100%"><tbody><tr>${tdHeads} </tr>`;
                             for (let i = 0, l = axisData.length; i < l; i++) {
                                 for (let j = 0; j < series.length; j++) {
                                     //组装表数据
@@ -374,5 +457,6 @@
         myChart1.setOption(option1);
         myChart2.setOption(option2);
         myChart3.setOption(option3);
+        myChart4.setOption(option4);
     }
 </script>
