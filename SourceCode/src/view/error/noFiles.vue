@@ -12,14 +12,13 @@
 </template>
 <style scoped>
     @import '../../assets/css/login.css';
-    @media screen  and (min-width:768px) and (max-width:992px) {.img-notfound{width:70%}.wrap404{padding: 5% 15%}}
-    @media screen  and (min-width:992px) and (max-width: 1200px){.img-notfound{width:60%}.wrap404{padding: 5% 15%}}
+    @media screen  and (min-width:768px) and (max-width:992px) {.img-notfound{width:70%}.wrap404{padding: 5% 15%}.mod-notfound{ margin-top: 20%;}}
+    @media screen  and (min-width:992px) and (max-width: 1200px){.img-notfound{width:60%}.wrap404{padding: 5% 15%}.mod-notfound { margin-top: 10%;}}
     @media (min-width:1200px){.img-notfound{width:55%}.wrap404{padding: 5% 20%}}
-    @media (max-width:768px){.img-notfound{width:80%} .wrap404{padding: 5% 10%}}
+    @media (max-width:768px){.img-notfound{width:80%} .wrap404{padding: 5% 10%} .mod-notfound { margin-top: 40%;}}
     .mod-notfound {
         BORDER-RIGHT: #e1e1e1 1px solid;
         BORDER-TOP: #e1e1e1 1px solid;
-        MARGIN-TOP: 50%;
         BACKGROUND: #fff;
         BORDER-LEFT: #e1e1e1 1px solid;
         BORDER-BOTTOM: #e1e1e1 1px solid;
