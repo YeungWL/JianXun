@@ -184,7 +184,12 @@ export default{
         },
         data: ['周一', '周二', '周三', '周四', '周五', '周六', '周日']
       },
-      yAxis: {},
+      yAxis: {
+        axisLabel: {
+          interval: 0,
+          rotate: 65
+        }
+      },
       series: [{
         name: '本周',
         type: 'bar',
@@ -251,7 +256,12 @@ export default{
         },
         data: ['周一', '周二', '周三', '周四', '周五', '周六', '周日']
       },
-      yAxis: {},
+      yAxis: {
+        axisLabel: {
+          interval: 0,
+          rotate: 65
+        }
+      },
       series: [{
         name: '本周',
         type: 'bar',
@@ -318,7 +328,12 @@ export default{
         },
         data: ['周一', '周二', '周三', '周四', '周五', '周六', '周日']
       },
-      yAxis: {},
+      yAxis: {
+        axisLabel: {
+          interval: 0,
+          rotate: 65
+        }
+      },
       series: [{
         name: '本周',
         type: 'bar',
