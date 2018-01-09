@@ -44,7 +44,7 @@
                             <div class="clearfix"></div>
                         </div>
                         <div class="x_content">
-                            <div id="main3" ref="main3" style="height:350px;"></div>
+                            <div id="main3" ref="main3" style="height:450px;"></div>
                         </div>
                     </div>
                 </div>
@@ -59,7 +59,7 @@
                             <div class="clearfix"></div>
                         </div>
                         <div class="x_content">
-                            <div id="main4"  ref="main4" style="height:350px;"></div>
+                            <div id="main4"  ref="main4" style="height:450px;"></div>
                         </div>
                     </div>
                 </div>
@@ -353,12 +353,6 @@ export default{
           axisTick: {
             alignWithLabel: true
           },
-          axisLine: {
-            onZero: false,
-            lineStyle: {
-              color: '#5793f3'
-            }
-          },
           data: ['一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '11月', '12月']
         }
       ],
@@ -385,6 +379,9 @@ export default{
           data: [10, 55.9, 141.1, 18.7, 48.3, 69.2, 100.6, 46.6, 55.4, 18.4, 15.3, 10.7]
         }
       ],
+      label: {normal: {
+        show: true
+      }},
       toolbox: {
         show: true,
         orient: 'vertica',
