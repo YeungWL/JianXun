@@ -1,3 +1,6 @@
+
+import Crypt from './crypto'
+
 export default{
     /**
      *判断是否为json对象
@@ -17,7 +20,8 @@ export default{
     if (typeof value !== 'string') {
       value = JSON.stringify(value)
     }
-    window.localStorage.setItem(key, value)
+    // Crypt.stringToBase64(key)
+    window.localStorage.setItem(Crypt.stringToBase64(key), Crypt.localRsaEncrypt(value))
   },
 
   /**
@@ -25,7 +29,8 @@ export default{
    */
   localGetItem: function (key) {
     if (!key) return
-    return window.localStorage.getItem(key)
+    let DecryptString = window.localStorage.getItem(Crypt.stringToBase64(key))
+    return Crypt.DecryptString(DecryptString)
   },
 
   /**
@@ -33,7 +38,7 @@ export default{
    */
   localRemoveItem: function (key) {
     if (!key) return
-    window.localStorage.removeItem(key)
+    window.localStorage.removeItem(Crypt.stringToBase64(key))
   },
   /**
    * 存储sessionStorage
@@ -43,21 +48,22 @@ export default{
     if (typeof content !== 'string') {
       value = JSON.stringify(value)
     }
-    window.sessionStorage.setItem(key, value)
+    window.sessionStorage.setItem(Crypt.stringToBase64(key), Crypt.localRsaEncrypt(value))
   },
   /**
    * 获取sessionStorage
    */
   sessionGetItem: function (key) {
     if (!key) return
-    return window.sessionStorage.getItem(key)
+    let DecryptString = window.sessionStorage.getItem(Crypt.stringToBase64(key))
+    return Crypt.DecryptString(DecryptString)
   },
   /**
    * 删除sessionStorage
    */
   sessionRemoveItem: function (key) {
     if (!key) return
-    window.sessionStorage.removeItem(key)
+    window.sessionStorage.removeItem(Crypt.stringToBase64(key))
   },
   /**
    * 清除所有的key/value
