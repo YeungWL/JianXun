@@ -58,6 +58,21 @@ const mutations = {
         Toast(res.description)
       }
     })
+  },
+
+  // 用户登出
+  [types.LOGOUT] (state, obj) {
+    let $router = obj.$router
+    ConstVariable.HttpRequestAjax(RequestUrl.logout).then((res) => {
+      console.log(res)
+      if (res.isSuccess === ConstVariable.isSuccess) {
+        // 清楚缓存
+        ConstVariable.Storage.clearCache()
+        $router.push('/login')
+      } else {
+        Toast(res.description)
+      }
+    })
   }
 }
 export default {

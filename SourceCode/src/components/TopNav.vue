@@ -34,7 +34,7 @@
 </template>
 <script type="text/javascript">
 import Sidebar from './Sidebar'
-import { mapGetters, mapActions } from 'vuex'
+import { mapGetters } from 'vuex'
 export default {
   data () {
     return {
@@ -51,13 +51,14 @@ export default {
   computed: {
     ...mapGetters([
       'userInfo'
-    ]),
-    ...mapActions([
     ])
   },
   methods: {
     logout () {
-
+      // let paramData = {
+      //   $router: this.$router
+      // }
+      this.$store.commit('LOGOUT', {$router: this.$router})
     },
     open () {
       this.isOpen = true

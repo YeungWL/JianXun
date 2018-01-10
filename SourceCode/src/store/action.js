@@ -15,5 +15,9 @@ export default{
   // 获取总数统计
   getTotalData: ({commit}, obj) => {
     commit(types.GETTOTALDATA, obj)
+  },
+  // 用户登出
+  logout: ({commit}, obj) => {
+    commit(types.LOGOUT, obj)
   }
 }

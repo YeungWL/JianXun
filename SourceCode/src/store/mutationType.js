@@ -6,3 +6,5 @@ export const LOGIN = 'LOGIN'
 export const GETPUBLICKEY = 'GETPUBLICKEY'
 // 获取总数统计
 export const GETTOTALDATA = 'GETTOTALDATA'
+// 用户登出
+export const LOGOUT = 'LOGOUT'
