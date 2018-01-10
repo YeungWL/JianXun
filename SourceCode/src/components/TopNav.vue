@@ -68,6 +68,14 @@ export default {
       } else {
         this.open()
       }
+
+      if (this.$store.state.myChartList.length > 0) {
+        this.$store.state.myChartList.forEach((myChart) => {
+          setTimeout(function () {
+            myChart.resize()
+          }, 100)
+        })
+      }
     }
   }
 }

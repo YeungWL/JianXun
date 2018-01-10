@@ -35,7 +35,7 @@ export default {
             })
           }
           that.timer = false
-        }, 400)
+        }, 200)
       }
     }
   }
