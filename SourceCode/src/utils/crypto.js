@@ -22,12 +22,12 @@ export default{
   },
   // 字符转base64
   stringToBase64 (str) {
-    if (str.length === 0) return ''
+    if (str && str.length === 0) return ''
     return Buffer.from(str).toString('base64')
   },
   // 字符转义
   baseToString (encryptStr) {
-    if (encryptStr.length === 0) return ''
+    if (encryptStr && encryptStr.length === 0) return ''
     return Buffer.from(encryptStr, 'base64').toString()
   },
   // 本地加密
