@@ -12,7 +12,7 @@
                     <ul class="nav navbar-nav navbar-right">
                         <li class="">
                             <a href="javascript:;" class="user-profile dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                                <img :src="userInfo.thumbnail_pic" alt="">{{userInfo.username}}
+                                <img src="../assets/images/img.jpg" alt="">{{userInfo.username}}
                                 <span class=" fa fa-angle-down"></span>
                             </a>
                             <ul class="dropdown-menu dropdown-usermenu pull-right">
