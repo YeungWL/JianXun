@@ -12,17 +12,17 @@ module.exports = {
     assetsPublicPath: '/',
     proxyTable: {
       '/api': {
-        target: 'http://172.18.7.192/DAS',
+        target: 'http://172.18.7.192',
         changeOrigin: true,
         pathRewrite: {
-          '^/api': ''
+          '^/api': '/DAS'
         }
       },
       '/openApi': {
         target: 'http://172.18.7.192',
         changeOrigin: true,
         pathRewrite: {
-          '^/OpenAPI/openApi': ''
+          '^/openApi': '/OpenAPI/openApi'
         }
       }
     },

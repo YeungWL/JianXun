@@ -16,7 +16,7 @@
                                 <span class=" fa fa-angle-down"></span>
                             </a>
                             <ul class="dropdown-menu dropdown-usermenu pull-right">
-                                <li><router-link to="/login"><i class="fa fa-sign-out pull-right"></i>Log Out</router-link> </li>
+                                <li><a href="javascript:void(0)" @click="logout"><i class="fa fa-sign-out pull-right"></i>Log Out</a> </li>
                             </ul>
                         </li>
                     </ul>
@@ -34,7 +34,7 @@
 </template>
 <script type="text/javascript">
 import Sidebar from './Sidebar'
-import { mapGetters } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 export default {
   data () {
     return {
@@ -51,9 +51,14 @@ export default {
   computed: {
     ...mapGetters([
       'userInfo'
+    ]),
+    ...mapActions([
     ])
   },
   methods: {
+    logout () {
+
+    },
     open () {
       this.isOpen = true
       this.$store.state.isOpen = this.isOpen

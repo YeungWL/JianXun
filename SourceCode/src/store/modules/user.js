@@ -57,7 +57,6 @@ const mutations = {
       } else {
         Toast(res.description)
       }
-      console.log(res)
     })
   }
 }
