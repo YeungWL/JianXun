@@ -11,16 +11,16 @@ if (!window.Promise) {
 // 添加一个请求拦截器
 axios.interceptors.request.use(function (config) {
     // 在请求发出之前进行一些操作
-  let userInfo = sessionStorage[Utils.stringToBase64('userInfo')] || ''
-  let userItem = JSON.parse(JSON.stringify(userInfo)) || {}
-  let tempID = userItem.tempID || ''
-  let token = userItem.token || ''
+  // let userInfo = sessionStorage[Utils.stringToBase64('userInfo')] || ''
+  // let userItem = JSON.parse(JSON.stringify(userInfo)) || {}
+  // let tempID = userItem.tempID || ''
+  // let token = userItem.token || ''
 
   config.headers = {
     'Content-Type': 'application/json',
     'clientType': Config.clientType,
-    'tempID': tempID,
-    'token': token
+    'tempID': '',
+    'token': ''
   }
 
   return config
