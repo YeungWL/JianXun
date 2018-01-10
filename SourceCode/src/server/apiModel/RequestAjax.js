@@ -24,7 +24,7 @@ axios.interceptors.request.use(function (config) {
     'Content-Type': 'application/json',
     'clientType': Config.clientType,
     'tempID': tempID,
-    'token': token
+    'userToken': token
   }
 
   return config

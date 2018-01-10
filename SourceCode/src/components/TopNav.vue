@@ -16,7 +16,7 @@
                                 <span class=" fa fa-angle-down"></span>
                             </a>
                             <ul class="dropdown-menu dropdown-usermenu pull-right">
-                                <li><router-link to="/login"><i class="fa fa-sign-out pull-right"></i>Log Out</router-link> </li>
+                                <li><a href="javascript:void(0)" @click="logout"><i class="fa fa-sign-out pull-right"></i>Log Out</a> </li>
                             </ul>
                         </li>
                     </ul>
@@ -54,6 +54,12 @@ export default {
     ])
   },
   methods: {
+    logout () {
+      // let paramData = {
+      //   $router: this.$router
+      // }
+      this.$store.commit('LOGOUT', {$router: this.$router})
+    },
     open () {
       this.isOpen = true
       this.$store.state.isOpen = this.isOpen
