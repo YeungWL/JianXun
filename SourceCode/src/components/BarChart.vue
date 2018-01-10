@@ -36,7 +36,7 @@ export default {
     }
   },
   mounted () {
-    var zhuhe = []
+    let zhuhe = []
     for (let i = 0; i < this.series.length; i++) {
       zhuhe.push({
         name: this.series[i].name,
