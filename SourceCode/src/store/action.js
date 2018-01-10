@@ -11,5 +11,9 @@ export default{
   // 获取公钥
   getPublicKey: ({commit}, obj) => {
     commit(types.GETPUBLICKEY, obj)
+  },
+  // 获取总数统计
+  getTotalData: ({commit}, obj) => {
+    commit(types.GETTOTALDATA, obj)
   }
 }
