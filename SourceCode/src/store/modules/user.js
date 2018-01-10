@@ -46,8 +46,16 @@ const mutations = {
     }
     ConstVariable.HttpRequestAjax(RequestUrl.login, params).then((res) => {
       if (res.isSuccess === ConstVariable.isSuccess && res.code === '1000') {
+        // 针对用户一些重要信息使用RSA加密
+        res.resData.uid = ConstVariable.Utils.localRsaEncrypt(res.resData.uid)
+        res.resData.accountUid = ConstVariable.Utils.localRsaEncrypt(res.resData.accountUid)
+        res.resData.mobile = ConstVariable.Utils.localRsaEncrypt(res.resData.mobile)
+        res.resData.userName = ConstVariable.Utils.localRsaEncrypt(res.resData.userName)
+        res.resData.code = ConstVariable.Utils.localRsaEncrypt(res.resData.code)
+
         // 存储用户信息
-        ConstVariable.Storage.sessionSetItem('userInfo', JSON.stringify(res.resData))
+        sessionStorage.setItem(ConstVariable.Utils.stringToBase64('userInfo'), ConstVariable.Utils.stringToBase64(JSON.stringify(res.resData)))
+
         ConstVariable.router.push('/home')
       } else {
         Toast(res.description)
