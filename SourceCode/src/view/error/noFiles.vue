@@ -3,8 +3,8 @@
     <div class="wrap404">
         <div class="row">
             <div class="mod-notfound grid-98"><img class="img-notfound" src="../../assets/images/notfound.gif">
-                <p >错误页面！</p>
-                <p style="MARGIN-BOTTOM: 30px" ><router-link to="/home" >返回首页</router-link></p>
+                <!-- <p >错误页面！</p> -->
+                <p style="MARGIN-BOTTOM: 30px;font-size:18px;text-align: right;    padding-right: 10px;" ><router-link to="/home" >返回首页</router-link></p>
         </div>
     </div>
 </div>

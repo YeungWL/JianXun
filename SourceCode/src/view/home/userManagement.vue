@@ -299,7 +299,7 @@ export default{
             optionToContent: function (opt) {
               let axisData = opt.xAxis[0].data // 坐标数据
               let series = opt.series // 折线图数据
-              let tdHeads = '<td  style="padding: 0 10px">时间</td>' // 表头
+              let tdHeads = '<td  style="padding: 0 10px">城市</td>' // 表头
               let tdBodys = '' // 数据
               series.forEach(function (item) {
                                 // 组装表头
