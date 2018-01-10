@@ -3,7 +3,7 @@ import RequestUrl from '../../server/apiModel/HttpRequestApi'
 import ConstVariable from './common'
 import { Toast } from 'mint-ui'
 const state = {
-  dataType: {register: 1, seller: 2, operation: 3, consumption: 4, cash: 5, tradeOrder: 6, serviceCode: 7, consumer: 8, intAccountConsum: 9, cashAccount: 10, wechatPay: 11, alipay: 12, crossMember: 13, bindServerCode: 14, store: 15},
+  dataType: {register: 1, seller: 2, cash: 3, consumption: 4, tradeOrder: 5, consumer: 6, intAccountConsum: 7, cashAccount: 8, wechatPay: 9, alipay: 10, crossMember: 11, operation: 12, serviceCode: 13, bindServerCode: 14, store: 15},
   registerInfo: {registerTotal: 0, title: '注册用户总数'},
   enterSellerInfo: {enterSellerTotal: 0, title: '入驻商家总数'},
   enterOperationInfo: {enterOperationTotal: 0, title: '入驻营运中心总数'},
