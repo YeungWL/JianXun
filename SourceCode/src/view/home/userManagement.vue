@@ -272,7 +272,8 @@ export default{
         label: {
           normal: {
             show: true,
-            position: 'inside'
+            position: 'inside',
+            rotate: '90'
           }
         },
         data: [18203, 23489, 29034, 104970, 131744, 630230, 23489, 29034, 104970, 131744, 18203, 23489, 29034, 104970, 131744, 630230, 23489, 29034, 104970, 131744, 23489, 29034, 104970, 131744]
@@ -334,10 +335,10 @@ export default{
       },
       color: ['#5793f3', '#d14a61', '#675bba'],
       tooltip: {
-        trigger: 'none',
-        axisPointer: {
-          type: 'cross'
-        }
+        // trigger: 'none'
+        // axisPointer: {
+        //   type: 'cross'
+        // }
       },
       legend: {
         data: ['推荐会员', '会员转商家入驻'],
@@ -427,14 +428,7 @@ export default{
     myChart2.setOption(option2)
     myChart3.setOption(option3)
     myChart4.setOption(option4)
-    window.onresize = () => {
-      return (() => {
-        myChart1.resize()
-        myChart2.resize()
-        myChart3.resize()
-        myChart4.resize()
-      })()
-    }
+    this.$store.state.myChartList.push(myChart1, myChart2, myChart3, myChart4)
   }
 }
 </script>
