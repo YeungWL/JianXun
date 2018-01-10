@@ -8,3 +8,5 @@ export const GETPUBLICKEY = 'GETPUBLICKEY'
 export const GETTOTALDATA = 'GETTOTALDATA'
 // 用户登出
 export const LOGOUT = 'LOGOUT'
+// 获取周期统计
+export const GETWEEKDATA = 'GETWEEKDATA'

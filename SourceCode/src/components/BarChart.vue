@@ -13,14 +13,26 @@ export default {
       series: [{
         name: '本周',
         color: '#ed7d4d',
-        data: [5, 20, 36, 10, 10, 20, 1]
+        data: this.barInfo.orderThisWeek
       }, {
         name: '上周',
         color: '#d970d5',
-        data: [5, 20, 36, 10, 10, 20, 15]
+        data: this.barInfo.orderLastWeek
       }],
       isdataView: false,
       magicType: ['line', 'bar', 'stack', 'tiled']
+    }
+  },
+  props: {
+    barInfo: {
+      type: Object,
+      default: function () {
+        return {
+          orderThisWeek: [0, 0, 0, 0, 0, 0, 0],
+          orderLastWeek: [0, 0, 0, 0, 0, 0, 0],
+          title: '订单周期统计'
+        }
+      }
     }
   },
   mounted () {

@@ -19,5 +19,9 @@ export default{
   // 用户登出
   logout: ({commit}, obj) => {
     commit(types.LOGOUT, obj)
+  },
+  // 获取周期统计
+  getWeekData: ({commit}, obj) => {
+    commit(types.GETWEEKDATA, obj)
   }
 }

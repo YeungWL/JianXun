@@ -120,9 +120,7 @@
                             <h2>一周订单概览</h2>
                             <div class="clearfix"></div>
                         </div>
-                        <div class="x_content">
-                        <div id="main1" ref="main1" style="height:350px;"></div>
-                        </div>
+                        <BarChart :barInfo="orderInfo"></BarChart>
                     </div>
                 </div>
                 <div class="col-md-6 col-sm-6 col-xs-12">
@@ -131,9 +129,7 @@
                             <h2>一周消费概览</h2>
                             <div class="clearfix"></div>
                         </div>
-                        <div class="x_content">
-                            <div id="main2" ref="main2" style="height:350px;"></div>
-                        </div>
+                        <BarChart :barInfo="consumersInfo"></BarChart>
                     </div>
                 </div>
                 <div class="col-md-6 col-sm-6 col-xs-12">
@@ -142,9 +138,25 @@
                             <h2>一周入驻商家数据概览</h2>
                             <div class="clearfix"></div>
                         </div>
-                        <div class="x_content">
-                            <div id="main3" ref="main3" style="height:350px;"></div>
+                        <BarChart :barInfo="enterSellersInfo"></BarChart>
+                    </div>
+                </div>
+                <div class="col-md-6 col-sm-6 col-xs-12">
+                    <div class="x_panel" style="overflow: hidden">
+                        <div class="x_title">
+                            <h2>一周入驻运营中心数据概览</h2>
+                            <div class="clearfix"></div>
                         </div>
+                        <BarChart :barInfo="enterBusinessInfo"></BarChart>
+                    </div>
+                </div>
+                <div class="col-md-6 col-sm-6 col-xs-12">
+                    <div class="x_panel" style="overflow: hidden">
+                        <div class="x_title">
+                            <h2>一周新增用户数据概览</h2>
+                            <div class="clearfix"></div>
+                        </div>
+                        <BarChart :barInfo="newUserInfo"></BarChart>
                     </div>
                 </div>
             </div>
@@ -164,246 +176,37 @@
 </template>
 <script>
 import TopNav from '../../components/TopNav'
+import BarChart from '../../components/BarChart'
 import {mapGetters} from 'vuex'
 export default{
   data () {
-    return {}
+    return {
+    }
   },
   components: {
-    TopNav: TopNav
+    TopNav: TopNav,
+    BarChart: BarChart
   },
   computed: {
     ...mapGetters([
       'registerInfo', 'enterSellerInfo', 'enterOperationInfo', 'consumInfo', 'cashInfo', 'tradeOrderInfo', 'serviceCodeInfo', 'consumerInfo', 'intAccountConsumInfo',
-      'cashAccountInfo', 'wechatPayInfo', 'alipayInfo', 'crossMemberInfo', 'bindServerCodeInfo', 'storeInfo'
+      'cashAccountInfo', 'wechatPayInfo', 'alipayInfo', 'crossMemberInfo', 'bindServerCodeInfo', 'storeInfo', 'orderInfo', 'consumersInfo', 'enterSellersInfo', 'enterBusinessInfo', 'newUserInfo'
     ])
   },
   created () {
+    console.log(this.newUserInfo)
     this.$store.commit('GETTOTALDATA')
+    this.$store.commit('GETWEEKDATA')
   },
   mounted () {
-    let option1 = {
-      tooltip: {},
-      legend: {
-        data: ['本周', '上周']
-      },
-      xAxis: {
-        axisLabel: {
-          interval: 0,
-          rotate: 40
-        },
-        data: ['周一', '周二', '周三', '周四', '周五', '周六', '周日']
-      },
-      yAxis: {
-        axisLabel: {
-          interval: 0,
-          rotate: 65
-        }
-      },
-      series: [{
-        name: '本周',
-        type: 'bar',
-        itemStyle: {normal: {
-          color: '#ed7d4d'
-        }},
-        data: [5, 20, 36, 10, 10, 20, 1]
-      },
-      {
-        name: '上周',
-        type: 'bar',
-        itemStyle: {normal: {
-          color: '#d970d5'
-        }},
-        data: [5, 20, 36, 10, 10, 20, 15]
-      }
-      ],
-      toolbox: {
-        show: true,
-        orient: 'vertica',
-        feature: {
-          mark: {show: true},
-          dataView: {show: true,
-            readOnly: true,
-            optionToContent: function (opt) {
-              let axisData = opt.xAxis[0].data // 坐标数据
-              let series = opt.series // 折线图数据
-              let tdHeads = '<td  style="padding: 0 10px">时间</td>' // 表头
-              let tdBodys = '' // 数据
-              series.forEach(function (item) {
-                                // 组装表头
-                tdHeads += `<td style="padding: 0 10px">${item.name}</td>`
-              })
-              let table = `<table border="1" class="table-bordered table-striped" style="width:100%;text-align:center;height:100%"><tbody><tr>${tdHeads} </tr>`
-              for (let i = 0, l = axisData.length; i < l; i++) {
-                for (let j = 0; j < series.length; j++) {
-                                    // 组装表数据
-                  tdBodys += `<td>${series[j].data[i]}</td>`
-                }
-                table += `<tr><td style="padding: 0 10px">${axisData[i]}</td>${tdBodys}</tr>`
-                tdBodys = ''
-              }
-              table += '</tbody></table>'
-              return table
-            }
-          },
-          magicType: {show: true, type: ['line', 'bar', 'stack', 'tiled']},
-          restore: {show: true},
-          saveAsImage: {show: true}
-        }
-      }
-    }
-//    一周订单概览表数据end
-    //    一周消费概览表数据start
-    let option2 = {
-      tooltip: {},
-      legend: {
-        data: ['本周', '上周']
-      },
-      xAxis: {
-        axisLabel: {
-          interval: 0,
-          rotate: 40
-        },
-        data: ['周一', '周二', '周三', '周四', '周五', '周六', '周日']
-      },
-      yAxis: {
-        axisLabel: {
-          interval: 0,
-          rotate: 65
-        }
-      },
-      series: [{
-        name: '本周',
-        type: 'bar',
-        itemStyle: {normal: {
-          color: '#ed7d4d'
-        }},
-        data: [500, 420, 356, 510, 0, 20, 1]
-      },
-      {
-        name: '上周',
-        type: 'bar',
-        itemStyle: {normal: {
-          color: '#d970d5'
-        }},
-        data: [885, 520, 346, 510, 130, 20, 15]
-      }
-      ],
-      toolbox: {
-        show: true,
-        orient: 'vertica',
-        feature: {
-          mark: {show: true},
-          dataView: {show: true,
-            readOnly: true,
-            optionToContent: function (opt) {
-              let axisData = opt.xAxis[0].data // 坐标数据
-              let series = opt.series // 折线图数据
-              let tdHeads = '<td  style="padding: 0 10px">时间</td>' // 表头
-              let tdBodys = '' // 数据
-              series.forEach(function (item) {
-                                // 组装表头
-                tdHeads += `<td style="padding: 0 10px">${item.name}</td>`
-              })
-              let table = `<table border="1" class="table-bordered table-striped" style="width:100%;text-align:center;height:100%"><tbody><tr>${tdHeads} </tr>`
-              for (let i = 0, l = axisData.length; i < l; i++) {
-                for (let j = 0; j < series.length; j++) {
-                                    // 组装表数据
-                  tdBodys += `<td>${series[j].data[i]}</td>`
-                }
-                table += `<tr><td style="padding: 0 10px">${axisData[i]}</td>${tdBodys}</tr>`
-                tdBodys = ''
-              }
-              table += '</tbody></table>'
-              return table
-            }
-          },
-          magicType: {show: true, type: ['line', 'bar', 'stack', 'tiled']},
-          restore: {show: true},
-          saveAsImage: {show: true}
-        }
-      }
-    }
     //    一周消费概览表数据end
-    //    一周消费概览表数据start
-    let option3 = {
-      tooltip: {},
-      legend: {
-        data: ['本周', '上周']
-      },
-      xAxis: {
-        axisLabel: {
-          interval: 0,
-          rotate: 40
-        },
-        data: ['周一', '周二', '周三', '周四', '周五', '周六', '周日']
-      },
-      yAxis: {
-        axisLabel: {
-          interval: 0,
-          rotate: 65
-        }
-      },
-      series: [{
-        name: '本周',
-        type: 'bar',
-        itemStyle: {normal: {
-          color: '#ed7d4d'
-        }},
-        data: [500, 420, 356, 510, 0, 20, 1]
-      },
-      {
-        name: '上周',
-        type: 'bar',
-        itemStyle: {normal: {
-          color: '#d970d5'
-        }},
-        data: [885, 520, 346, 510, 130, 20, 15]
-      }
-      ],
-      toolbox: {
-        show: true,
-        orient: 'vertica',
-        feature: {
-          mark: {show: true},
-          dataView: {show: true,
-            readOnly: true,
-            optionToContent: function (opt) {
-              let axisData = opt.xAxis[0].data // 坐标数据
-              let series = opt.series // 折线图数据
-              let tdHeads = '<td  style="padding: 0 10px">时间</td>' // 表头
-              let tdBodys = '' // 数据
-              series.forEach(function (item) {
-                                // 组装表头
-                tdHeads += `<td style="padding: 0 10px">${item.name}</td>`
-              })
-              let table = `<table border="1" class="table-bordered table-striped" style="width:100%;text-align:center;height:100%"><tbody><tr>${tdHeads} </tr>`
-              for (let i = 0, l = axisData.length; i < l; i++) {
-                for (let j = 0; j < series.length; j++) {
-                                    // 组装表数据
-                  tdBodys += `<td>${series[j].data[i]}</td>`
-                }
-                table += `<tr><td style="padding: 0 10px">${axisData[i]}</td>${tdBodys}</tr>`
-                tdBodys = ''
-              }
-              table += '</tbody></table>'
-              return table
-            }
-          },
-          magicType: {show: true, type: ['line', 'bar', 'stack', 'tiled']},
-          restore: {show: true},
-          saveAsImage: {show: true}
-        }
-      }
-    }
-    //    一周消费概览表数据end
-    let myChart1 = this.$echarts.init(this.$refs.main1)
-    let myChart2 = this.$echarts.init(this.$refs.main2)
-    let myChart3 = this.$echarts.init(this.$refs.main3)
-    myChart1.setOption(option1)
-    myChart2.setOption(option2)
-    myChart3.setOption(option3)
-    this.$store.state.myChartList.push(myChart1, myChart2, myChart3)
+    // let myChart1 = this.$echarts.init(this.$refs.main1)
+    // let myChart2 = this.$echarts.init(this.$refs.main2)
+    // let myChart3 = this.$echarts.init(this.$refs.main3)
+    // myChart1.setOption(option1)
+    // myChart2.setOption(option2)
+    // myChart3.setOption(option3)
+    // this.$store.state.myChartList.push(myChart1, myChart2)
   }
 }
 </script>
