@@ -29,5 +29,22 @@ export default{
   baseToString (encryptStr) {
     if (encryptStr.length === 0) return ''
     return Buffer.from(encryptStr, 'base64').toString()
+  },
+  // 本地加密
+  localRsaEncrypt (str) {
+    if (str && str.length === 0) return ''
+    console.log(str)
+    let publicKey = Buffer.from(process.rsaEncrypt.PUBKER, 'base64').toString()
+    let keyParam = {'key': publicKey, padding: crypto.constants.RSA_PKCS1_PADDING}
+    let plain = Buffer.from(str)
+    return crypto.publicEncrypt(keyParam, plain).toString('base64')
+  },
+  // 本地解密
+  localRsaDecrypt (str) {
+    if (str && str.length <= 0) return ''
+    let privateKey = Buffer.from(process.rsaEncrypt.PRIVKEY, 'base64').toString()
+    let keyParam = {'key': privateKey, padding: crypto.constants.RSA_PKCS1_PADDING}
+    let plain = Buffer.from(str, 'base64')
+    return crypto.privateDecrypt(keyParam, plain).toString()
   }
 }
