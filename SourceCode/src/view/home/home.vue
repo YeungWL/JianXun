@@ -199,6 +199,220 @@ export default{
     this.$store.commit('GETWEEKDATA')
   },
   mounted () {
+    // let option1 = {
+    //   tooltip: {},
+    //   legend: {
+    //     data: ['本周', '上周']
+    //   },
+    //   xAxis: {
+    //     axisLabel: {
+    //       interval: 0,
+    //       rotate: 40
+    //     },
+    //     data: ['周一', '周二', '周三', '周四', '周五', '周六', '周日']
+    //   },
+    //   yAxis: {
+    //     axisLabel: {
+    //       interval: 0,
+    //       rotate: 65
+    //     }
+    //   },
+    //   series: [{
+    //     name: '本周',
+    //     type: 'bar',
+    //     itemStyle: {normal: {
+    //       color: '#ed7d4d'
+    //     }},
+    //     data: [5, 20, 36, 10, 10, 20, 1]
+    //   },
+    //   {
+    //     name: '上周',
+    //     type: 'bar',
+    //     itemStyle: {normal: {
+    //       color: '#d970d5'
+    //     }},
+    //     data: [5, 20, 36, 10, 10, 20, 15]
+    //   }
+    //   ],
+    //   toolbox: {
+    //     show: true,
+    //     orient: 'vertica',
+    //     feature: {
+    //       mark: {show: true},
+    //       dataView: {show: true,
+    //         readOnly: true,
+    //         optionToContent: function (opt) {
+    //           let axisData = opt.xAxis[0].data // 坐标数据
+    //           let series = opt.series // 折线图数据
+    //           let tdHeads = '<td  style="padding: 0 10px">时间</td>' // 表头
+    //           let tdBodys = '' // 数据
+    //           series.forEach(function (item) {
+    //                             // 组装表头
+    //             tdHeads += `<td style="padding: 0 10px">${item.name}</td>`
+    //           })
+    //           let table = `<table border="1" class="table-bordered table-striped" style="width:100%;text-align:center;height:100%"><tbody><tr>${tdHeads} </tr>`
+    //           for (let i = 0, l = axisData.length; i < l; i++) {
+    //             for (let j = 0; j < series.length; j++) {
+    //                                 // 组装表数据
+    //               tdBodys += `<td>${series[j].data[i]}</td>`
+    //             }
+    //             table += `<tr><td style="padding: 0 10px">${axisData[i]}</td>${tdBodys}</tr>`
+    //             tdBodys = ''
+    //           }
+    //           table += '</tbody></table>'
+    //           return table
+    //         }
+    //       },
+    //       magicType: {show: true, type: ['line', 'bar', 'stack', 'tiled']},
+    //       restore: {show: true},
+    //       saveAsImage: {show: true}
+    //     }
+    //   }
+    // }
+//    一周订单概览表数据end
+    //    一周消费概览表数据start
+    // let option2 = {
+    //   tooltip: {},
+    //   legend: {
+    //     data: ['本周', '上周']
+    //   },
+    //   xAxis: {
+    //     axisLabel: {
+    //       interval: 0,
+    //       rotate: 40
+    //     },
+    //     data: ['周一', '周二', '周三', '周四', '周五', '周六', '周日']
+    //   },
+    //   yAxis: {
+    //     axisLabel: {
+    //       interval: 0,
+    //       rotate: 65
+    //     }
+    //   },
+    //   series: [{
+    //     name: '本周',
+    //     type: 'bar',
+    //     itemStyle: {normal: {
+    //       color: '#ed7d4d'
+    //     }},
+    //     data: [500, 420, 356, 510, 0, 20, 1]
+    //   },
+    //   {
+    //     name: '上周',
+    //     type: 'bar',
+    //     itemStyle: {normal: {
+    //       color: '#d970d5'
+    //     }},
+    //     data: [885, 520, 346, 510, 130, 20, 15]
+    //   }
+    //   ],
+    //   toolbox: {
+    //     show: true,
+    //     orient: 'vertica',
+    //     feature: {
+    //       mark: {show: true},
+    //       dataView: {show: true,
+    //         readOnly: true,
+    //         optionToContent: function (opt) {
+    //           let axisData = opt.xAxis[0].data // 坐标数据
+    //           let series = opt.series // 折线图数据
+    //           let tdHeads = '<td  style="padding: 0 10px">时间</td>' // 表头
+    //           let tdBodys = '' // 数据
+    //           series.forEach(function (item) {
+    //                             // 组装表头
+    //             tdHeads += `<td style="padding: 0 10px">${item.name}</td>`
+    //           })
+    //           let table = `<table border="1" class="table-bordered table-striped" style="width:100%;text-align:center;height:100%"><tbody><tr>${tdHeads} </tr>`
+    //           for (let i = 0, l = axisData.length; i < l; i++) {
+    //             for (let j = 0; j < series.length; j++) {
+    //                                 // 组装表数据
+    //               tdBodys += `<td>${series[j].data[i]}</td>`
+    //             }
+    //             table += `<tr><td style="padding: 0 10px">${axisData[i]}</td>${tdBodys}</tr>`
+    //             tdBodys = ''
+    //           }
+    //           table += '</tbody></table>'
+    //           return table
+    //         }
+    //       },
+    //       magicType: {show: true, type: ['line', 'bar', 'stack', 'tiled']},
+    //       restore: {show: true},
+    //       saveAsImage: {show: true}
+    //     }
+    //   }
+    // }
+    //    一周消费概览表数据end
+    //    一周消费概览表数据start
+    // let option3 = {
+    //   tooltip: {},
+    //   legend: {
+    //     data: ['本周', '上周']
+    //   },
+    //   xAxis: {
+    //     axisLabel: {
+    //       interval: 0,
+    //       rotate: 40
+    //     },
+    //     data: ['周一', '周二', '周三', '周四', '周五', '周六', '周日']
+    //   },
+    //   yAxis: {
+    //     axisLabel: {
+    //       interval: 0,
+    //       rotate: 65
+    //     }
+    //   },
+    //   series: [{
+    //     name: '本周',
+    //     type: 'bar',
+    //     itemStyle: {normal: {
+    //       color: '#ed7d4d'
+    //     }},
+    //     data: [500, 420, 356, 510, 0, 20, 1]
+    //   },
+    //   {
+    //     name: '上周',
+    //     type: 'bar',
+    //     itemStyle: {normal: {
+    //       color: '#d970d5'
+    //     }},
+    //     data: [885, 520, 346, 510, 130, 20, 15]
+    //   }
+    //   ],
+    //   toolbox: {
+    //     show: true,
+    //     orient: 'vertica',
+    //     feature: {
+    //       mark: {show: true},
+    //       dataView: {show: true,
+    //         readOnly: true,
+    //         optionToContent: function (opt) {
+    //           let axisData = opt.xAxis[0].data // 坐标数据
+    //           let series = opt.series // 折线图数据
+    //           let tdHeads = '<td  style="padding: 0 10px">时间</td>' // 表头
+    //           let tdBodys = '' // 数据
+    //           series.forEach(function (item) {
+    //                             // 组装表头
+    //             tdHeads += `<td style="padding: 0 10px">${item.name}</td>`
+    //           })
+    //           let table = `<table border="1" class="table-bordered table-striped" style="width:100%;text-align:center;height:100%"><tbody><tr>${tdHeads} </tr>`
+    //           for (let i = 0, l = axisData.length; i < l; i++) {
+    //             for (let j = 0; j < series.length; j++) {
+    //                                 // 组装表数据
+    //               tdBodys += `<td>${series[j].data[i]}</td>`
+    //             }
+    //             table += `<tr><td style="padding: 0 10px">${axisData[i]}</td>${tdBodys}</tr>`
+    //             tdBodys = ''
+    //           }
+    //           table += '</tbody></table>'
+    //           return table
+    //         }
+    //       },
+    //       magicType: {show: true, type: ['line', 'bar', 'stack', 'tiled']},
+    //       restore: {show: true},
+    //       saveAsImage: {show: true}
+    //     }
+    //   }
+    // }
     //    一周消费概览表数据end
     // let myChart1 = this.$echarts.init(this.$refs.main1)
     // let myChart2 = this.$echarts.init(this.$refs.main2)
