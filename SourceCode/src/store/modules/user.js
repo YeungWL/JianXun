@@ -5,7 +5,7 @@ import Func from '../../server/common/Func'
 import ConstVariable from './common'
 
 const state = {
-  userInfo: null,
+  userInfo: {username: ''},
   loginInfo: {userAccount: '', password: '', isRemember: 0}// 用户登录信息
 
 }
@@ -27,13 +27,9 @@ const getters = {
 const mutations = {
     // 获取用户信息
   [types.GETUSERINFO] (state, obj) {
-    ConstVariable.HttpRequestAjax(RequestUrl.userInfo).then((res) => {
-      if (res.isSuccess === ConstVariable.isSuccess && res.code === ConstVariable.code) {
-        state.userInfo = res.resData
-      } else {
-        Toast(res.description)
-      }
-    })
+    let userInfo = sessionStorage[ConstVariable.Utils.stringToBase64('userInfo')]
+    let userItem = JSON.parse(ConstVariable.Utils.baseToString(userInfo))
+    state.userInfo.username = ConstVariable.Utils.localRsaDecrypt(userItem.userName) || ''
   },
 
   // 用户登录
@@ -46,6 +42,7 @@ const mutations = {
     }
     ConstVariable.HttpRequestAjax(RequestUrl.login, params).then((res) => {
       if (res.isSuccess === ConstVariable.isSuccess && res.code === '1000') {
+        state.userInfo.username = res.resData.userName || ''
         // 针对用户一些重要信息使用RSA加密
         res.resData.uid = ConstVariable.Utils.localRsaEncrypt(res.resData.uid)
         res.resData.accountUid = ConstVariable.Utils.localRsaEncrypt(res.resData.accountUid)
