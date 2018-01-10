@@ -9,106 +9,106 @@
                 <div class="itemWrap col-md-55 col-sm-4 col-xs-6" style="height: 75px;overflow: hidden; margin-bottom: 5px;">
                     <div class="pull-left item1"><i class="fa  fa fa-male"></i></div>
                     <div class="pull-left item2">
-                        <span class="item21"> 190000</span>
-                        <span class="item22"> 注册用户总数</span>
+                        <span class="item21"> {{registerInfo.registerTotal}}</span>
+                        <span class="item22"> {{registerInfo.title}}</span>
                     </div>
                 </div>
                 <div class="itemWrap col-md-55 col-sm-4 col-xs-6" style="height: 75px;overflow: hidden; margin-bottom: 5px;">
                     <div class="pull-left item1"><i class="fa   fa-user"></i></div>
                     <div class="pull-left item2">
-                        <span class="item21"> 190000</span>
-                        <span class="item22"> 入驻商家总数</span>
+                        <span class="item21"> {{enterSellerInfo.enterSellerTotal}}</span>
+                        <span class="item22"> {{enterSellerInfo.title}}</span>
                     </div>
                 </div>
                 <div class="itemWrap col-md-55 col-sm-4 col-xs-6" style="height: 75px;overflow: hidden; margin-bottom: 5px;">
                     <div class="pull-left item1"><i class="fa   fa-sitemap"></i></div>
                     <div class="pull-left item2">
-                        <span class="item21"> 190000</span>
-                        <span class="item22"> 入驻营运中心总数</span>
+                        <span class="item21"> {{enterOperationInfo.enterOperationTotal}}</span>
+                        <span class="item22"> {{enterOperationInfo.title}}</span>
                     </div>
                 </div>
                 <div class="itemWrap col-md-55 col-sm-4 col-xs-6" style="height: 75px;overflow: hidden; margin-bottom: 5px;">
                     <div class="pull-left item1"><i class="fa   fa-cny "></i></div>
                     <div class="pull-left item2">
-                        <span class="item21"> 190000</span>
-                        <span class="item22"> 提现总数</span>
+                        <span class="item21"> {{cashInfo.cashTotal}}</span>
+                        <span class="item22"> {{cashInfo.title}}</span>
                     </div>
                 </div>
                 <div class="itemWrap col-md-55 col-sm-4 col-xs-6" style="height: 75px;overflow: hidden; margin-bottom: 5px;">
                     <div class="pull-left item1"><i class="fa   fa-shopping-cart"></i></div>
                     <div class="pull-left item2">
-                        <span class="item21"> 190000</span>
-                        <span class="item22"> 消费总额</span>
+                        <span class="item21"> {{consumInfo.consumTotal}}</span>
+                        <span class="item22"> {{consumInfo.title}}</span>
                     </div>
                 </div>
                 <div class="itemWrap col-md-55 col-sm-4 col-xs-6" style="height: 75px;overflow: hidden; margin-bottom: 5px;">
                     <div class="pull-left item1"><i class="fa   fa-navicon"></i></div>
                     <div class="pull-left item2">
-                        <span class="item21"> 190000</span>
-                        <span class="item22"> 交易订单总数</span>
+                        <span class="item21"> {{tradeOrderInfo.tradeOrderTotal}}</span>
+                        <span class="item22"> {{tradeOrderInfo.title}}</span>
                     </div>
                 </div>
-                <div class="itemWrap col-md-55 col-sm-4 col-xs-6" style="height: 75px;overflow: hidden; margin-bottom: 5px;">
+                <!-- <div class="itemWrap col-md-55 col-sm-4 col-xs-6" style="height: 75px;overflow: hidden; margin-bottom: 5px;">
                     <div class="pull-left item1"><i class="fa   fa-barcode"></i></div>
                     <div class="pull-left item2">
-                        <span class="item21"> 190000</span>
-                        <span class="item22"> 出售服务码总数</span>
+                        <span class="item21"> {{serviceCodeInfo.serviceCodeTotal}}</span>
+                        <span class="item22"> {{serviceCodeInfo.title}}</span>
                     </div>
-                </div>
+                </div> -->
                 <div class="itemWrap col-md-55 col-sm-4 col-xs-6" style="height: 75px;overflow: hidden; margin-bottom: 5px;">
                     <div class="pull-left item1"><i class="fa    fa-group "></i></div>
                     <div class="pull-left item2">
-                        <span class="item21"> 190000</span>
-                        <span class="item22"> 消费者数量</span>
+                        <span class="item21"> {{consumerInfo.consumerTotal}}</span>
+                        <span class="item22"> {{consumerInfo.title}}</span>
                     </div>
                 </div>
                 <div class="itemWrap col-md-55 col-sm-4 col-xs-6" style="height: 75px;overflow: hidden; margin-bottom: 5px;">
                     <div class="pull-left item1"><i class="fa    fa-share-square-o"></i></div>
                     <div class="pull-left item2">
-                        <span class="item21"> 190000</span>
-                        <span class="item22"> 积分账户消费</span>
+                        <span class="item21"> {{intAccountConsumInfo.intAccountConsumTotal}}</span>
+                        <span class="item22"> {{intAccountConsumInfo.title}}</span>
                     </div>
                 </div>
                 <div class="itemWrap col-md-55 col-sm-4 col-xs-6" style="height: 75px;overflow: hidden; margin-bottom: 5px;">
                     <div class="pull-left item1"><i class="fa    fa-share-square"></i></div>
                     <div class="pull-left item2">
-                        <span class="item21"> 190000</span>
-                        <span class="item22"> 现金账户消费</span>
+                        <span class="item21"> {{cashAccountInfo.cashAccountTotal}}</span>
+                        <span class="item22"> {{cashAccountInfo.title}}</span>
                     </div>
                 </div>
                 <div class="itemWrap col-md-55 col-sm-4 col-xs-6" style="height: 75px;overflow: hidden; margin-bottom: 5px;">
                     <div class="pull-left item1"><i class="fa   fa fa-wechat"></i></div>
                     <div class="pull-left item2">
-                        <span class="item21"> 190000</span>
-                        <span class="item22"> 微信支付</span>
+                        <span class="item21"> {{wechatPayInfo.wechatPayTotal}}</span>
+                        <span class="item22"> {{wechatPayInfo.title}}</span>
                     </div>
                 </div>
                 <div class="itemWrap col-md-55 col-sm-4 col-xs-6" style="height: 75px;overflow: hidden; margin-bottom: 5px;">
                     <div class="pull-left item1"><i class="fa     fa-suitcase"></i></div>
                     <div class="pull-left item2">
-                        <span class="item21"> 190000</span>
-                        <span class="item22"> 支付宝支付</span>
+                        <span class="item21"> {{alipayInfo.alipayTotal}}</span>
+                        <span class="item22"> {{alipayInfo.title}}</span>
                     </div>
                 </div>
                 <div class="itemWrap col-md-55 col-sm-4 col-xs-6" style="height: 75px;overflow: hidden; margin-bottom: 5px;">
                     <div class="pull-left item1"><i class="fa    fa-cc-mastercard"></i></div>
                     <div class="pull-left item2">
-                        <span class="item21"> 190000</span>
-                        <span class="item22"> 跨界会员数</span>
+                        <span class="item21"> {{crossMemberInfo.crossMemberTotal}}</span>
+                        <span class="item22"> {{crossMemberInfo.title}}</span>
                     </div>
                 </div>
                 <div class="itemWrap col-md-55 col-sm-4 col-xs-6" style="height: 75px;overflow: hidden; margin-bottom: 5px;">
                     <div class="pull-left item1"><i class="fa    fa-institution "></i></div>
                     <div class="pull-left item2">
-                        <span class="item21"> 190000</span>
-                        <span class="item22"> 已绑服务码门店数</span>
+                        <span class="item21"> {{bindServerCodeInfo.bindServerCodeTotal}}</span>
+                        <span class="item22"> {{bindServerCodeInfo.title}}</span>
                     </div>
                 </div>
                 <div class="itemWrap col-md-55 col-sm-4 col-xs-6" style="height: 75px;overflow: hidden; margin-bottom: 5px;">
                     <div class="pull-left item1"><i class="fa     fa-line-chart "></i></div>
                     <div class="pull-left item2">
-                        <span class="item21"> 190000</span>
-                        <span class="item22"> 门店铺设总数</span>
+                        <span class="item21"> {{storeInfo.storeTotal}}</span>
+                        <span class="item22"> {{storeInfo.title}}</span>
                     </div>
                 </div>
             </div>
@@ -164,12 +164,22 @@
 </template>
 <script>
 import TopNav from '../../components/TopNav'
+import {mapGetters} from 'vuex'
 export default{
   data () {
     return {}
   },
   components: {
     TopNav: TopNav
+  },
+  computed: {
+    ...mapGetters([
+      'registerInfo', 'enterSellerInfo', 'enterOperationInfo', 'consumInfo', 'cashInfo', 'tradeOrderInfo', 'serviceCodeInfo', 'consumerInfo', 'intAccountConsumInfo',
+      'cashAccountInfo', 'wechatPayInfo', 'alipayInfo', 'crossMemberInfo', 'bindServerCodeInfo', 'storeInfo'
+    ])
+  },
+  created () {
+    this.$store.commit('GETTOTALDATA')
   },
   mounted () {
     let option1 = {
