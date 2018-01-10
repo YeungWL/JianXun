@@ -4,7 +4,8 @@ import UserManagement from '@/view/home/userManagement'
 import Login from '@/view/user/login'
 import Home from '@/view/home/home'
 import NotFount from '@/view/error/noFiles'
-
+import businessManagement from '@/view/home/businessManagement'
+import developing from '@/view/error/developing'
 Vue.use(Router)
 
 export default new Router({
@@ -29,6 +30,16 @@ export default new Router({
       path: '/userManagement',
       name: 'UserManagement',
       component: UserManagement
+    },
+    {
+      path: '/businessManagement',
+      name: 'businessManagement',
+      component: businessManagement
+    },
+    {
+      path: '/developing',
+      name: 'developing',
+      component: developing
     },
     {
       path: '/error',
