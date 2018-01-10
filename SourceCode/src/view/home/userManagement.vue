@@ -12,7 +12,7 @@
                             <div class="clearfix"></div>
                         </div>
                         <div class="x_content">
-                            <div id="main1" ref="main1" style="height:350px;"></div>
+                            <div id="main1" ref="main1" style="height:450px;"></div>
                         </div>
                     </div>
                 </div>
