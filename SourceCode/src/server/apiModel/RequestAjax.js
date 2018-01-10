@@ -61,6 +61,10 @@ axios.interceptors.response.use(function (res) {
 
 // 请求接口
 export const httpFetch = (url, params) => {
+  // 判断是否是登录进去的
+  if (url !== '/api/user/login' && !sessionStorage[Utils.stringToBase64('userInfo')]) {
+    router.push('/login')
+  }
   // 处理请求参数
   if ((params !== null || params !== '') && Config.isEncrypt) {
       // 需要加密处理的接口
