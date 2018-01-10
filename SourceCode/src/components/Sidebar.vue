@@ -28,10 +28,10 @@
                     <div class="menu_section">
                         <ul class="nav side-menu">
                             <li><router-link :to="{path:'/userManagement'}"><i class="fa  fa-group"></i> 用户管理</router-link></li>
-                            <li><router-link :to="{path:'/businessManagement'}"><i class="fa  fa-user"></i> 商户管理 </router-link></li>
-                            <li><router-link :to="{path:'/error'}"><i class="fa fa-dashboard"></i> 营运中心管理</router-link></li>
-                            <li><router-link :to="{path:'/error'}"><i class="fa  fa-jsfiddle"></i> 财务管理</router-link></li>
-                            <li><router-link :to="{path:'/error'}"><i class="fa  fa-line-chart"></i>消费管理 </router-link></li>
+                            <li><router-link :to="{path:'/developing'}"><i class="fa  fa-user"></i> 商户管理 </router-link></li>
+                            <li><router-link :to="{path:'/developing'}"><i class="fa fa-dashboard"></i> 营运中心管理</router-link></li>
+                            <li><router-link :to="{path:'/developing'}"><i class="fa  fa-jsfiddle"></i> 财务管理</router-link></li>
+                            <li><router-link :to="{path:'/developing'}"><i class="fa  fa-line-chart"></i>消费管理 </router-link></li>
                         </ul>
                     </div>
                 </div>
