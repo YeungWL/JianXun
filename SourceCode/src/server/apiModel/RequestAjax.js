@@ -3,6 +3,7 @@ import router from '../../router'
 import {Toast} from 'mint-ui'
 import Config from '../common/config'
 import Utils from '../../utils/crypto'
+import Storage from '../../utils/localStorage'
 // import Url from './HttpRequestApi'
 
 if (!window.Promise) {
@@ -41,7 +42,10 @@ axios.interceptors.response.use(function (res) {
   // console.log('responseError:', err)
   // 检查是否需要授权
   if (err.response.status === 401) {
+    Storage.clearCache()
+    console.log(33333333)
     router.push('/login')
+    return false
   } else if (err.response.status === 404) { // 404页面不存在
     router.push('/error')
   } else if (err.response.status === 500 || err.response.status === 501 || err.response.status === 502) { // 检查服务器500
@@ -61,7 +65,6 @@ axios.interceptors.response.use(function (res) {
 
 // 请求接口
 export const httpFetch = (url, params) => {
-  console.log(router.path)
   // 判断是否是登录进去的
   if (url !== '/api/user/login' && !sessionStorage[Utils.stringToBase64('userInfo')]) {
     router.push('/login')
