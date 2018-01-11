@@ -1,6 +1,11 @@
 <template>
   <div id="app" :class="$store.state.isOpen ? 'nav-sm' : 'nav-md'" >
-    <router-view/>
+    
+      <keep-alive>
+       <router-view v-if="$route.meta.keepAlive && $store.state.isRefresh && $store.state.isLoadPath"></router-view>
+      </keep-alive>
+      <router-view v-if="!($route.meta.keepAlive && $store.state.isRefresh && $store.state.isLoadPath)"></router-view>
+    
   </div>
 </template>
 <script>
@@ -12,7 +17,12 @@ export default {
       screenWidth: document.body.clientWidth
     }
   },
+  created () {
+    this.$store.state.paths = this.$route.path
+    console.log(5325326)
+  },
   mounted () {
+    this.$store.state.paths = this.$route.path
     let that = this
     window.onresize = () => {
       return (() => {
@@ -37,6 +47,10 @@ export default {
           that.timer = false
         }, 200)
       }
+    },
+    '$route.path' (val) {
+      console.log(5432654724)
+      this.$store.state.isLoadPath = true
     }
   }
 }

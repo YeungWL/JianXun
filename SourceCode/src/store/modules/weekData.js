@@ -22,10 +22,9 @@ const getters = {
   payServerCodeInfo: state => state.payServerCodeInfo,
   withDrawInfo: state => state.withDrawInfo,
   storageData: (object) => {
-    if (object.length > 0) {
-      console.log(4253146)
+    if (object && typeof object === 'object') {
       state.storageList.push(object)
-      ConstVariable.Storage.localSetItem('statistics', state.storageList)
+      localStorage.setItem('statistics', JSON.stringify(state.storageList))
     }
   }
 }
@@ -40,7 +39,7 @@ const mutations = {
         for (let i = 0, length = weekInfo.length; i < length; i++) {
           state.orderInfo.ThisWeek.push(weekInfo[i].amount)
         }
-        getters.storageData(state.orderInfo.ThisWeek)
+        // getters.storageData({'orderInfoNow': state.orderInfo.ThisWeek})
       } else {
         Toast(res.description)
       }
@@ -52,6 +51,7 @@ const mutations = {
         for (let i = 0, length = weekInfo.length; i < length; i++) {
           state.orderInfo.LastWeek.push(weekInfo[i].amount)
         }
+        // getters.storageData({'orderInfoLast': state.orderInfo.LastWeek})
       } else {
         Toast(res.description)
       }
