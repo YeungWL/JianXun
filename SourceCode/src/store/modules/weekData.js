@@ -9,7 +9,8 @@ const state = {
   consumersInfo: {ThisWeek: [], LastWeek: [], title: '消费周期统计'},
   enterSellersInfo: {ThisWeek: [], LastWeek: [], title: '入驻商家周期统计'},
   enterBusinessInfo: {ThisWeek: [], LastWeek: [], title: '入驻运营中心周期统计'},
-  newUserInfo: {ThisWeek: [], LastWeek: [], title: '新增用户周期统计'}
+  newUserInfo: {ThisWeek: [], LastWeek: [], title: '新增用户周期统计'},
+  storageList: []
 }
 const getters = {
   orderInfo: state => state.orderInfo,
@@ -17,7 +18,13 @@ const getters = {
   enterSellersInfo: state => state.enterSellersInfo,
   enterBusinessInfo: state => state.enterBusinessInfo,
   newUserInfo: state => state.newUserInfo,
-  payServerCodeInfo: state => state.payServerCodeInfo
+  payServerCodeInfo: state => state.payServerCodeInfo,
+  storageData: (object) => {
+    if (object.length > 0) {
+      state.storageList.push(object)
+      ConstVariable.Storage.localSetItem('statistics', state.storageList)
+    }
+  }
 }
 const mutations = {
     // 获取周期统计
