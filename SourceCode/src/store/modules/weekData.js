@@ -5,11 +5,11 @@ import { Toast } from 'mint-ui'
 const state = {
   dataType: {order: 1, consumer: 2, enterSeller: 3, enterBusiness: 4, newUser: 5, payServerCode: 6},
   weekType: {this: 1, last: 2},
-  orderInfo: {orderThisWeek: [], orderLastWeek: [], title: '订单周期统计'},
-  consumersInfo: {consumersThisWeek: [], consumersLastWeek: [], title: '消费周期统计'},
-  enterSellersInfo: {enterSellersThisWeek: [], enterSellersLastWeek: [], title: '入驻商家周期统计'},
-  enterBusinessInfo: {enterBusinessThisWeek: [], enterBusinessLastWeek: [], title: '入驻运营中心周期统计'},
-  newUserInfo: {newUserThisWeek: [], newUserLastWeek: [], title: '新增用户周期统计'}
+  orderInfo: {ThisWeek: [], LastWeek: [], title: '订单周期统计'},
+  consumersInfo: {ThisWeek: [], LastWeek: [], title: '消费周期统计'},
+  enterSellersInfo: {ThisWeek: [], LastWeek: [], title: '入驻商家周期统计'},
+  enterBusinessInfo: {ThisWeek: [], LastWeek: [], title: '入驻运营中心周期统计'},
+  newUserInfo: {ThisWeek: [], LastWeek: [], title: '新增用户周期统计'}
 }
 const getters = {
   orderInfo: state => state.orderInfo,
@@ -27,7 +27,7 @@ const mutations = {
       if (res.isSuccess === ConstVariable.isSuccess) {
         let weekInfo = res.resData.statistic
         for (let i = 0, length = weekInfo.length; i < length; i++) {
-          state.orderInfo.orderThisWeek.push(weekInfo[i].amount)
+          state.orderInfo.ThisWeek.push(weekInfo[i].amount)
         }
       } else {
         Toast(res.description)
@@ -38,7 +38,7 @@ const mutations = {
       if (res.isSuccess === ConstVariable.isSuccess) {
         let weekInfo = res.resData.statistic
         for (let i = 0, length = weekInfo.length; i < length; i++) {
-          state.orderInfo.orderLastWeek.push(weekInfo[i].amount)
+          state.orderInfo.LastWeek.push(weekInfo[i].amount)
         }
       } else {
         Toast(res.description)
@@ -50,7 +50,7 @@ const mutations = {
       if (res.isSuccess === ConstVariable.isSuccess) {
         let weekInfo = res.resData.statistic
         for (let i = 0, length = weekInfo.length; i < length; i++) {
-          state.consumersInfo.consumersThisWeek.push(weekInfo[i].amount)
+          state.consumersInfo.ThisWeek.push(weekInfo[i].amount)
         }
       } else {
         Toast(res.description)
@@ -61,7 +61,7 @@ const mutations = {
       if (res.isSuccess === ConstVariable.isSuccess) {
         let weekInfo = res.resData.statistic
         for (let i = 0, length = weekInfo.length; i < length; i++) {
-          state.consumersInfo.consumersLastWeek.push(weekInfo[i].amount)
+          state.consumersInfo.LastWeek.push(weekInfo[i].amount)
         }
       } else {
         Toast(res.description)
@@ -73,7 +73,7 @@ const mutations = {
       if (res.isSuccess === ConstVariable.isSuccess) {
         let weekInfo = res.resData.statistic
         for (let i = 0, length = weekInfo.length; i < length; i++) {
-          state.enterSellersInfo.enterSellersThisWeek.push(weekInfo[i].amount)
+          state.enterSellersInfo.ThisWeek.push(weekInfo[i].amount)
         }
       } else {
         Toast(res.description)
@@ -84,7 +84,7 @@ const mutations = {
       if (res.isSuccess === ConstVariable.isSuccess) {
         let weekInfo = res.resData.statistic
         for (let i = 0, length = weekInfo.length; i < length; i++) {
-          state.enterSellersInfo.enterSellersLastWeek.push(weekInfo[i].amount)
+          state.enterSellersInfo.LastWeek.push(weekInfo[i].amount)
         }
       } else {
         Toast(res.description)
@@ -96,7 +96,7 @@ const mutations = {
       if (res.isSuccess === ConstVariable.isSuccess) {
         let weekInfo = res.resData.statistic
         for (let i = 0, length = weekInfo.length; i < length; i++) {
-          state.enterBusinessInfo.enterBusinessThisWeek.push(weekInfo[i].amount)
+          state.enterBusinessInfo.ThisWeek.push(weekInfo[i].amount)
         }
       } else {
         Toast(res.description)
@@ -107,7 +107,7 @@ const mutations = {
       if (res.isSuccess === ConstVariable.isSuccess) {
         let weekInfo = res.resData.statistic
         for (let i = 0, length = weekInfo.length; i < length; i++) {
-          state.enterBusinessInfo.enterBusinessLastWeek.push(weekInfo[i].amount)
+          state.enterBusinessInfo.LastWeek.push(weekInfo[i].amount)
         }
       } else {
         Toast(res.description)
@@ -119,7 +119,7 @@ const mutations = {
       if (res.isSuccess === ConstVariable.isSuccess) {
         let weekInfo = res.resData.statistic
         for (let i = 0, length = weekInfo.length; i < length; i++) {
-          state.newUserInfo.newUserThisWeek.push(weekInfo[i].amount)
+          state.newUserInfo.ThisWeek.push(weekInfo[i].amount)
         }
       } else {
         Toast(res.description)
@@ -130,7 +130,7 @@ const mutations = {
       if (res.isSuccess === ConstVariable.isSuccess) {
         let weekInfo = res.resData.statistic
         for (let i = 0, length = weekInfo.length; i < length; i++) {
-          state.newUserInfo.newUserLastWeek.push(weekInfo[i].amount)
+          state.newUserInfo.LastWeek.push(weekInfo[i].amount)
         }
       } else {
         Toast(res.description)

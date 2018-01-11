@@ -7,35 +7,28 @@
 export default {
   data () {
     return {
+      a: this.barInfo,
       LegendData: ['本周', '上周'],
       xData: ['周一', '周二', '周三', '周四', '周五', '周六', '周日'],
       yData: [],
       series: [{
         name: '本周',
         color: '#ed7d4d',
-        data: this.barInfo.orderThisWeek
+        data: this.barInfo.ThisWeek
       }, {
         name: '上周',
         color: '#d970d5',
-        data: this.barInfo.orderLastWeek
+        data: this.barInfo.LastWeek
       }],
       isdataView: false,
       magicType: ['line', 'bar', 'stack', 'tiled']
     }
   },
   props: {
-    barInfo: {
-      type: Object,
-      default: function () {
-        return {
-          orderThisWeek: [0, 0, 0, 0, 0, 0, 0],
-          orderLastWeek: [0, 0, 0, 0, 0, 0, 0],
-          title: '订单周期统计'
-        }
-      }
-    }
+    barInfo: Object
   },
   mounted () {
+    console.log(this.a)
     let zhuhe = []
     for (let i = 0; i < this.series.length; i++) {
       zhuhe.push({
