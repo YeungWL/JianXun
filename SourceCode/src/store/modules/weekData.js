@@ -24,7 +24,7 @@ const getters = {
   storageData: (object) => {
     if (object && typeof object === 'object') {
       state.storageList.push(object)
-      localStorage.setItem('statistics', JSON.stringify(state.storageList))
+      // localStorage.setItem('statistics', JSON.stringify(state.storageList))
     }
   }
 }

@@ -19,7 +19,6 @@ export default {
   },
   created () {
     this.$store.state.paths = this.$route.path
-    console.log(5325326)
   },
   mounted () {
     this.$store.state.paths = this.$route.path
@@ -49,7 +48,7 @@ export default {
       }
     },
     '$route.path' (val) {
-      console.log(5432654724)
+     // console.log('value', this.$route.meta.keepAlive, this.$store.state.isRefresh, this.$store.state.isLoadPath)
       this.$store.state.isLoadPath = true
     }
   }
