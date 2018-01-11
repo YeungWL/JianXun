@@ -69,16 +69,19 @@ const mutations = {
   // 用户登出
   [types.LOGOUT] (state, obj) {
     let $router = obj.$router
-    ConstVariable.HttpRequestAjax(RequestUrl.logout).then((res) => {
-      console.log(res)
-      if (res.isSuccess === ConstVariable.isSuccess) {
-        // 清楚缓存
-        ConstVariable.Storage.clearCache()
-        $router.push('/login')
-      } else {
-        Toast(res.description)
-      }
-    })
+    // 清楚缓存
+    ConstVariable.Storage.clearCache()
+    $router.push('/login')
+    // ConstVariable.HttpRequestAjax(RequestUrl.logout).then((res) => {
+    //   console.log(res)
+    //   if (res.isSuccess === ConstVariable.isSuccess) {
+    //     // 清楚缓存
+    //     ConstVariable.Storage.clearCache()
+    //     $router.push('/login')
+    //   } else {
+    //     Toast(res.description)
+    //   }
+    // })
   },
   // 检查是否已经登录
   [types.CHECKISLOGIN] (state, obj) {

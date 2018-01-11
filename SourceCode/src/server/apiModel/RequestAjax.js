@@ -77,7 +77,7 @@ export const httpFetch = (url, params) => {
         let key = localStorage[Utils.stringToBase64('publicKey')] || ''
         res.fields.forEach((v) => {
           if (params[v]) {
-            params[v] = Utils.encrypRsa(key, v)
+            params[v] = Utils.encrypRsa(key, params[v])
           }
         })
       }
