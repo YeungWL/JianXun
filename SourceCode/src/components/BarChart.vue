@@ -61,6 +61,7 @@ export default {
       series: zhuhe,
       toolbox: {
         show: true,
+        right: '2%',
         orient: 'vertica',
         feature: {
           mark: {show: true},
