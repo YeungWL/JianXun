@@ -169,6 +169,17 @@
                         </div>
                     </div>
                 </div>
+                <div class="col-md-6 col-sm-6 col-xs-12">
+                    <div class="x_panel" style="overflow: hidden">
+                        <div class="x_title">
+                            <h2>一周已提现数据概览</h2>
+                            <div class="clearfix"></div>
+                        </div>
+                        <div v-if="withDrawInfo.ThisWeek.length > 0 && withDrawInfo.LastWeek.length > 0">
+                            <BarChart :barInfo="withDrawInfo"></BarChart>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
         <!-- /page content -->
@@ -200,7 +211,7 @@ export default{
   computed: {
     ...mapGetters([
       'registerInfo', 'enterSellerInfo', 'enterOperationInfo', 'consumInfo', 'cashInfo', 'tradeOrderInfo', 'serviceCodeInfo', 'consumerInfo', 'intAccountConsumInfo',
-      'cashAccountInfo', 'wechatPayInfo', 'alipayInfo', 'crossMemberInfo', 'bindServerCodeInfo', 'storeInfo', 'orderInfo', 'consumersInfo', 'enterSellersInfo', 'enterBusinessInfo', 'newUserInfo'
+      'cashAccountInfo', 'wechatPayInfo', 'alipayInfo', 'crossMemberInfo', 'bindServerCodeInfo', 'storeInfo', 'orderInfo', 'consumersInfo', 'enterSellersInfo', 'enterBusinessInfo', 'newUserInfo', 'withDrawInfo'
     ])
   },
   created () {
