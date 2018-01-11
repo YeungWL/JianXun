@@ -215,7 +215,7 @@ export default{
     ])
   },
   created () {
-    // this.$store.commit('POLLINGTIME')
+    // this.$store.commit('POLLINGTIME', {pathname: 'home'})
     this.$store.commit('GETTOTALDATA')
     this.$store.commit('GETWEEKDATA')
   },

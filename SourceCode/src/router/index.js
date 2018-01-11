@@ -23,7 +23,7 @@ export default new Router({
     },
     {
       path: '/home',
-      meta: {keepAlive: 1},
+      meta: {keepAlive: true},
       name: 'Home',
       component: Home
     },
