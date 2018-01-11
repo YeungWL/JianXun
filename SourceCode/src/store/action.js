@@ -27,5 +27,9 @@ export default{
   // 检查是否已经登录
   checkIsLogin: ({commit}, obj) => {
     commit(types.CHECKISLOGIN, obj)
+  },
+  // 轮询
+  pollingTime: ({commit}, obj) => {
+    commit(types.POLLINGTIME, obj)
   }
 }

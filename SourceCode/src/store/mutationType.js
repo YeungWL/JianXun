@@ -12,3 +12,5 @@ export const LOGOUT = 'LOGOUT'
 export const GETWEEKDATA = 'GETWEEKDATA'
 // 检查是否已经登录
 export const CHECKISLOGIN = 'CHECKISLOGIN'
+// 轮询
+export const POLLINGTIME = 'POLLINGTIME'

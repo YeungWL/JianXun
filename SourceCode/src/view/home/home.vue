@@ -215,7 +215,7 @@ export default{
     ])
   },
   created () {
-    console.log(5646245735347)
+    // this.$store.commit('POLLINGTIME')
     this.$store.commit('GETTOTALDATA')
     this.$store.commit('GETWEEKDATA')
   },

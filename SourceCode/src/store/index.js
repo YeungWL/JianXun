@@ -7,6 +7,7 @@ import user from './modules/user'
 import openApi from './modules/openApi'
 import totalData from './modules/totalData'
 import weekData from './modules/weekData'
+import poll from './modules/poll'
 
 Vue.use(Vuex)
 
@@ -15,7 +16,8 @@ export default new Vuex.Store({
     user,
     openApi,
     totalData,
-    weekData
+    weekData,
+    poll
   },
   state,
   actions
