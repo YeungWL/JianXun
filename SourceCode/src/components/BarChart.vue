@@ -7,7 +7,6 @@
 export default {
   data () {
     return {
-      a: this.barInfo,
       LegendData: ['本周', '上周'],
       xData: ['周一', '周二', '周三', '周四', '周五', '周六', '周日'],
       yData: [],
@@ -28,7 +27,6 @@ export default {
     barInfo: Object
   },
   mounted () {
-    console.log(this.a)
     let zhuhe = []
     for (let i = 0; i < this.series.length; i++) {
       zhuhe.push({

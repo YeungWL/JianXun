@@ -120,7 +120,9 @@
                             <h2>一周订单概览</h2>
                             <div class="clearfix"></div>
                         </div>
-                        <BarChart :barInfo="orderInfo"></BarChart>
+                        <div v-if="orderInfo.ThisWeek.length > 0 && orderInfo.LastWeek.length > 0">
+                            <BarChart :barInfo="orderInfo"></BarChart>
+                        </div>
                     </div>
                 </div>
                 <div class="col-md-6 col-sm-6 col-xs-12">
@@ -129,7 +131,9 @@
                             <h2>一周消费概览</h2>
                             <div class="clearfix"></div>
                         </div>
-                        <BarChart :barInfo="consumersInfo"></BarChart>
+                        <div v-if="consumersInfo.ThisWeek.length > 0 && consumersInfo.LastWeek.length > 0">
+                            <BarChart :barInfo="consumersInfo"></BarChart>
+                        </div>
                     </div>
                 </div>
                 <div class="col-md-6 col-sm-6 col-xs-12">
@@ -138,7 +142,9 @@
                             <h2>一周入驻商家数据概览</h2>
                             <div class="clearfix"></div>
                         </div>
-                        <BarChart :barInfo="enterSellersInfo"></BarChart>
+                        <div v-if="enterSellersInfo.ThisWeek.length > 0 && enterSellersInfo.LastWeek.length > 0">
+                            <BarChart :barInfo="enterSellersInfo"></BarChart>
+                        </div>
                     </div>
                 </div>
                 <div class="col-md-6 col-sm-6 col-xs-12">
@@ -147,7 +153,9 @@
                             <h2>一周入驻运营中心数据概览</h2>
                             <div class="clearfix"></div>
                         </div>
-                        <BarChart :barInfo="enterBusinessInfo"></BarChart>
+                        <div v-if="enterBusinessInfo.ThisWeek.length > 0 && enterBusinessInfo.LastWeek.length > 0">
+                            <BarChart :barInfo="enterBusinessInfo"></BarChart>
+                        </div>
                     </div>
                 </div>
                 <div class="col-md-6 col-sm-6 col-xs-12">
@@ -156,7 +164,9 @@
                             <h2>一周新增用户数据概览</h2>
                             <div class="clearfix"></div>
                         </div>
-                        <BarChart :barInfo="newUserInfo"></BarChart>
+                        <div v-if="newUserInfo.ThisWeek.length > 0 && newUserInfo.LastWeek.length > 0">
+                            <BarChart :barInfo="newUserInfo"></BarChart>
+                        </div>
                     </div>
                 </div>
             </div>
