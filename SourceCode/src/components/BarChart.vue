@@ -19,7 +19,7 @@ export default {
         color: '#d970d5',
         data: this.barInfo.LastWeek
       }],
-      isdataView: false,
+      isdataView: true,
       magicType: ['line', 'bar', 'stack', 'tiled']
     }
   },
@@ -78,8 +78,12 @@ export default {
               let table = `<table border="1" class="table-bordered table-striped" style="width:100%;text-align:center;height:100%"><tbody><tr>${tdHeads} </tr>`
               for (let i = 0, l = axisData.length; i < l; i++) {
                 for (let j = 0; j < series.length; j++) {
+                  if (series[j].data[i]) {
+                    tdBodys += `<td>${series[j].data[i]}</td>`
+                  } else {
+                    tdBodys += `<td>0</td>`
+                  }
                   // 组装表数据
-                  tdBodys += `<td>${series[j].data[i]}</td>`
                 }
                 table += `<tr><td style="padding: 0 10px">${axisData[i]}</td>${tdBodys}</tr>`
                 tdBodys = ''

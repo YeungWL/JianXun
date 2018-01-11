@@ -14,9 +14,9 @@
                     <label for="password" class="sr-only">密码</label>
                     <input type="password" class="form-control" id="password" placeholder="密码" v-model.trim="loginInfo.password" autocomplete="off">
                 </div>
-                <div class="form-group">
+                <!-- <div class="form-group">
                     <label for="remember"><input type="checkbox" id="remember" v-model.trim="loginInfo.isRemember"> 记住密码</label>
-                </div>
+                </div> -->
                 <div class="form-group">
                     <div class="btn btn-lg btn-primary"style="width: 100%" @click="login">登录</div>
                 </div>
