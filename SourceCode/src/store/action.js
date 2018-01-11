@@ -23,5 +23,9 @@ export default{
   // 获取周期统计
   getWeekData: ({commit}, obj) => {
     commit(types.GETWEEKDATA, obj)
+  },
+  // 检查是否已经登录
+  checkIsLogin: ({commit}, obj) => {
+    commit(types.CHECKISLOGIN, obj)
   }
 }

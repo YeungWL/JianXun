@@ -38,7 +38,7 @@ axios.interceptors.response.use(function (res) {
     // 在这里对返回的数据进行处理
   return res
 }, function (err) {
-  console.log('responseError:', err)
+  // console.log('responseError:', err)
   // 检查是否需要授权
   if (err.response.status === 401) {
     router.push('/login')
@@ -61,6 +61,7 @@ axios.interceptors.response.use(function (res) {
 
 // 请求接口
 export const httpFetch = (url, params) => {
+  console.log(router.path)
   // 判断是否是登录进去的
   if (url !== '/api/user/login' && !sessionStorage[Utils.stringToBase64('userInfo')]) {
     router.push('/login')

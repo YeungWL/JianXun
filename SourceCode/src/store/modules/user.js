@@ -74,6 +74,15 @@ const mutations = {
         Toast(res.description)
       }
     })
+  },
+  // 检查是否已经登录
+  [types.CHECKISLOGIN] (state, obj) {
+    let $router = obj.$router
+    if (obj && obj.paths === '/login' && sessionStorage[ConstVariable.Utils.stringToBase64('userInfo')]) {
+      $router.push('/home')
+    } else {
+      $router.push('/login')
+    }
   }
 }
 export default {

@@ -21,12 +21,14 @@ const getters = {
   payServerCodeInfo: state => state.payServerCodeInfo,
   storageData: (object) => {
     if (object.length > 0) {
+      console.log(4253146)
       state.storageList.push(object)
       ConstVariable.Storage.localSetItem('statistics', state.storageList)
     }
   }
 }
 const mutations = {
+
     // 获取周期统计
   [types.GETWEEKDATA] (state, obj) {
     // 周期订单本周统计
@@ -36,6 +38,7 @@ const mutations = {
         for (let i = 0, length = weekInfo.length; i < length; i++) {
           state.orderInfo.ThisWeek.push(weekInfo[i].amount)
         }
+        getters.storageData(state.orderInfo.ThisWeek)
       } else {
         Toast(res.description)
       }

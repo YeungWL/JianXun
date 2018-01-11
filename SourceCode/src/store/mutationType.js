@@ -10,3 +10,5 @@ export const GETTOTALDATA = 'GETTOTALDATA'
 export const LOGOUT = 'LOGOUT'
 // 获取周期统计
 export const GETWEEKDATA = 'GETWEEKDATA'
+// 检查是否已经登录
+export const CHECKISLOGIN = 'CHECKISLOGIN'

@@ -34,6 +34,8 @@ export default{
     return {}
   },
   created () {
+      // 检测是否已经登录
+    this.$store.commit('CHECKISLOGIN', {paths: this.$route.path, $router: this.$router})
       // 获取公钥
     this.$store.commit('GETPUBLICKEY')
   },
