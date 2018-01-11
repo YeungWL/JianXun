@@ -96,6 +96,7 @@ export default {
     }
     let myChart = this.$echarts.init(this.$refs.main)
     myChart.setOption(option)
+    this.$store.state.myChartList.push(myChart)
   }
 }
 </script>
