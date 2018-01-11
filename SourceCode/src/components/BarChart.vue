@@ -61,10 +61,9 @@ export default {
       series: zhuhe,
       toolbox: {
         show: true,
-        right: '2%',
+        right: '2.5%',
         orient: 'vertica',
         feature: {
-          mark: {show: true},
           dataView: {show: this.isdataView,
             readOnly: true,
             optionToContent: function (opt) {
@@ -93,9 +92,9 @@ export default {
               return table
             }
           },
-          magicType: {show: true, type: this.magicType},
-          restore: {show: true},
-          saveAsImage: {show: true}
+          magicType: {show: true, type: this.magicType, title: {line: '折线图', bar: '柱状图', stack: '堆叠', tiled: '平铺'}},
+          restore: {show: true, title: '还原'},
+          saveAsImage: {show: true, title: '保存图片'}
         }
       }
     }
