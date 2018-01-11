@@ -1,6 +1,7 @@
 /**
  * 加密 解密
  */
+/* eslint-disable */
 import crypto from 'crypto'
 
 export default{
@@ -33,7 +34,6 @@ export default{
   // 本地加密
   localRsaEncrypt (str) {
     if (str && str.length === 0) return ''
-    console.log(str)
     let publicKey = Buffer.from(process.rsaEncrypt.PUBKER, 'base64').toString()
     let keyParam = {'key': publicKey, padding: crypto.constants.RSA_PKCS1_PADDING}
     let plain = Buffer.from(str)

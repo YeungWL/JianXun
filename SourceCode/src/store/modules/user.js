@@ -29,7 +29,8 @@ const mutations = {
   [types.GETUSERINFO] (state, obj) {
     let userInfo = sessionStorage[ConstVariable.Utils.stringToBase64('userInfo')]
     let userItem = JSON.parse(ConstVariable.Utils.baseToString(userInfo))
-    state.userInfo.username = ConstVariable.Utils.localRsaDecrypt(userItem.userName) || ''
+    state.userInfo.username = userItem.userName || ''
+    // state.userInfo.username = ConstVariable.Utils.localRsaDecrypt(userItem.userName) || ''
   },
 
   // 用户登录
@@ -44,11 +45,11 @@ const mutations = {
       if (res.isSuccess === ConstVariable.isSuccess && res.code === '1000') {
         state.userInfo.username = res.resData.userName || ''
         // 针对用户一些重要信息使用RSA加密
-        res.resData.uid = ConstVariable.Utils.localRsaEncrypt(res.resData.uid)
-        res.resData.accountUid = ConstVariable.Utils.localRsaEncrypt(res.resData.accountUid)
-        res.resData.mobile = ConstVariable.Utils.localRsaEncrypt(res.resData.mobile)
-        res.resData.userName = ConstVariable.Utils.localRsaEncrypt(res.resData.userName)
-        res.resData.code = ConstVariable.Utils.localRsaEncrypt(res.resData.code)
+        // res.resData.uid = ConstVariable.Utils.localRsaEncrypt(res.resData.uid)
+        // res.resData.accountUid = ConstVariable.Utils.localRsaEncrypt(res.resData.accountUid)
+        // res.resData.mobile = ConstVariable.Utils.localRsaEncrypt(res.resData.mobile)
+        // res.resData.userName = ConstVariable.Utils.localRsaEncrypt(res.resData.userName)
+        // res.resData.code = ConstVariable.Utils.localRsaEncrypt(res.resData.code)
 
         // 存储用户信息
         sessionStorage.setItem(ConstVariable.Utils.stringToBase64('userInfo'), ConstVariable.Utils.stringToBase64(JSON.stringify(res.resData)))
