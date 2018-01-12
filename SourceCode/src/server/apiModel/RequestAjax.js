@@ -48,7 +48,7 @@ axios.interceptors.response.use(function (res) {
     return false
   } else if (err.response.status === 404) { // 404页面不存在
     router.push('/error')
-  } else if (err.response.status === 500 || err.response.status === 501 || err.response.status === 502) { // 检查服务器500
+  } else if (err.response.status === 500 || err.response.status === 501 || err.response.status === 502 || err.response.status === 504) { // 检查服务器500
     Toast({
       message: '服务器繁忙 稍后再试',
       duration: 2000
