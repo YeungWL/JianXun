@@ -1,0 +1,86 @@
+/* scssRem端口 */
+// @function pp( $size ){
+//   @return $size / 150 * 1rem;
+// }
+// // 滚动条
+// @mixin scrollBar {
+//   ::-webkit-scrollbar-track-piece {
+//     background-color: rgba(224, 224, 224, 0.9);
+//     border-radius: 6px;
+//   }
+//   ::-webkit-scrollbar {
+//     width: 6px;
+//     height: 6px;
+//   }
+//   ::-webkit-scrollbar-thumb:vertical {
+//     height: 5px;
+//     background-color: rgba(125, 125, 125, 0.7);
+//     border-radius: 6px;
+//   }
+//   ::-webkit-scrollbar-thumb:horizontal {
+//     width: 5px;
+//     background-color: rgba(125, 125, 125, 0.7);
+//     border-radius: 6px;
+//   }
+// }
+
+/* 使用多个遍历传参 */
+//-------------------------------   
+/* @mixin opacity( $opacity: 50 ) {
+  opacity: $opacity / 100;
+  filter: alpha( opacity = $opacity );
+}
+// sass使用方法 传递参数
+.opacity{ @include opacity; }
+.opacity-80{ @include opacity(80); } 
+//css 编译后样式
+.opacity{ opacity: 0.5; filter: alpha(50) }
+.opacity-80{ opacity: 0.8; filter: alpha(80) } */
+
+
+/* 媒体查询传参1 */
+//-------------------------------                     
+/* @mixin maxShow( $res ){
+  @media only screen and ( max-width: $res ){
+    @content;
+  }
+}
+// sass使用方法
+@include maxShow( 480px ) { body{ color: red } }
+// css 编译后样式
+@media only screen and ( max-width: 480px ) { body{ color: red } } */
+
+
+/* 媒体查询传参2 */
+//-------------------------------              
+/* // @import 'palette.common.scss';
+@media( min-width: 1440px ){
+  // @import 'palette.desktop.scss';
+  div{color:green}
+}
+@media ( min-width: 1024px ){
+  // @import 'palette.mobile.scss';
+  div{color:red}
+}
+// css 编译后样式
+@media ( min-width: 1440px ) { div{ color:green } }
+@media ( min-width: 1024px ) { div{ color:red } } */
+
+
+/* 颜色变量判断 */
+//-------------------------------
+/* $flat: true;
+$show: green;
+.ib{
+    display:inline-block;
+    @if $flat { *display: inline; *zoom: 1; }
+}
+p {
+  @if $show == ocean { color:blue; }
+  @else if $show == matador { color:red; }
+  @else if $show == monster { color:green; }
+  @else { color:black; }
+}
+//css 编译后样式
+.ib{ display: inline-block; *display: inline; *zoom: 1; }
+  p{ color:green; } */

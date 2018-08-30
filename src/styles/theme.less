@@ -1,0 +1,63 @@
+
+.theme(@backcolor:#67C23A,@fcolor:#fff) {
+  /*header*/ 
+    .layout .header {
+      background:@backcolor;
+      .el-menu-demo {
+          background-color:@backcolor;
+        }
+      .el-menu-item.is-active {
+      background: #fff;
+          span,i{
+          color:@backcolor;
+          }
+      }
+      .el-menu--horizontal .el-menu-item:hover {
+          background: #fff;
+          color:@backcolor;
+          span,i{
+            color:@backcolor;
+          } 
+      }
+   }
+  /* 侧边栏 */
+  .el-container .el-aside .el-menu-item:focus, .el-container .el-aside .el-menu-item:hover {
+    background:@backcolor!important;
+    color:@fcolor!important;
+  }
+  .el-container .el-aside .el-menu-item.is-active {
+    background: @backcolor!important;
+    color:#fff;
+  }
+  /*table*/ 
+  .customTable .el-table .el-table__header-wrapper thead th {
+    background-color:@backcolor;
+  }
+  /*button*/ 
+  .el-button--primary, .el-button--primaryn:focus {
+    background: @backcolor;
+    border-color: @backcolor;
+    color:#fff;
+  }
+  .el-button--primary:focus, .el-button--primary:hover {
+      background: @backcolor;
+      border-color: @backcolor;
+      color: #fff;
+  }
+  .el-button--primary:hover {
+    background: @backcolor!important;
+    border-color: @backcolor!important;
+    color: #fff!important;
+  }
+  .el-button:hover{
+    // background: @backcolor;
+    border-color: @backcolor;
+    color:@backcolor;
+  }
+
+  /*dialog*/ 
+  .el-dialog__header {
+    background: @backcolor;
+  }
+}
+
