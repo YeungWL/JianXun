@@ -190,7 +190,9 @@ export default {
                     vm.$router.push('/layout');
                   }
                 })
-  
+                setTimeout(_ => {
+                  this.getUserRoots()
+                }, 1000)
                 localStorage.setItem('userId',res.data[0].userId); // 用户id[32位长度]
                 localStorage.setItem('phone',res.data[0].phone); // 手机号码
                 localStorage.setItem('userName',name);//用户名,在系统唯一
@@ -211,7 +213,28 @@ export default {
           return false;
         }
       });
-    },       
+    }, 
+    // 获取用户权限
+    getUserRoots() {
+      this.$store
+        .dispatch('getRoots', {//分发 action
+          menuName: '',
+          menuCode: '',
+          parentId: '',
+          isLeaf: '' 
+        })
+        .then(_ => {
+          console.log(_.data.data[0].url)
+          console.log(this.$store, 999999)
+          this.$router.push(_.data.data[0].url)
+          //        this.$message.success('获取权限成功')
+          setTimeout(_ => {}, 1000)
+        })
+        .catch(error => {
+          this.$router.push('/login')
+          this.$message.error(error.code)
+        })
+    },           
     // //设置cookie
     setCookie(c_name,c_pwd,exdays) {
       var exdate=new Date();//获取时间

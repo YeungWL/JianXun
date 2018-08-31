@@ -31,7 +31,7 @@
     </div>
 
     <!-- 导出dialog -->
-    <el-dialog title="导出" :visible.sync="dialogFormVisible">
+    <el-dialog title="导出" :visible.sync="dialogFormVisible" width="40%">
       <el-form :model="form">
         <el-form-item label="起始日期" :label-width="formLabelWidth">
           <el-date-picker v-model="form.beginTime" type="datetime" placeholder="开始日期">
@@ -48,92 +48,68 @@
     </el-dialog>
 
     <!-- 设置的dialog -->
-    <el-dialog title="设置" :visible.sync="dialogFormVisible1">
-      <el-form ref="form" :model="setting" label-width="80px">
-        <!-- <el-form-item label="选择专业">
-          <el-select v-model="setting.major" placeholder="请选择专业" style="width:400px">
-            <el-option label="公路与铁路" value="公路与铁路"></el-option>
-            <el-option label="市政与水利" value="市政与水利"></el-option>
-            <el-option label="建筑与市政工程" value="建筑与市政工程"></el-option>
-          </el-select>
-        </el-form-item> -->
-        <el-form-item label="选择模板">
-          <el-select v-model="setting.templateId" placeholder="请选择模板地区" style="width:400px">
-            <el-option :label="item.name" :value="item.templateId" v-for="item in telDataList" :key="item.templateId"></el-option>
-          </el-select>
-        </el-form-item>
+    <el-dialog title="设置" :visible.sync="dialogFormVisible1" width="560px" class="my-dialog">
+      <div class="setting">
         <div class="project">
-          <span class="left">分项工程</span>
+          <span class="left">添加日志</span>
           <el-button icon="el-icon-plus" 
                      style="padding: 0;width: 30px;height: 32px;"
-                     @click="addItem"></el-button>
+                     @click="addItem, addDialog = true"></el-button>
         </div>
-        <div class="projectList">
-          <ul>
-            <li v-for="(item, index) in itemJson" :key="index">
-              <el-input v-model="item.itemName" v-show="item.edit"></el-input>
-              <div style="width:380px;margin: 0 0 10px 10px;height:32px;line-height:32px;" v-show="!item.edit">{{item.itemName}}</div>
-              <div v-if="!item.edit">
-                <el-button class="my_button" icon="el-icon-edit" style="color:#3386e4;" @click="item.edit = !item.edit"></el-button>
-                <el-button class="my_button" icon="el-icon-delete" style="color:#F56C6C;" @click="delBuildItem(item, index)"></el-button>
-              </div>
-              <div v-else>
-                <el-button class="my_button" icon="el-icon-check" style="color:#67C23A;" @click="updateBuildItem(item)"></el-button>
-                <el-button class="my_button" icon="el-icon-close" style="color:#F56C6C;" @click="item.edit = !item.edit"></el-button>
-              </div>
-            </li>
-          </ul>
+        <div class="project">
+          <span class="left">土建专业</span>
+          <span>
+            <el-button style="height: 32px;" type="primary" @click="updateName = true">修改名称</el-button>
+            <el-button style="height: 32px;" type="success">预览</el-button>
+            <el-button style="height: 32px;" type="info">设置参数</el-button>
+          </span>
         </div>
-        <div class="project" style="border-top: 1px solid #DCDFE6;padding-top: 10px;">
-          <span class="left">班组</span>
-          <el-button icon="el-icon-plus" 
-                     style="padding: 0;width: 30px;height: 32px;"
-                     @click="addGroup"></el-button>
+        <div class="project">
+          <span class="left">土建专业</span>
+          <span>
+            <el-button style="height: 32px;" type="primary">修改名称</el-button>
+            <el-button style="height: 32px;" type="success">预览</el-button>
+            <el-button style="height: 32px;" type="info">设置参数</el-button>
+          </span>
         </div>
-        <div class="projectList">
-          <ul>
-            <li v-for="(group, index) in groupJson" :key="group.groupId">
-              <el-input v-model="group.groupName" v-show="group.edit"></el-input>
-              <div style="width:380px;margin: 0 0 10px 10px;height:32px;line-height:32px;" v-show="!group.edit">{{group.groupName}}</div>
-              <div v-if="!group.edit">
-                <el-button class="my_button" icon="el-icon-edit" style="color:#3386e4;" @click="group.edit = !group.edit"></el-button>
-                <el-button class="my_button" icon="el-icon-delete" style="color:#F56C6C;" @click="delBuildGroup(group, index)"></el-button>
-              </div>
-              <div v-else>
-                <el-button class="my_button" icon="el-icon-check" style="color:#67C23A;" @click="updateBuildGroup(group)"></el-button>
-                <el-button class="my_button" icon="el-icon-close" style="color:#F56C6C;" @click="group.edit = !group.edit"></el-button>
-              </div>
-            </li>
-          </ul>
-        </div>
-        <div class="open">
-          <div class="openTitle">
-            <a href="javascript:;" @click="dialogFormVisible2 = true">日志检查开放范围</a>
-          </div>
-          <ul>
-            <li>张三丰</li>
-            <li>张三丰</li>
-            <li>张三丰</li>
-
-            <li>张三丰</li>
-            <li>张三丰</li>
-            <li>张三丰</li>
-
-            <li>张三丰</li>
-            <li>张三丰</li>
-            <li>张三丰</li>
-            <li>张三丰</li>
-
-            <li>张三丰</li>
-            <li>张三丰</li>
-            <li>张三丰</li>
-
-            <li>张三丰</li>
-          </ul>
-        </div>
-      </el-form>
+      </div>
       <div slot="footer" class="dialog-footer" style="text-align: center;">
         <el-button type="primary" @click="setBuildAttr">提 交</el-button>
+      </div>
+    </el-dialog>
+
+    <!-- 添加日志模板dialog -->
+    <el-dialog title="添加日志" :visible.sync="addDialog" class="my-dialog" width="600px">
+      <div>
+        <el-form :inline="true" :model="formInline">
+          <el-form-item label="日志名称">
+            <el-input v-model="formInline.user" placeholder="日志名称"></el-input>
+          </el-form-item>
+          <el-form-item label="工程模板">
+            <el-select v-model="formInline.user" placeholder="工程模板"></el-select>
+          </el-form-item>
+        </el-form>
+        <div>
+          <div style="text-align: center;">预览</div>
+        </div>
+      </div>
+      <div slot="footer" class="dialog-footer" style="text-align: center;">
+        <el-button type="primary" @click="addDialog = false">确 定</el-button>
+      </div>
+    </el-dialog>
+
+    <!-- 修改名称dialog -->
+    <el-dialog title="修改日志名称" :visible.sync="updateName" class="my-dialog">
+      <div>
+        <el-form :model="formInline">
+          <el-form-item label="修改日志名称">
+            <el-input v-model="test1" placeholder="修改日志名称"></el-input>
+            <el-input type="hidden" v-model="test2"></el-input>
+          </el-form-item>
+        </el-form>
+      </div>
+      <div slot="footer" class="dialog-footer" style="text-align: right;">
+        <el-button type="primary" @click="updateName = false">确 定</el-button>
       </div>
     </el-dialog>
 
@@ -144,23 +120,6 @@
           <el-option >
           </el-option>
         </el-select>
-        <!-- <Organization-View :render-data="structure" :prop="setting">
-          <template slot="card" slot-scope="prop">
-            <ul class="department">
-              <li class="departmentName">
-                {{prop.departmentName}}
-              </li>
-              <li class="member" :key="member.departmentId" v-for="member in prop.memberList" @dblclick="openMessage(member)">
-                <img class="avatar" :src="member.logoUrl" alt="">
-                <span>
-                  <span class="fl">姓名</span>
-                  <span>{{member.memberName}}</span>
-                  <span class="fr">({{member.headRole|headRole}})</span>
-                </span>
-              </li>
-            </ul>
-          </template>
-        </Organization-View> -->
 
         <div slot="footer" class="dialog-footer">
           <el-button type="primary" @click="dialogFormVisible2 = false">确 定</el-button>
@@ -189,21 +148,9 @@ export default {
       orgId:'',
       form: {
         name: "",
-        region: "",
-        date1: "",
-        date2: "",
-        delivery: false,
         type: [],
-        resource: "",
-        desc: "",
-        district: "",
         beginTime: "",
         endTime: ""
-      },
-      setting: {
-        major: "",
-        district: "",
-        templateId: ""
       },
       formLabelWidth: "120px",
       dialogFormVisible: false,
@@ -213,11 +160,29 @@ export default {
       value1: "",
       demoEvents: [],
       buttonShow: false,
-      telDataList: [],
+      addDialog: false,
+      updateName: false,
       logData: {},
       itemJson: [],
       groupJson: [],
-      layerJson: []
+      layerJson: [],
+      formInline: {
+        user: ''
+      },
+      test1: '',
+      test2: ''
+    }
+  },
+  watch: {
+    test1() {
+      let oldNum = this.test1
+      let newNum = this.test1.replace(/(\d{3})\d{4}(\d{4})/, '$1****$2')
+      console.log(newNum)
+      this.test1 = newNum
+      console.log(oldNum)
+      if (this.test1.indexOf('*') === -1) {
+        this.test2 = this.test1
+      }
     }
   },
   methods: {
@@ -323,13 +288,7 @@ export default {
       })
     },
     // 获取模板分页列表
-    getTemplateList() {
-      this.$api.getTemplateList().then(res => {
-        if(res.errorCode == '1') {
-          this.telDataList = res.data
-        }
-      })
-    },
+    getTemplateList() {},
     // 修改分项工程项
     updateBuildItem(data) {
       if(data.itemName == "") {
@@ -465,7 +424,6 @@ export default {
   created() {
     this.getProjectList()
     this.getMyOrg()
-    this.getTemplateList()
   }
 }
 </script>
@@ -507,63 +465,15 @@ export default {
   .el-form-item {
     margin-top: 20px;
   }
+  .setting {
+    padding: 20px 0;
+  }
   .project {
     width: 482px;
     display: flex;
     justify-content: space-between;
-    padding: 0 0 0 10px;
-    span:nth-child(1) {
-      line-height: 32px;
-    }
-    span:nth-child(2) {
-      display: inline-block;
-      border: 1px solid #ccc;
-      font-size: 16px;
-      width: 30px;
-      height: 32px;
-      text-align: center;
-      cursor: pointer;
-    }
-  }
-  .projectList {
-    width: 482px;
-    margin-top: 10px;
-    ul {
-      li {
-        display: flex;
-        justify-content: space-between;
-        .el-input {
-          width: 380px;
-          margin: 0 0 10px 10px;
-        }
-        .my_button {
-          padding: 0;
-          font-size: 16px;
-          width: 30px;
-          height: 32px;
-          text-align: center;
-        }
-      }
-    }
-  }
-  .open {
-    width: 482px;
-    padding-left: 10px;
-    ul {
-      display: flex;
-      flex-wrap: wrap;
-      margin: 10px 0 0 0;
-
-      li {
-        padding: 0 10px 0 0;
-      }
-    }
-    .openTitle {
-      a {
-        color: #606266;
-        text-decoration: underline;
-      }
-    }
+    padding: 7px 0;
+    line-height: 32px;
   }
   .organization {
     .el-select {

@@ -13,6 +13,8 @@ import '../static/iconfont/iconfont.css'//引入iconfont公共图标库样式
 import 'styles/theme.less' //引入换肤样式
 import 'styles/color.less' //引入换肤共用样式
 import 'styles/index.scss'
+import 'es6-promise'
+import axios from 'axios'
 import * as filters from './filters/filters.js'
 
 // 日历
@@ -23,7 +25,7 @@ Vue.use(vueEventCalendar, {locale: 'en'}) //可以设置语言，支持中文和
 
 // 引入全局过滤器
 import './filters/globalFilters'
-
+Vue.prototype.axios = axios
 Vue.use(ElementUI)
 
 // import UI from './components/index';
@@ -52,7 +54,101 @@ Vue.prototype.$cookie = cookie
 Vue.prototype.getToken = function (){//changeData是函数名
   return "PC_JIANXUN_APP2018";
 }
+// 改变数据格式
+// let f = (objItem = [], rootsArr = []) => {
+//   if (objItem.length > 0) {
+//     objItem.forEach(item => {
+//       rootsArr.push(item)
+//       if (item.children && item.children.length > 0) {
+//         f(item.children, rootsArr)
+//       }
+//     })
+//   }
+//   let defaultRoutes = [
+//     { url: '/login' },
+//     { url: '/register' },
+//     { url: '/login' },
+//     { url: '/error/404' },
+//     { url: '/index' }
+//   ] // 默认路由
+//   return rootsArr.concat(defaultRoutes)
+// }
+// router.beforeEach((to, from, next) => {
+//   let modelS = [...document.getElementsByClassName('v-modal')]
+//   modelS.forEach(item => {
+//     item.style.display = 'none'
+//   })
+//   window.scroll(0, 0)
+//   if (true) {
+//     let defaultRoutes = [
+//       { url: '/login' },
+//       { url: '/register' },
+//       { url: '/login' },
+//       { url: '/error/404' },
+//       { url: '/index' }
+//     ] // 默认路由
+//     defaultRoutes.forEach(item => {
+//       if (to.fullPath == item.url) {
+//         next()
+//       }
+//     })
+//     if (
+//       store.state.menuRoots.rootLists &&
+//       store.state.menuRoots.rootLists.length > 0
+//     ) {
+//       let permissionList = f(store.state.menuRoots.rootLists)
+//       // ajax获取权限列表函数
+//       // 这里省略了一些判断条件，比如判断是否已经拥有了权限数据等
+//       let isPermission = false
+//       permissionList.forEach(v => {
+//         // 判断跳转的页面是否在权限列表中
+//         if (v.url == to.fullPath) {
+//           isPermission = true
+//         }
+//       })
 
+//       // 没有权限时跳转到404页面
+//       if (to.fullPath == '/error/404' || isPermission) {
+//         // debugger
+//         next()
+//       } else {
+//            next() // 没调试好，暂时备注掉/**/
+
+// //      next({ path: '/error/404', replace: true })
+//       }
+//     } else {
+//       //			next({path: "/login", replace: true})
+//       next()
+//     }
+//   }
+// })
+// //获取子菜单数据
+// Vue.prototype.$getChildrenMenu=function(data,path){
+//   let userAuthorityList=JSON.parse(JSON.stringify(data));
+//   for(let i=0;i<userAuthorityList.length;i++){
+//     if(userAuthorityList[i].path==path){
+//        return userAuthorityList[i].children;
+//       // console.log(this.facilityList);
+//     }
+//   }
+// };
+// //获取最后子菜单数据
+// Vue.prototype.$getLastChildrenMenu=function(data,path){
+//   let userAuthorityList=JSON.parse(JSON.stringify(this.$store.getters.rootLists));
+//   // console.log(userAuthorityList);
+//   for(let i=0;i<userAuthorityList.length;i++){
+//     if(userAuthorityList[i].children&&userAuthorityList[i].children.length>=1){
+//       // console.log(userAuthorityList[i].children);
+//       for(let j=0;j<userAuthorityList[i].children.length;j++){
+//         //console.log(userAuthorityList[i].children[j].path);
+//         if(userAuthorityList[i].children[j].path==path){
+//             return  userAuthorityList[i].children[j].children;
+//         }
+//       }
+//     }
+
+//   }
+// }
 /* eslint-disable no-new */
 /**
  * new Vue实例化了vue对象

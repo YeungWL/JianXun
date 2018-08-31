@@ -1,30 +1,41 @@
 <template>
-   <menu-bar :thisAside='thisAside'></menu-bar>
+  <el-container>
+  <el-aside class="aside-menu"  width="200px">
+    <el-menu :default-openeds="openeds" @select="handleSelect" :default-active="activeIndex">
+      <el-submenu :index="((index+1)+'')" v-for="(item,index) in asideArr" :key="index">
+        <template slot="title">{{item.title}}</template>
+        <el-menu-item-group v-for="(ele,i) in item.content" :key="i"  >
+          <!-- :class="{'is-active': selActive == selActive }" -->
+          <el-menu-item :index="(index+1)+'-'+(i+1)" >{{ele}}</el-menu-item>
+        </el-menu-item-group>
+      </el-submenu>
+
+    </el-menu>
+  </el-aside>
+  <!-- 内容区域 -->
+  <el-main>
+    <router-view></router-view>
+  </el-main>
+</el-container>
 </template>
 
 <script>
 import { mapGetters } from 'vuex'
-import menuBar from '../../components/menuBar'
 export default {
-  components: {
-    menuBar
-  },
+  name: 'system',
   computed: {
     ...mapGetters(['rootLists'])
   },  
-  name: 'system',  
   data() {
     return {
       openeds: ['1'],
       activeIndex: '1-1',
-      thisAside: {}, //当前页面所拥有的菜单权限
       asideArr: [
         {title: '权限管理', content: ['菜单管理','角色管理','用户管理','操作日志','字典管理','地区管理','施工日志模板管理','监理日志模板管理']}
       ]
     }
   },
   created() {
-    this.getMenu()
     // console.log(this.$route.name)
     switch (this.$route.name) {
       case 'menu': this.activeIndex = '1-1'; break
@@ -38,19 +49,6 @@ export default {
     }
   },
   methods: {
-    //获取当前菜单
-    getMenu() {
-      // console.log(this.rootLists, 1111111111111)
-      let navArr = JSON.parse(this.$store.getters.rootLists)// json转数组
-      navArr.forEach((item, i) => {
-        if (item.menuName === '系统设置') {
-          // console.log(typeof this.rootLists)
-          this.thisAside = item
-
-          console.log(this.thisAside)
-        }
-      })
-    },    
     handleSelect(key, keyPath) {
       // console.log(key, keyPath)
       this.activeIndex = key

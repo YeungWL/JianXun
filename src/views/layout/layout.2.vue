@@ -123,8 +123,13 @@
 import md5 from "js-md5"
 import { toCheckPwd2 } from "@/utils/validate"
 import headerIcon from '../../assets/images/user.png'
-
+import { mapGetters } from 'vuex'
 export default {
+  computed: {
+    ...mapGetters([
+      'rootLists'
+    ])
+  },  
   name: "layout",
   data() {
     var validatePassword = (rule, value, callback) => {
@@ -164,7 +169,7 @@ export default {
       }
     };
     return {       
-      primaryRouteMenuList:[],// 菜单列表
+      primaryRouteMenuList:[],
       account: "",
       logoUrl: "",
       changePwdForm: {
@@ -189,30 +194,30 @@ export default {
       }
     };
   },
-  // watch: {
-  //   'this.rootLists'(v){
-  //     this.primaryRouteMenuList=v;
-  //   }
-  // },  
-  created() {
-    this.getUserRoots()
-    // this.getMyMenuList()
-    //计算重载activeIndex
-    var path = this.$route.matched[1].path;
-    switch (path) {
-      case "/organization":
-        this.activeIndex = "index2";
-        break;
-      case "/record":
-        this.activeIndex = "index3";
-        break;
-      case "/supervisorLog":
-        this.activeIndex = "index4";
-        break;
-      default:
-        this.activeIndex = "index1";
-        break;
+  watch: {
+    'this.rootLists'(v){
+      this.primaryRouteMenuList=v;
     }
+  },  
+  created() {
+    // this.getUserRoots()
+    this.getMyMenuList()
+    //计算重载activeIndex
+    // var path = this.$route.matched[1].path;
+    // switch (path) {
+    //   case "/organization":
+    //     this.activeIndex = "index2";
+    //     break;
+    //   case "/record":
+    //     this.activeIndex = "index3";
+    //     break;
+    //   case "/supervisorLog":
+    //     this.activeIndex = "index4";
+    //     break;
+    //   default:
+    //     this.activeIndex = "index1";
+    //     break;
+    // }
     // console.log(this.$route.matched[1]);
     this.account = localStorage.getItem('name')
     this.logoUrl = localStorage.getItem('logoUrl')
@@ -223,46 +228,75 @@ export default {
       );
     }
   },
+  mounted(){
+    // this.primaryRouteMenuList = this.rootLists
+      // console.log("primaryRouteMenuList:"+this.primaryRouteMenuList)
+  },  
   methods: {
     // 获取用户权限
     getUserRoots() {
-      // console.log(this.$store.getters.rootLists, 4444444)
-      this.primaryRouteMenuList = JSON.parse(this.$store.getters.rootLists)
-      // let navArr = JSON.parse(this.$store.getters.rootLists)// json转数组
-      // navArr.forEach(item => {
-      //   this.primaryRouteMenuList.push(item)
-      // })
-      // console.log(this.primaryRouteMenuList)
-    },           
-    handleSelect(key, keyPath) {
-      this.activeIndex = key;
-      switch (key) {
-        case "index1":
-          this.$router.push("/project");
-          break;
-        case "index2":
-          this.$router.push("/organization");
-          break;
-        case "index3":
-          this.$router.push("/record");
-          break;
-        case "index4":
-          this.$router.push("/supervisorLog");
-          break;
-        case "index5":
-          this.$router.push("/checking");
-          break;          
-        case "index6":
-          this.$router.push("/library");
-          break;
-        case "index7":
-          this.$router.push("/library");
-          break;
-        case "index8":
-          this.$router.push("/system");
-          break;          
+      this.$store
+        .dispatch('getRoots', {//分发 action
+          menuName: '',
+          menuCode: '',
+          parentId: '',
+          isLeaf: '' 
+        })
+        .then(_ => {
+          // console.log(this.$store)
+          // this.$message.success('获取权限成功')
+          // this.primaryRouteMenuList = this.rootLists;
+          //  console.log("primaryRouteMenuList:"+this.primaryRouteMenuList);
+          setTimeout(_ => {}, 1000)
+        })
+        .catch(error => {
+          this.$router.push('/login')
+          this.$message.error(error.code)
+        })
+    }, 
+    //获取用户权限
+    getMyMenuList(){
+      let params = {   
+        menuName: '',
+        menuCode:'',
+        parentId: '',
+        isLeaf: '' 
       }
-    },
+      this.$api.getMyMenuList(params).then(res=> {
+        if(res.errorCode === '1'){
+         this.primaryRouteMenuList = res.data;
+        }
+      })
+    },        
+    // handleSelect(key, keyPath) {
+    //   this.activeIndex = key;
+    //   switch (key) {
+    //     case "index1":
+    //       this.$router.push("/project");
+    //       break;
+    //     case "index2":
+    //       this.$router.push("/organization");
+    //       break;
+    //     case "index3":
+    //       this.$router.push("/record");
+    //       break;
+    //     case "index4":
+    //       this.$router.push("/supervisorLog");
+    //       break;
+    //     case "index5":
+    //       this.$router.push("/checking");
+    //       break;          
+    //     case "index6":
+    //       this.$router.push("/library");
+    //       break;
+    //     case "index7":
+    //       this.$router.push("/library");
+    //       break;
+    //     case "index8":
+    //       this.$router.push("/system");
+    //       break;          
+    //   }
+    // },
     //点击换肤
     changeColor(command) {
       document.getElementById("app").className = "theme" + command;
