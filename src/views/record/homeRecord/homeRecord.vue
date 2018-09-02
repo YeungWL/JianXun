@@ -60,8 +60,8 @@
           <span class="left">土建专业</span>
           <span>
             <el-button style="height: 32px;" type="primary" @click="updateName = true">修改名称</el-button>
-            <el-button style="height: 32px;" type="success">预览</el-button>
-            <el-button style="height: 32px;" type="info">设置参数</el-button>
+            <el-button style="height: 32px;" type="success" @click="inspect = true">预览</el-button>
+            <el-button style="height: 32px;" type="info" @click="settingProp = true">设置参数</el-button>
           </span>
         </div>
         <div class="project">
@@ -99,17 +99,35 @@
     </el-dialog>
 
     <!-- 修改名称dialog -->
-    <el-dialog title="修改日志名称" :visible.sync="updateName" class="my-dialog">
+    <el-dialog title="修改日志名称" :visible.sync="updateName" class="my-dialog" width="500px">
       <div>
-        <el-form :model="formInline">
+        <el-form :inline="true" :model="formInline">
           <el-form-item label="修改日志名称">
             <el-input v-model="test1" placeholder="修改日志名称"></el-input>
             <el-input type="hidden" v-model="test2"></el-input>
           </el-form-item>
         </el-form>
       </div>
-      <div slot="footer" class="dialog-footer" style="text-align: right;">
+      <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="updateName = false">确 定</el-button>
+      </div>
+    </el-dialog>
+
+    <!-- 预览dialog -->
+    <el-dialog title="预览" :visible.sync="inspect" class="my-dialog">
+      <div>
+        <div style="text-align: center;">预览</div>
+      </div>
+      <div slot="footer" class="dialog-footer" style="text-align: center;">
+        <el-button type="primary" @click="inspect = false">确 定</el-button>
+      </div>
+    </el-dialog>
+
+    <!-- 设置参数dialog1 -->
+    <el-dialog title="设置参数" :visible.sync="settingProp" class="my-dialog">
+      <div></div>
+      <div slot="footer" class="dialog-footer" style="text-align: center;">
+        <el-button type="primary" @click="settingProp = false">提 交</el-button>
       </div>
     </el-dialog>
 
@@ -162,6 +180,8 @@ export default {
       buttonShow: false,
       addDialog: false,
       updateName: false,
+      inspect: false,
+      settingProp: false,
       logData: {},
       itemJson: [],
       groupJson: [],
