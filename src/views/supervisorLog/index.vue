@@ -26,7 +26,7 @@ export default {
       openeds: ['1'],
       activeIndex: '1-1',
       asideArr: [
-        {title: '施工日志', content: ['日志主页', '资费管理']}
+        {title: '监理日志', content: ['日志主页', '资费管理']}
       ]
     }
   },

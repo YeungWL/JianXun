@@ -7,9 +7,9 @@
                  :default-active="$route.menuUrl"
                  :router="true">
           <el-submenu :index="item.menuUrl"
-                      v-for="(item,s) in thisAside.childList"
+                      v-for="(item,s) in thisAside"
                       :key="s">
-            <template slot="title">{{item.menuName}}</template>
+            <template slot="menuName">{{item.menuName}}</template>
             <el-menu-item-group v-for="(ele,i) in item.childList"
                                 :key="i">
               <el-menu-item v-if="item.status" :index="ele.menuUrl">{{ele.menuName}}</el-menu-item>

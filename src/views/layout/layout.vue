@@ -227,11 +227,11 @@ export default {
     // 获取用户权限
     getUserRoots() {
       // console.log(this.$store.getters.rootLists, 4444444)
-      this.primaryRouteMenuList = JSON.parse(this.$store.getters.rootLists)
-      // let navArr = JSON.parse(this.$store.getters.rootLists)// json转数组
-      // navArr.forEach(item => {
-      //   this.primaryRouteMenuList.push(item)
-      // })
+      // this.primaryRouteMenuList = JSON.parse(this.$store.getters.rootLists)
+      let navArr = JSON.parse(this.$store.getters.rootLists)// json转数组
+      navArr.forEach(item => {
+        this.primaryRouteMenuList.push(item)
+      })
       // console.log(this.primaryRouteMenuList)
     },           
     handleSelect(key, keyPath) {
@@ -355,6 +355,7 @@ export default {
 }
 .layout {
   height: 100%;
+  min-width: 1024px;
   .index {
     height: 100%;
     padding-top: 80px;

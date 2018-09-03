@@ -212,7 +212,7 @@ export default {
         menuName: '',
         menuCode:'',
         parentId: '',
-        isLeaf: '' 
+        isLeaf: '2' 
       }
       this.$api.menuList(params).then(res => {
         this.treeData = res.data;
@@ -273,8 +273,9 @@ export default {
         this.roleForm.roleName = data.roleName
         this.roleForm.code = data.code
         this.roleForm.description = data.description
-        // this.roleForm.menuIdJson = data.menuIdJson
+        // this.roleForm.menuIdJson = data.roleMenuList
         this.roleForm.orderNo = data.orderNo 
+        // console.log(data.roleMenuList)
       })
     },
     // 验证角色编码唯一性
@@ -300,6 +301,7 @@ export default {
       delete this.roleForm.roleId  
       let menuIdJson = JSON.stringify({'menuIdArr': this.getMenuIdArr()})
       this.roleForm.menuIdJson = menuIdJson 
+     
       this.$refs.roleForm.validate(valid => {
         if (valid) {
           this.$api.addRole(this.roleForm).then(response => {
@@ -319,7 +321,8 @@ export default {
     // 编辑提交
     update(data) {
       let menuIdJson = JSON.stringify({'menuIdArr': this.getMenuIdArr()})
-      this.roleForm.menuIdJson = menuIdJson     
+      this.roleForm.menuIdJson = menuIdJson  
+      //  console.log(menuIdJson)   
       this.$refs.roleForm.validate(valid => {
         if (valid) {
           this.$api.updateRole(this.roleForm).then(response => {

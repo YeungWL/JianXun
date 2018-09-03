@@ -1,30 +1,46 @@
 <template>
   <div class="page-content-body">
-    <div>
-      <el-form :inline="true" ref="form" size="mini" v-model="getProjectLawListAttr">
-        <el-form-item label="项目名称：">
-          <el-select v-model="getProjectLawListAttr.projectId" placeholder="请选择" @change="UpdateProjectDocumentList">
-            <el-option v-for="item in projectList" :key="item.projectId" :label="item.proName" :value="item.projectId">
-            </el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="文件名称：">
-          <el-input v-model="getProjectLawListAttr.lawName" placeholder="文件名称"></el-input>
-        </el-form-item>
-        <el-form-item label="文号：">
-          <el-input v-model="getProjectLawListAttr.lawNo" placeholder="文号"></el-input>
-        </el-form-item>
-        <el-form-item label="发布机构：">
-          <el-input v-model="getProjectLawListAttr.deptUnit" placeholder="发布机构"></el-input>
-        </el-form-item>
-        <el-form-item label="管理人：">
-          <el-input v-model="getProjectLawListAttr.manager" placeholder="管理人"></el-input>
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" size="small" class="search_btn" @click="handleSearch">搜索</el-button>
-          <el-button type="primary" size="small" class="search_btn" @click="handleUploadFile">上传</el-button>
-          <el-button type="text" @click="fileFormatDialogVisible = true">文件格式标准</el-button>
-        </el-form-item>
+    <div class="my-dialog scwj-dialog">
+      <el-form ref="form" size="mini" v-model="getProjectLawListAttr">
+        <el-row :gutter="24">
+          <el-col :span="8">
+            <el-form-item label="项目名称：" label-width="90px">
+              <el-select v-model="getProjectLawListAttr.projectId" placeholder="请选择" @change="UpdateProjectDocumentList">
+                <el-option v-for="item in projectList" :key="item.projectId" :label="item.proName" :value="item.projectId">
+                </el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="发布机构：" label-width="90px">
+              <el-input v-model="getProjectLawListAttr.deptUnit" placeholder="发布机构"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="管理人：" label-width="70px">
+              <el-input v-model="getProjectLawListAttr.manager" placeholder="管理人"></el-input>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row :gutter="24">
+          <el-col :span="9">
+            <el-form-item label="文件名称：" label-width="90px">
+              <el-input v-model="getProjectLawListAttr.lawName" placeholder="文件名称"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="文号：" label-width="60px">
+              <el-input v-model="getProjectLawListAttr.lawNo" placeholder="文号"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="7">
+            <el-form-item>
+              <el-button type="primary" size="small" class="search_btn" @click="handleSearch">搜索</el-button>
+              <el-button type="primary" size="small" class="search_btn" @click="handleUploadFile">上传</el-button>
+              <el-button type="text" @click="fileFormatDialogVisible = true">文件格式标准</el-button>
+            </el-form-item>
+          </el-col>
+        </el-row>
       </el-form>
       <el-tabs v-model="getProjectLawListAttr.typeId" type="card" @tab-click="tabNameHandleClick">
         <el-tab-pane v-for="item in lawType" :label="item.name" :name="item.bianma" :key="item.index"></el-tab-pane>
@@ -53,9 +69,9 @@
         </el-pagination>
       </div>
     </div>
-    
+
     <!-- 弹框 查看文件格式标准-->
-    <el-dialog title="查看文件格式标准" :visible.sync="fileFormatDialogVisible" width="30%" class="my-dialog">
+    <el-dialog title="查看文件格式标准" :visible.sync="fileFormatDialogVisible" width="30%" class="my-dialog" center>
       <div class="dialog-content">
         <p>格式标准：
           <span class="red">（当前只能导入word文本文档）</span>
@@ -71,13 +87,13 @@
           <li>8、只能导入word文本文档。</li>
         </ul>
       </div>
-      <div class="dialog-footer">
+      <span slot="footer" class="dialog-footer">
         <el-button @click="fileFormatDialogVisible = false">关 闭</el-button>
-      </div>
+      </span>
     </el-dialog>
 
     <!-- 弹框 文库详情-->
-    <el-dialog title="查看文库" :visible.sync="detailsViewDialogVisible" width="90%" class="my-dialog my-library-dialog" center>
+    <el-dialog title="查看文库" :visible.sync="detailsViewDialogVisible" width="90%" class="my-dialog my-library-dialog details" >
       <div>
         <div class="content_revise">
           <div class="main_content_revise">
@@ -113,9 +129,9 @@
             </div>
           </div>
           <div class="enclosure_revise">
-            <div style="margin: 10px 10px 10px 10px">
+            <div style="margin: 10px 10px 10px 10px;" class="pos-fix"> 
               <div>
-                <P>附件如下：</P>
+                <P>附件：</P>
               </div>
               <ul>
                 <li v-for="item in viewAttachment" :key="item.index" :label="item.fileName" :value="item.fileName">
@@ -131,7 +147,7 @@
     </el-dialog>
 
     <!-- 弹框 修改文件-->
-    <el-dialog title="上传文件" :visible.sync="fileReviseDialogVisible" width="80%" class="my-dialog">
+    <el-dialog title="修改文件" :visible.sync="fileReviseDialogVisible" width="80%" class="my-dialog" center>
       <div class="content_revise">
         <div class="main_content_revise">
           <div style="margin: 30px 20px 10px 10px">
@@ -164,19 +180,6 @@
                 <el-row>
                   <el-col :span="23">
                     <el-form-item>
-                      <ul>
-                        <li v-for="item in itemJson" :key="item.index" :label="item.fileName" :value="item.fileName">
-                          <div>{{item.fileName}}
-                            <el-button class="my_button" icon="el-icon-delete" @click="delBuildItem(item)" round></el-button>
-                          </div>
-                        </li>
-                      </ul>
-                    </el-form-item>
-                  </el-col>
-                </el-row>
-                <el-row>
-                  <el-col :span="23">
-                    <el-form-item>
                       <textarea style="resize:none" class="ckeditor" id="editor2" name="content"></textarea>
                     </el-form-item>
                   </el-col>
@@ -191,7 +194,7 @@
               <input id="FileSelect" type="file" @change="getFile($event)">
             </div>
             <div>
-              <P>附件如下：</P>
+              <P>附件：</P>
             </div>
             <ul>
               <li v-for="item in itemJson" :key="item.index" :label="item.fileName" :value="item.fileName">
@@ -203,7 +206,6 @@
           </div>
         </div>
       </div>
-
       <span slot="footer" class="dialog-footer">
         <el-button @click="fileReviseDialogVisible = false">取 消</el-button>
         <el-button type="primary" @click="onEditSubmit">确 定</el-button>
@@ -211,7 +213,7 @@
     </el-dialog>
 
     <!-- 弹框 上传文件 -->
-    <el-dialog title="上传文件" :visible.sync="fileUploadDialogVisible" width="80%" class="my-dialog">
+    <el-dialog title="上传文件" :visible.sync="fileUploadDialogVisible" width="80%" class="my-dialog" center>
       <div style="margin: 30px 20px 10px 10px">
         <div class="ui-form">
           <el-form ref="saveProjectLawAttr" :model="saveProjectLawAttr" label-width="90px" size="mini">
@@ -248,7 +250,7 @@
               </el-col>
               <el-col :span="9">
                 <form>
-                  <input id="FileSelect" type="file" @change="getFile($event)">
+                  <input id="FileSelect2" type="file" @change="getFile($event)">
                 </form>
               </el-col>
             </el-row>
@@ -285,7 +287,7 @@
           </el-form>
         </div>
       </div>
-      <span slot="footer" class="dialog-footer">
+      <span slot="footer" class="dialog-footer" >
         <el-button @click="fileUploadDialogVisible = false">取 消</el-button>
         <el-button type="primary" @click="onfileUploadSubmit">确 定</el-button>
       </span>
@@ -567,8 +569,10 @@ export default {
             }
           }
           CKEDITOR.replace("editor1", {
+            toolbarCanCollapse: true,
+            toolbarStartupExpanded: false,
             height: 280
-          }).setData(this.ReviseDetail.content);
+          }).setData(this.saveProjectLawAttr.content);
         });
       } else {
         this.$message({
@@ -623,7 +627,9 @@ export default {
                     }
                   }
                   CKEDITOR.replace("editor2", {
-                    height: 280
+                    toolbarCanCollapse: true,
+                    toolbarStartupExpanded: false,
+                    height: 400
                   }).setData(this.ReviseDetail.content);
                 });
               }
@@ -720,14 +726,19 @@ export default {
     },
 
     getFile(event) {
-      var oInput = document.getElementById("FileSelect");
+      if (this.fileReviseDialogVisible === true)
+        var oInput = document.getElementById("FileSelect");
+      else var oInput = document.getElementById("FileSelect2");
+
+      console.log("this.itemJson.length: " + this.itemJson.length);
+
       if (this.itemJson.length >= 10) {
         this.$message({
           message: "附件最多是10个 ！！！",
           type: "warning"
         });
         oInput.value = ""; //虽然file的value不能设为有字符的值，但是可以设置为空值
-        oInput.outerHTML = oInput.outerHTML; //重新初始化了file的html
+        //oInput.outerHTML = oInput.outerHTML; //重新初始化了file的html
         return false;
       }
 
@@ -758,6 +769,7 @@ export default {
 
                 let itemData = {
                   fileName: re.data.data.fileName,
+                  fileId: "",
                   fileSize: re.data.data.fileSize,
                   path: re.data.data.path,
                   index: index
@@ -783,7 +795,6 @@ export default {
           });
         }
       } else {
-
       }
     },
 

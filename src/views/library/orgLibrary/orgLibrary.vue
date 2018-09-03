@@ -1,21 +1,37 @@
 <template>
   <div class="page-content-body">
-    <div>
-      <el-form :inline="true" ref="form" size="mini" v-model="getOrgLawListAttr">
-        <el-form-item label="组织名称：">
-          <el-select v-model="getOrgLawListAttr.orgId" placeholder="请选择" @change="UpdateOrgDocumentList">
-            <el-option v-for="item in orgList" :key="item.projectOrgId" :label="item.orgName" :value="item.projectOrgId">
-            </el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="查找">
-          <el-input v-model="getOrgLawListAttr.search" placeholder="文件名称\文号"></el-input>
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" size="small" class="search_btn" @click="handleSearch">搜索</el-button>
-          <el-button type="primary" size="small" class="search_btn" @click="handleUploadFile">上传</el-button>
-          <el-button type="text" @click="fileFormatDialogVisible = true">文件格式标准</el-button>
-        </el-form-item>
+    <div class="my-dialog scwj-dialog">
+      <el-form ref="form" size="mini" v-model="getOrgLawListAttr">
+        <el-row :gutter="24">
+          <el-col :span="9">
+            <el-form-item label="组织名称：" label-width="90px">
+              <el-select v-model="getOrgLawListAttr.orgId" placeholder="请选择" @change="UpdateOrgDocumentList">
+                <el-option v-for="item in orgList" :key="item.projectOrgId" :label="item.orgName" :value="item.projectOrgId">
+                </el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="9">
+            <el-form-item label="查找" label-width="60px">
+              <el-input v-model="getOrgLawListAttr.search" placeholder="文件名称\文号"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="2">
+            <el-form-item>
+              <el-button type="primary" size="small" class="search_btn" @click="handleSearch">搜索</el-button>
+            </el-form-item>
+          </el-col>
+          <el-col :span="2">
+            <el-form-item>
+              <el-button type="primary" size="small" class="search_btn" @click="handleUploadFile">上传</el-button>
+            </el-form-item>
+          </el-col>
+          <el-col :span="2">
+            <el-form-item>
+              <el-button type="text" @click="fileFormatDialogVisible = true">文件格式标准</el-button>
+            </el-form-item>
+          </el-col>
+        </el-row>
       </el-form>
       <div class="page-main customTable">
         <el-table ref="multipleTable" style="width: 100%" v-loading="loading" element-loading-text="拼命加载中" :data="orgDocumentList"
@@ -36,14 +52,14 @@
       </div>
       <!-- 分页 -->
       <div class="pagination">
-        <el-pagination background layout="total, prev, pager, next" @current-change="handlePageChange" :current-page.sync="getOrgLawListAttr.currentPage"
-          :page-size="getOrgLawListAttr.showCount" :total="total">
+        <el-pagination background layout="total, prev, pager, next" @current-change="handlePageChange"
+          :current-page.sync="getOrgLawListAttr.currentPage" :page-size="getOrgLawListAttr.showCount" :total="total">
         </el-pagination>
       </div>
     </div>
 
     <!-- 弹框 查看文件格式标准-->
-    <el-dialog title="查看文件格式标准" :visible.sync="fileFormatDialogVisible" width="30%" class="my-dialog">
+    <el-dialog title="查看文件格式标准" :visible.sync="fileFormatDialogVisible" width="30%" class="my-dialog" center>
       <div class="dialog-content">
         <p>格式标准：
           <span class="red">（当前只能导入word文本文档）</span>
@@ -59,13 +75,14 @@
           <li>8、只能导入word文本文档。</li>
         </ul>
       </div>
-      <div class="dialog-footer">
+      <span slot="footer" class="dialog-footer">
         <el-button @click="fileFormatDialogVisible = false">关 闭</el-button>
-      </div>
+      </span>
     </el-dialog>
 
     <!-- 弹框 文库详情-->
-    <el-dialog title="查看文库" :visible.sync="detailsViewDialogVisible" width="90%" class="my-dialog my-library-dialog" center>
+    <el-dialog title="查看文库" :visible.sync="detailsViewDialogVisible" width="90%" class="my-dialog my-library-dialog details"
+      center>
       <div>
         <div class="content_revise">
           <div class="main_content_revise">
@@ -101,14 +118,14 @@
             </div>
           </div>
           <div class="enclosure_revise">
-            <div style="margin: 10px 10px 10px 10px">
+            <div style="margin: 10px 10px 10px 10px;" class="pos-fix">
               <div>
                 <P>附件如下：</P>
               </div>
               <ul>
                 <li v-for="item in viewAttachment" :key="item.index" :label="item.fileName" :value="item.fileName">
                   <div>
-                    <a v-bind:href="item.filePath">{{item.fileName}}</a>
+                    <a v-bind:href="item.filePath" target="_blank">{{item.fileName}}</a>
                   </div>
                 </li>
               </ul>
@@ -119,7 +136,7 @@
     </el-dialog>
 
     <!-- 弹框 上传文件-->
-    <el-dialog title="上传文件" :visible.sync="fileUploadDialogVisible" width="80%" class="my-dialog">
+    <el-dialog title="上传文件" :visible.sync="fileUploadDialogVisible" width="80%" class="my-dialog" center>
       <div style="margin: 30px 20px 10px 10px">
         <div class="ui-form">
           <el-form ref="saveOrgLawAttr" :model="saveOrgLawAttr" label-width="90px" size="mini">
@@ -143,7 +160,8 @@
               </el-col>
               <el-col :span="6">
                 <el-form-item label="生效日期:">
-                  <el-date-picker type="date" placeholder="选择日期" v-model="saveOrgLawAttr.validateTime" style="width: 100%;" value-format="yyyy-MM-dd"></el-date-picker>
+                  <el-date-picker type="date" placeholder="选择日期" v-model="saveOrgLawAttr.validateTime" style="width: 100%;"
+                    value-format="yyyy-MM-dd"></el-date-picker>
                 </el-form-item>
               </el-col>
               <el-col :span="8">
@@ -208,7 +226,8 @@
                   </el-col>
                   <el-col :span="7">
                     <el-form-item label="生效日期:">
-                      <el-date-picker type="date" placeholder="选择日期" v-model="ReviseDetail.validateTime" style="width: 100%;" value-format="yyyy-MM-dd"></el-date-picker>
+                      <el-date-picker type="date" placeholder="选择日期" v-model="ReviseDetail.validateTime" style="width: 100%;"
+                        value-format="yyyy-MM-dd"></el-date-picker>
                     </el-form-item>
                   </el-col>
                 </el-row>
@@ -219,21 +238,14 @@
                     </el-form-item>
                   </el-col>
                 </el-row>
-                <el-row>
-                  <el-col :span="20">
-                    <el-form-item>
-                      <el-button type="primary" @click="onEditSubmit">确 定</el-button>
-                    </el-form-item>
-                  </el-col>
-                </el-row>
               </el-form>
             </div>
           </div>
         </div>
         <div class="enclosure_revise">
-          <div style="margin: 10px 10px 10px 10px">
+          <div style="margin: 10px 10px 10px 10px;" class="pos-fix">
             <div>
-              <input id="FileSelect" type="file" @change="getFile($event)">
+              <input id="FileSelect2" type="file" @change="getFile($event)">
             </div>
             <div>
               <P>附件如下：</P>
@@ -248,6 +260,9 @@
           </div>
         </div>
       </div>
+      <span slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="onEditSubmit">确 定</el-button>
+      </span>
     </el-dialog>
   </div>
 </template>
@@ -472,6 +487,8 @@ export default {
                     }
                   }
                   CKEDITOR.replace("editor2", {
+                    toolbarCanCollapse: true,
+                    toolbarStartupExpanded: false,
                     height: 280
                   }).setData(this.ReviseDetail.content);
                 });
@@ -554,7 +571,10 @@ export default {
     handlePreview(file) {},
 
     getFile(event) {
-      var oInput = document.getElementById("FileSelect");
+      if (this.fileReviseDialogVisible === true)
+        var oInput = document.getElementById("FileSelect");
+      else var oInput = document.getElementById("FileSelect2");
+
       if (this.itemJson.length >= 10) {
         this.$message({
           message: "附件最多是10个 ！！！",
@@ -699,6 +719,8 @@ export default {
         }
         this.$nextTick(_ => {
           CKEDITOR.replace("editor1", {
+            toolbarCanCollapse: true,
+            toolbarStartupExpanded: false,
             height: 280
           });
         });

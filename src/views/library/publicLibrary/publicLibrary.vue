@@ -1,79 +1,107 @@
 <template>
   <div class="page-content-body">
-    <div>
-      <el-form :inline="true" ref="form" size="mini" v-model="listForm">
-        <el-form-item label="文件类型：" prop="typeId">
-          <el-select v-model="listForm.typeId" placeholder="请选择">
-            <el-option v-for="item in lawType" :key="item.index" :label="item.name" :value="item.bianma">
-            </el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="文件状态：" prop="valid">
-          <el-select v-model="listForm.valid" placeholder="请选择">
-            <el-option v-for="item in validType" :key="item.index" :label="item.label" :value="item.value">
-            </el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="审核状态：" prop="status">
-          <el-select v-model="listForm.status" placeholder="请选择">
-            <el-option v-for="item in statusType" :key="item.index" :label="item.label" :value="item.value">
-            </el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="上架状态：" prop="putaway">
-          <el-select v-model="listForm.putaway" placeholder="请选择">
-            <el-option v-for="item in manageType" :key="item.index" :label="item.label" :value="item.value">
-            </el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="区域：" v-show="isShowArea">
-          <el-select v-model="listForm.provinceCode" placeholder="请选择省" @change="getProv()">
-            <el-option v-for="item in provinceOptions" :key="item.areaId" :label="item.name" :value="item.areaCode">
-            </el-option>
-          </el-select>
-          <el-select v-if="listForm.provinceCode!=''" v-model="listForm.cityCode" placeholder="请选择市" @change="getCity()">
-            <el-option v-for="item in citys" :key="item.areaId" :label="item.name" :value="item.areaCode">
-            </el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="文件名称：">
-          <el-input v-model="listForm.lawName" placeholder="文件名称"></el-input>
-        </el-form-item>
-        <el-form-item label="文号：">
-          <el-input v-model="listForm.lawNo" placeholder="文号"></el-input>
-        </el-form-item>
-        <el-form-item label="上传人：">
-          <el-input v-model="listForm.manager" placeholder="上传人"></el-input>
-        </el-form-item>
-        <el-form-item label="发布机构：">
-          <el-input v-model="listForm.deptUnit" placeholder="发布机构"></el-input>
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" size="small" class="search_btn" @click="handleSearch">搜索</el-button>
-          <el-button type="primary" size="small" class="search_btn" @click="handleUploadFile">上传</el-button>
-          <el-button type="text" @click="fileFormatDialogVisible = true">文件格式标准</el-button>
-        </el-form-item>
+    <div class="ui-form">
+      <el-form ref="form" v-model="listForm" size="mini">
+        <el-row :gutter="24">
+          <el-col :span="10">
+            <el-form-item label="文件名称：" label-width="90px">
+              <el-input v-model="listForm.lawName" placeholder="文件名称"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="7">
+            <el-form-item label="文号：" label-width="60px">
+              <el-input v-model="listForm.lawNo" placeholder="文号"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="7">
+            <el-form-item label="发布机构：" label-width="90px">
+              <el-input v-model="listForm.deptUnit" placeholder="发布机构"></el-input>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row :gutter="24">
+          <el-col :span="5">
+            <el-form-item label="文件类型：" prop="typeId" label-width="85px">
+              <el-select v-model="listForm.typeId" placeholder="请选择">
+                <el-option v-for="item in lawType" :key="item.index" :label="item.name" :value="item.bianma">
+                </el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="5">
+            <el-form-item label="上架状态：" prop="putaway" label-width="85px">
+              <el-select v-model="listForm.putaway" placeholder="请选择">
+                <el-option v-for="item in manageType" :key="item.index" :label="item.label" :value="item.value">
+                </el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="5">
+            <el-form-item label="效力：" prop="valid" label-width="60px">
+              <el-select v-model="listForm.valid" placeholder="请选择">
+                <el-option v-for="item in validType" :key="item.index" :label="item.label" :value="item.value">
+                </el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="5">
+            <el-form-item label="状态：" prop="status" label-width="60px">
+              <el-select v-model="listForm.status" placeholder="请选择">
+                <el-option v-for="item in statusType" :key="item.index" :label="item.label" :value="item.value">
+                </el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="4">
+            <el-form-item label="上传人：" label-width="70px">
+              <el-input v-model="listForm.manager" placeholder="上传人"></el-input>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row :gutter="24">
+          <el-col :span="9">
+            <el-form-item label="区域：" v-show="isShowArea" label-width="60px">
+              <el-select v-model="listForm.provinceCode" placeholder="请选择省" @change="getProv()">
+                <el-option v-for="item in provinceOptions" :key="item.areaId" :label="item.name" :value="item.areaCode">
+                </el-option>
+              </el-select>
+              <el-select v-if="listForm.provinceCode!=''" v-model="listForm.cityCode" placeholder="请选择市" @change="getCity()">
+                <el-option v-for="item in citys" :key="item.areaId" :label="item.name" :value="item.areaCode">
+                </el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="11">
+            <el-form-item>
+              <el-button type="primary" size="small" class="search_btn" @click="handleSearch">搜索</el-button>
+              <el-button type="primary" size="small" class="search_btn" @click="handleUploadFile">上传</el-button>
+              <el-button type="text" @click="fileFormatDialogVisible = true">文件格式标准</el-button>
+            </el-form-item>
+          </el-col>
+        </el-row>
       </el-form>
       <el-tabs v-model="cateId" type="card" @tab-click="tabNameHandleClick">
         <el-tab-pane v-for="item in lawCate" :label="item.name" :name="item.bianma" :key="item.index"></el-tab-pane>
       </el-tabs>
       <div class="page-main customTable">
-        <el-table ref="multipleTable" style="width: 100%" v-loading="loading" element-loading-text="拼命加载中" :data="tablelist" key="ArcDataArr">
+        <el-table ref="multipleTable" style="width: 100%" v-loading="loading" element-loading-text="拼命加载中" :data="tablelist"
+          key="ArcDataArr">
           <el-table-column prop="lawName" label="文件名称" min-width="200" show-overflow-tooltip></el-table-column>
           <el-table-column prop="lawNo" label="文号" min-width="80" show-overflow-tooltip></el-table-column>
           <el-table-column prop="deptUnit" label="发布机构" min-width="80" show-overflow-tooltip></el-table-column>
-          <el-table-column prop="validateTime" label="生效时间" min-width="50"></el-table-column>
-          <el-table-column prop="readCount" label="阅读量" min-width="40"></el-table-column>
-          <el-table-column prop="creator" label="上传人" min-width="40"></el-table-column>
-          <el-table-column label="文件状态" min-width="40" show-overflow-tooltip>
+          <el-table-column prop="validateTime" label="生效时间" min-width="80"></el-table-column>
+          <el-table-column prop="readCount" label="阅读量" min-width="50"></el-table-column>
+          <el-table-column prop="creator" label="上传人" min-width="60"></el-table-column>
+          <el-table-column label="效力" min-width="40">
             <template slot-scope="scope"> {{ scope.row.valid=== "0"? '无效' : '有效' }}</template>
           </el-table-column>
-          <el-table-column label="审核状态" min-width="38" show-overflow-tooltip>
+          <el-table-column label="状态" min-width="40">
             <template slot-scope="scope">
-              <span class="edit" @click="documentAudit(scope.row)">{{ scope.row.status=== "Y"? '审核通过' : scope.row.status=== "N"? '等待审核' : '审核拒绝' }}</span>
+              <span class="edit" @click="documentAudit(scope.row)">{{ scope.row.status=== "Y"? '通过' :
+                scope.row.status=== "N"? '待审' : '拒绝' }}</span>
             </template>
           </el-table-column>
-          <el-table-column label="操作" min-width="60">
+          <el-table-column label="操作" min-width="100">
             <template slot-scope="scope">
               <span class="edit" @click="editDetails(scope.row)">修改</span>
               <span class="edit" @click="documentPublicHandle(scope.row)">{{ scope.row.putaway=== "Y"? '下架' : '上架' }}</span>
@@ -84,15 +112,15 @@
       </div>
       <!-- 分页 -->
       <div class="pagination">
-        <el-pagination background layout="total, prev, pager, next" @current-change="handlePageChange" :current-page.sync="listForm.currentPage"
-          :page-size="listForm.showCount" :total="total">
+        <el-pagination background layout="total, prev, pager, next" @current-change="handlePageChange"
+          :current-page.sync="listForm.currentPage" :page-size="listForm.showCount" :total="total">
         </el-pagination>
       </div>
     </div>
 
-
     <!-- 弹框 文库复核-->
-    <el-dialog title="文库复核" :visible.sync="fileViewDialogVisible" width="70%" class="my-dialog my-library-dialog" center>
+    <el-dialog title="文库复核" :visible.sync="fileViewDialogVisible" width="70%" class="my-dialog my-library-dialog"
+      center>
       <div>
         <div class="page-content">
           <div class="divBox">
@@ -124,13 +152,11 @@
           </div>
         </div>
       </div>
-
       <span slot="footer" class="dialog-footer">
         <div class="tip-box">注：复核只针对合法性和格式，不涉及内容准确性，内容准确性由文件管理人负责。</div>
         <el-button @click="handleReject">不同意</el-button>
         <el-button type="primary" @click="handleApprove">同意</el-button>
       </span>
-
       <el-dialog width="30%" title="提示" :visible.sync="ApproveVisible" append-to-body center>
         <span>复核成功！</span>
         <span slot="footer" class="dialog-footer">
@@ -141,31 +167,29 @@
       <!--弹框 复核不同意意见  -->
       <el-dialog width="30%" title="提示" :visible.sync="RejectVisible" append-to-body center>
         <div>复核不同意意见：</div>
-
         <el-checkbox-group v-model="rejectReasonIllegalVisible">
           <el-checkbox size="small" label="非法" border>非法</el-checkbox>
         </el-checkbox-group>
-        <textarea style="margin-top: 6px" v-show="rejectReasonIllegalVisible" v-model="detailReasonIllegal" rows="1" cols="60"></textarea>
-
+        <textarea style="margin-top: 6px" v-show="rejectReasonIllegalVisible" v-model="detailReasonIllegal" rows="1"
+          cols="60"></textarea>
         <el-checkbox-group v-model="rejectReasonInconformityVisible">
           <el-checkbox size="small" label="格式不符合要求" border>格式不符合要求</el-checkbox>
         </el-checkbox-group>
-        <textarea style="margin-top: 6px" v-show="rejectReasonInconformityVisible" v-model="detailReasonInconformity" rows="1" cols="60"></textarea>
-
+        <textarea style="margin-top: 6px" v-show="rejectReasonInconformityVisible" v-model="detailReasonInconformity"
+          rows="1" cols="60"></textarea>
         <el-checkbox-group v-model="rejectReasonDuplicateVisible">
           <el-checkbox size="small" label="与当前文库中文档重复" border>与当前文库中文档重复</el-checkbox>
         </el-checkbox-group>
-        <textarea style="margin-top: 6px" v-show="rejectReasonDuplicateVisible" v-model="detailReasonDuplicate" rows="1" cols="60"></textarea>
-
+        <textarea style="margin-top: 6px" v-show="rejectReasonDuplicateVisible" v-model="detailReasonDuplicate" rows="1"
+          cols="60"></textarea>
         <span slot="footer" class="dialog-footer">
           <el-button type="primary" @click="handleRejectReason">确定</el-button>
         </span>
       </el-dialog>
     </el-dialog>
 
-
     <!-- 弹框 查看文件格式标准-->
-    <el-dialog title="查看文件格式标准" :visible.sync="fileFormatDialogVisible" width="30%" class="my-dialog">
+    <el-dialog title="查看文件格式标准" :visible.sync="fileFormatDialogVisible" width="30%" class="my-dialog" center>
       <div class="dialog-content">
         <p>格式标准：
           <span class="red">（当前只能导入word文本文档）</span>
@@ -181,14 +205,13 @@
           <li>8、只能导入word文本文档。</li>
         </ul>
       </div>
-      <div class="dialog-footer">
-        <el-button @click="fileFormatDialogVisible = false">关 闭</el-button>
-      </div>
+            <span slot="footer" class="dialog-footer">
+<el-button @click="fileFormatDialogVisible = false">关 闭</el-button>
+      </span>
     </el-dialog>
 
-
     <!-- 弹框 文库详情-->
-    <el-dialog title="查看文库" :visible.sync="detailsViewDialogVisible" width="70%" class="my-dialog my-library-dialog">
+    <el-dialog title="查看文库" :visible.sync="detailsViewDialogVisible" width="70%" class="my-dialog my-library-view-dialog">
       <div>
         <div class="page-content">
           <div class="divBox">
@@ -198,7 +221,6 @@
               <!-- <div class="inner-right" @click="dialogVisible = true">举报</div> -->
             </div>
           </div>
-
           <div class="meta_list">
             <h1 class="title" v-model:title="fileView.lawName">{{fileView.lawName}}</h1>
             <div class="divBox">
@@ -225,10 +247,9 @@
       </div>
     </el-dialog>
 
-
     <!-- 弹框 上传文件-->
-    <el-dialog title="上传文件" :visible.sync="fileUploadDialogVisible" width="80%" class="my-dialog">
-      <div style="margin: 30px 20px 10px 10px">
+    <el-dialog title="上传文件" :visible.sync="fileUploadDialogVisible" width="80%" class="my-dialog scwj-dialog" center>
+      <div style="width:100%;margin: 30px 20px 10px 10px">
         <div class="ui-form">
           <el-form ref="fileEditForm" :model="fileEditForm" label-width="90px" size="mini">
             <el-row :gutter="24">
@@ -251,10 +272,10 @@
               </el-col>
               <el-col :span="7">
                 <el-form-item label="生效日期:">
-                  <el-date-picker type="date" placeholder="选择日期" v-model="fileEditForm.validateTime" style="width: 100%;" value-format="yyyy-MM-dd"></el-date-picker>
+                  <el-date-picker type="date" placeholder="选择日期" v-model="fileEditForm.validateTime" style="width: 100%;"
+                    value-format="yyyy-MM-dd"></el-date-picker>
                 </el-form-item>
               </el-col>
-
               <el-col :span="6">
                 <el-form-item label="效力状态: ">
                   <el-radio-group v-model="fileEditForm.valid">
@@ -264,7 +285,6 @@
                 </el-form-item>
               </el-col>
             </el-row>
-
             <el-row :gutter="23">
               <el-col :span="8">
                 <el-form-item label="文件类别：">
@@ -283,12 +303,12 @@
                 </el-form-item>
               </el-col>
               <el-col :span="5">
-                <el-form-item   v-show="isShowArea">
-                  <el-select v-if="fileEditForm.provinceCode!=''" v-model="fileEditForm.cityCode" placeholder="请选择市" @change="getCityUpload()">
+                <el-form-item v-show="isShowArea">
+                  <el-select v-if="fileEditForm.provinceCode!=''" v-model="fileEditForm.cityCode" placeholder="请选择市"
+                    @change="getCityUpload()">
                     <el-option v-for="item in citys" :key="item.areaId" :label="item.name" :value="item.areaCode">
                     </el-option>
                   </el-select>
-
                 </el-form-item>
               </el-col>
             </el-row>
@@ -301,7 +321,6 @@
                   </el-checkbox-group>
                 </el-form-item>
               </el-col>
-
             </el-row>
             <el-row>
               <el-col :span="23">
@@ -310,22 +329,19 @@
                 </el-form-item>
               </el-col>
             </el-row>
-            <el-row>
-              <el-col :span="20">
-                <el-form-item>
-                  <el-button @click="cancel">取 消</el-button>
-                  <el-button type="primary" @click="onSubmit">确 定</el-button>
-                </el-form-item>
-              </el-col>
-            </el-row>
           </el-form>
         </div>
       </div>
+
+      <span slot="footer" class="dialog-footer">
+
+        <el-button @click="cancel">取 消</el-button>
+        <el-button type="primary" @click="onSubmit">确 定</el-button>
+      </span>
     </el-dialog>
 
-
     <!-- 弹框 修改文件-->
-    <el-dialog title="修改文件" :visible.sync="fileReviseDialogVisible" width="90%" class="my-dialog">
+    <el-dialog title="修改文件" :visible.sync="fileReviseDialogVisible" width="96%" class="my-dialog" center>
       <div class="content_revise">
         <div class="left_3">
           <div style="margin: 10px 10px 10px 10px">
@@ -333,76 +349,78 @@
             <div class="red" id="para" v-html="auditOpinion"> </div>
           </div>
         </div>
-        <div class="right_3">
-          <div style="margin: 30px 20px 10px 10px">
+        <div style="width:100%; margin: 30px 20px 10px 10px">
+          <div>
             <div class="ui-form">
-              <el-form ref="ReviseDetail" :model="ReviseDetail" label-width="90px" size="mini">
+              <el-form ref="ReviseDetail" :model="ReviseDetail" size="mini">
                 <el-row :gutter="24">
-                  <el-col :span="13">
-                    <el-form-item label="文件名称：">
+                  <el-col :span="10">
+                    <el-form-item label="文件名称：" label-width="90px">
                       <el-input :disabled="true" v-model="ReviseDetail.lawName"></el-input>
                     </el-form-item>
                   </el-col>
-                  <el-col :span="10">
-                    <el-form-item label="文号：">
+                  <el-col :span="7">
+                    <el-form-item label="文号：" label-width="60px">
                       <el-input v-model="ReviseDetail.lawNo"></el-input>
+                    </el-form-item>
+                  </el-col>
+                  <el-col :span="7">
+                    <el-form-item label="发布机构：" label-width="90px">
+                      <el-input v-model="ReviseDetail.deptUnit"></el-input>
                     </el-form-item>
                   </el-col>
                 </el-row>
                 <el-row :gutter="24">
-                  <el-col :span="10">
-                    <el-form-item label="发布机构：">
-                      <el-input v-model="ReviseDetail.deptUnit"></el-input>
-                    </el-form-item>
-                  </el-col>
-                  <el-col :span="7">
-                    <el-form-item label="生效日期:">
-                      <el-date-picker type="date" placeholder="选择日期" v-model="ReviseDetail.validateTime" style="width: 100%;" value-format="yyyy-MM-dd"></el-date-picker>
-                    </el-form-item>
-                  </el-col>
-
-                  <el-col :span="6">
-                    <el-form-item label="效力状态: ">
-                      <el-radio-group v-model="ReviseDetail.valid">
-                        <el-radio label="1">有效</el-radio>
-                        <el-radio label="0">失效</el-radio>
-                      </el-radio-group>
-                    </el-form-item>
-                  </el-col>
-                </el-row>
-
-                <el-row :gutter="20">
                   <el-col :span="5">
-                    <el-form-item label="文件类别：">
+                    <el-form-item label="生效日期：" label-width="90px">
+                      <el-date-picker type="date" placeholder="选择日期" v-model="ReviseDetail.validateTime" style="width: 100%;"
+                        value-format="yyyy-MM-dd"></el-date-picker>
+                    </el-form-item>
+                  </el-col>
+                  <el-col :span="5">
+                    <el-form-item label="文件类别：" label-width="90px">
                       <el-select v-model="ReviseDetail.cateId" placeholder="请选择文件类别" @change="abc">
                         <el-option v-for="item in lawCate" :label="item.name" :value="item.bianma" :key="item.index">
                         </el-option>
                       </el-select>
                     </el-form-item>
                   </el-col>
-                  <el-col :span="18">
-                    <el-form-item label="区域：" v-show="isShowArea">
+                  <el-col :span="5">
+                    <el-form-item label="区域：" v-show="isShowArea" label-width="60px">
                       <el-select v-model="ReviseDetail.provinceCode" placeholder="请选择省" @change="getProvUpload()">
                         <el-option v-for="item in provinceOptions" :key="item.areaId" :label="item.name" :value="item.areaCode">
                         </el-option>
                       </el-select>
-                      <el-select v-if="ReviseDetail.provinceCode!=''" v-model="ReviseDetail.cityCode" placeholder="请选择市" @change="getCityUpload()">
+                    </el-form-item>
+                  </el-col>
+                  <el-col :span="5">
+                    <el-form-item v-show="isShowArea">
+                      <el-select v-if="ReviseDetail.provinceCode!=''" v-model="ReviseDetail.cityCode" placeholder="请选择市"
+                        @change="getCity()">
                         <el-option v-for="item in citys" :key="item.areaId" :label="item.name" :value="item.areaCode">
                         </el-option>
                       </el-select>
+
                     </el-form-item>
                   </el-col>
                 </el-row>
-                <el-row>
-                  <el-col :span="24">
-                    <el-form-item label="文件属性：" prop="type">
+                <el-row :gutter="24">
+                  <el-col :span="5">
+                    <el-form-item label="效力状态: " label-width="90px">
+                      <el-radio-group v-model="ReviseDetail.valid">
+                        <el-radio label="1">有效</el-radio>
+                        <el-radio label="0">失效</el-radio>
+                      </el-radio-group>
+                    </el-form-item>
+                  </el-col>
+                  <el-col :span="18">
+                    <el-form-item label="文件属性：" prop="type" label-width="90px">
                       <el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAllChange">全选</el-checkbox>
                       <el-checkbox-group v-model="checkedEditType" @change="handleCheckedLawTypeChange" class="check_item">
                         <el-checkbox v-for="item in EditLawType" :label="item.bianma" :key="item.index">{{item.name}}</el-checkbox>
                       </el-checkbox-group>
                     </el-form-item>
                   </el-col>
-
                 </el-row>
                 <el-row>
                   <el-col :span="24">
@@ -411,22 +429,18 @@
                     </el-form-item>
                   </el-col>
                 </el-row>
-                <el-row>
-                  <el-col :span="20">
-                    <el-form-item>
-                      <!-- <el-button @click="editCancel">取 消</el-button> -->
-                      <el-button type="primary" @click="onEditSubmit">确 定</el-button>
-                    </el-form-item>
-                  </el-col>
-                </el-row>
+
               </el-form>
             </div>
           </div>
         </div>
       </div>
+      <span slot="footer" class="dialog-footer">
+<el-button type="primary" @click="onEditSubmit">确 定</el-button>
+      </span>
+
+
     </el-dialog>
-
-
   </div>
 </template>
 
@@ -582,15 +596,15 @@ export default {
         },
         {
           value: "R",
-          label: "审核拒绝"
+          label: "拒绝"
         },
         {
           value: "Y",
-          label: "审核通过"
+          label: "通过"
         },
         {
           value: "N",
-          label: "等待审核"
+          label: "待审"
         }
       ],
       validType: [
@@ -627,6 +641,7 @@ export default {
     this.lawTypeList();
     this.lawCateList();
     this.personLawList();
+    this.getAreaAndCity();
   },
   created() {},
   methods: {
@@ -652,10 +667,6 @@ export default {
           this.lawType[i + 1] = res.data[i];
           this.EditLawType[i] = res.data[i];
         }
-        for (var i = 0; i < this.EditLawType.length; i++) {
-          console.log("this.EditLawType  " + this.EditLawType[i].name);
-          console.log("this.EditLawType  " + this.EditLawType[i].bianma);
-        }
       });
     },
 
@@ -680,12 +691,20 @@ export default {
 
     getAreaAndCity() {
       let params = {
-        areaCode: "0",
-        token: this.listForm.token
+        areaCode: "0"
       };
       this.$api.getAreaAndCity(params).then(res => {
         this.provinceOptions = res.data;
       });
+    },
+
+    abc(item) {
+      if (item == "0003" || item == "0005") {
+        this.isShowArea = true; //显示区域选择下拉框
+        this.getAreaAndCity(); //获取区域数据
+      } else {
+        this.isShowArea = false;
+      }
     },
 
     //选择省
@@ -711,15 +730,31 @@ export default {
       let tempCity = [];
       this.citys = [];
       let allCity = this.provinceOptions;
-      let prov = this.fileEditForm.provinceCode;
-      this.fileEditForm.cityCode = "";
 
-      for (var val of allCity) {
-        if (prov == val.areaCode) {
-          tempCity = val.childList;
+      if (this.ReviseDetail.provinceCode.length != 0) {
+        let prov = this.ReviseDetail.provinceCode;
+        //this.ReviseDetail.cityCode = "";
+        console.log(
+          "this.ReviseDetail.provinceCode inner : " +
+            this.ReviseDetail.provinceCode
+        );
+        for (var val of allCity) {
+          if (prov == val.areaCode) {
+            tempCity = val.childList;
+          }
         }
+        this.citys = tempCity;
+      } else if (this.fileUploadDialogVisible.provinceCode.length != 0) {
+        let prov = this.fileEditForm.provinceCode;
+        this.fileEditForm.cityCode = "";
+        for (var val of allCity) {
+          if (prov == val.areaCode) {
+            tempCity = val.childList;
+          }
+        }
+        this.citys = tempCity;
+      } else {
       }
-      this.citys = tempCity;
     },
 
     //选择市
@@ -790,8 +825,8 @@ export default {
 
     /* 修改页面 弹框 */
     editDetails(val) {
-      this.auditOpinion = '';
-      
+      this.auditOpinion = "";
+
       this.SubmitAuditLaw.lawId = val.lawId;
       this.$api
         .viewEditLaw({
@@ -819,7 +854,20 @@ export default {
               this.ReviseDetail.valid = res.data[0].law.valid;
               this.checkedEditType = [];
 
-              console.log("this.checkedEditType  " + this.checkedEditType);
+              console.log(
+                "this.ReviseDetail.cateId　：　" + this.ReviseDetail.cateId
+              );
+
+              if (
+                this.ReviseDetail.cateId == "0003" ||
+                this.ReviseDetail.cateId == "0005"
+              ) {
+                this.isShowArea = true; //显示区域选择下拉框
+                this.getAreaAndCity(); //获取区域数据
+                this.getProvUpload();
+              } else {
+                this.isShowArea = false;
+              }
 
               var arr = res.data[0].law.typeId.replace(
                 new RegExp("'", "gm"),
@@ -828,7 +876,15 @@ export default {
               this.checkedEditType.push(arr);
 
               this.$nextTick(_ => {
+                for (name in CKEDITOR.instances) {
+                  var editor = CKEDITOR.instances[name];
+                  if (editor) {
+                    editor.destroy(true);
+                  }
+                }
                 CKEDITOR.replace("editor2", {
+                  toolbarCanCollapse: true,
+                  toolbarStartupExpanded: false,
                   height: 280
                 }).setData(this.ReviseDetail.content);
               });
@@ -908,10 +964,19 @@ export default {
     //打开提交文件对话框
     handleUploadFile() {
       this.fileUploadDialogVisible = true;
+
       this.$nextTick(_ => {
+        for (name in CKEDITOR.instances) {
+          var editor = CKEDITOR.instances[name];
+          if (editor) {
+            editor.destroy(true);
+          }
+        }
         CKEDITOR.replace("editor1", {
+          toolbarCanCollapse: true,
+          toolbarStartupExpanded: false,
           height: 280
-        });
+        }).setData(this.ReviseDetail.content);
       });
     },
 
@@ -1018,16 +1083,6 @@ export default {
       });
     },
 
-    //
-    abc(item) {
-      if (item == "0003" || item == "0005") {
-        this.isShowArea = true; //显示区域选择下拉框
-        this.getAreaAndCity(); //获取区域数据
-      } else {
-        this.isShowArea = false;
-      }
-    },
-
     //取消
     cancel() {
       this.$confirm("内容尚未完成，你要离开此页吗？", "温馨提示", {
@@ -1036,9 +1091,11 @@ export default {
         type: "warning"
       })
         .then(() => {
-          this.$router.replace({
-            path: "/library/publicLibrary"
-          });
+          this.fileUploadDialogVisible = false;
+
+          // this.$router.replace({
+          //   path: "/library/publicLibrary"
+          // });
         })
         .catch(() => {});
     },
@@ -1095,7 +1152,7 @@ export default {
               confirmButtonText: "确定",
               callback: action => {
                 this.fileUploadDialogVisible = false;
-                this.personLawList()
+                this.personLawList();
               }
             });
           } else {
@@ -1149,12 +1206,11 @@ export default {
         .then(res => {
           console.log("res.errorCode" + res.errorCode);
           if (res.errorCode === "1") {
-
             this.$alert("修改文库成功", "提示", {
               confirmButtonText: "确定",
               callback: action => {
                 this.fileReviseDialogVisible = false;
-                this.personLawList()
+                this.personLawList();
               }
             });
           } else {
@@ -1185,7 +1241,7 @@ export default {
 }
 
 .page-content {
-  max-width: 90%; // margin:10px 5px 15px 20px;
+  max-width: 100%; // margin:10px 5px 15px 20px;
   margin: auto; // position: absolute;
 }
 
@@ -1249,7 +1305,7 @@ export default {
 }
 
 .content-summary {
-  padding: 0px 10px;
+  padding: 0px 80px;
   margin-top: 10pxm;
   max-width: 100%;
 }
@@ -1267,7 +1323,7 @@ export default {
 
 .left_3 {
   flex: 300px 0;
-  background-color: rgb(227, 233, 233);
+
 }
 
 .left {
@@ -1346,6 +1402,7 @@ export default {
     text-align: left;
     box-sizing: border-box;
   }
+
   .el-dialog {
     //Add for display the detail public libary
     display: flex;
@@ -1353,47 +1410,59 @@ export default {
     width: 60%;
     height: 870%;
   }
+
   .el-dialog__body {
     padding: 15px 15px 0;
     padding: 0; //Add for display the detail public libary
     overflow: auto;
   }
+
   .el-table-column--selection .cell {
     padding: 0;
     padding-left: 10px;
   }
+
   .el-button {
     width: 78px;
   }
+
   .el-table th > .cell {
     padding: 0;
     padding-left: 10px;
   }
+
   .my-form {
     .el-form-item {
       margin-bottom: 8px;
     }
+
     .el-form-item__label {
       color: #5cb941;
     }
+
     .el-form-item__content {
       display: flex;
       align-items: center;
     }
+
     .search-btn {
       margin-left: 10px;
     }
+
     .el-input__inner {
       background: #f6f6f6;
     }
+
     .info-input {
       height: 80px;
+
       .el-textarea__inner {
         height: 100%;
         background: #f6f6f6;
         resize: none;
       }
     }
+
     .el-textarea__inner:focus {
       outline: 0;
     }

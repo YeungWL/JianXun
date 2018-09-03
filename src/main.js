@@ -29,7 +29,7 @@ Vue.prototype.axios = axios
 Vue.use(ElementUI)
 
 // import UI from './components/index';
-// Vue.use(UI)
+// Vue.use(UI) 
 
 import uiComponents from "@/components/index";
 Vue.use(uiComponents);
@@ -123,32 +123,32 @@ Vue.prototype.getToken = function (){//changeData是函数名
 //   }
 // })
 // //获取子菜单数据
-// Vue.prototype.$getChildrenMenu=function(data,path){
-//   let userAuthorityList=JSON.parse(JSON.stringify(data));
-//   for(let i=0;i<userAuthorityList.length;i++){
-//     if(userAuthorityList[i].path==path){
-//        return userAuthorityList[i].children;
-//       // console.log(this.facilityList);
-//     }
-//   }
-// };
-// //获取最后子菜单数据
-// Vue.prototype.$getLastChildrenMenu=function(data,path){
-//   let userAuthorityList=JSON.parse(JSON.stringify(this.$store.getters.rootLists));
-//   // console.log(userAuthorityList);
-//   for(let i=0;i<userAuthorityList.length;i++){
-//     if(userAuthorityList[i].children&&userAuthorityList[i].children.length>=1){
-//       // console.log(userAuthorityList[i].children);
-//       for(let j=0;j<userAuthorityList[i].children.length;j++){
-//         //console.log(userAuthorityList[i].children[j].path);
-//         if(userAuthorityList[i].children[j].path==path){
-//             return  userAuthorityList[i].children[j].children;
-//         }
-//       }
-//     }
+Vue.prototype.$getChildrenMenu=function(data,menuCode){
+  let userAuthorityList=JSON.parse(data);
+  for(let i=0;i<userAuthorityList.length;i++){
+    if(userAuthorityList[i].menuCode==menuCode){
+       return userAuthorityList[i].childList;
+      // console.log('getChildrenMenu:'+userAuthorityList[i].childList);
+    }
+  }
+};
+//获取最后子菜单数据
+Vue.prototype.$getLastChildrenMenu=function(data,menuCode){
+  let userAuthorityList=JSON.parse(this.$store.getters.rootLists);
+  // console.log(userAuthorityList);
+  for(let i=0;i<userAuthorityList.length;i++){
+    if(userAuthorityList[i].childList&&userAuthorityList[i].childList.length>=1){
+      // console.log(userAuthorityList[i].childList);
+      for(let j=0;j<userAuthorityList[i].childList.length;j++){
+        //console.log(userAuthorityList[i].childList[j].path);
+        if(userAuthorityList[i].childList[j].menuCode==menuCode){
+            return  userAuthorityList[i].childList[j].childList;
+        }
+      }
+    }
 
-//   }
-// }
+  }
+}
 /* eslint-disable no-new */
 /**
  * new Vue实例化了vue对象

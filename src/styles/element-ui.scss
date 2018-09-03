@@ -92,6 +92,12 @@ $red:#e85657;
       line-height: 40px;
       min-width: 198px;
     }
+    .el-menu-item {
+      height: 40px;
+      line-height: 40px;
+      min-width: 198px;
+      padding-left: 40px!important;
+    }
     .el-menu-item::before {
       content: '';
       display: block;
@@ -161,6 +167,12 @@ $red:#e85657;
   text-align: right;
   .button2 {
     margin-left: 20px;
+  }
+}
+
+.my-dialog.scwj-dialog {
+  .el-dialog{
+    min-width: 1100px;
   }
 }
 
@@ -454,10 +466,49 @@ $red:#e85657;
     background: #fff;
     border-top: 1px solid #eee;
   }
-  
+}
 
+.my-dialog.my-library-view-dialog {
+  .el-dialog {
+    display: flex;
+    flex-direction: column;
+    width: 50%; 
+    height: 78%;
+  }
+  .el-dialog__body {
+    padding: 0 0 0;
+    margin-bottom: 10px;
+    overflow: auto;
+  }
+
+  .el-dialog__footer{
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: #fff;
+    border-top: 1px solid #eee;
+  }
 }
 .wkxg .el-dialog{width: 950px!important;}
+// 项目级别文库 查看文库详情
+.my-dialog.my-library-dialog.details {
+  .el-dialog__body {
+    // overflow: hidden;
+    margin-bottom: 10px;
+  }
+  .main_content_revise{
+    // height: 600px;
+    // overflow: auto;
+  }
+  .enclosure_revise{
+    position:  absolute;
+    right: 20px;
+    top: 50px;
+    width: 22%;
+
+  }
+}
 
 // 日期组件
 .el-date-editor.el-input {
