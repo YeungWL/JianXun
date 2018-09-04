@@ -15,7 +15,7 @@
             <el-button type="primary"  icon="el-icon-search" @click="handleSearch">查询</el-button>
           </el-form-item>
           <div class="btn-group fr">
-            <el-button type="primary" icon="el-icon-plus" @click="handleCreate">新增</el-button>
+            <el-button type="primary" icon="el-icon-plus" @click="handleCreate" :disable="!addUserStatus">新增</el-button>
           </div> 
         </el-form>
       </div>
@@ -45,7 +45,7 @@
           <el-table-column prop="createTime" label="创建时间" min-width="150" sortable></el-table-column>
           <el-table-column label="操作" min-width="120">
             <template slot-scope="scope">              
-              <span class="btn" title="编辑" @click="handleUpdate(scope.row)"><i class="iconfont icon-edit editicon"></i></span>
+              <span class="btn" title="编辑" @click="handleUpdate(scope.row)"  :disable="!updateUserStatus"><i class="iconfont icon-edit editicon"></i></span>
               <span  v-if='scope.row.status == 0'>
                 <span class="btn" @click="getUserDelete(scope.row,1)">停用</span>
                 <span class="btn" @click="getUserDelete(scope.row,2)">冻结</span> 
@@ -162,6 +162,10 @@ export default {
       roleOptions: [], 
       loading: false,      
       total: 0,
+      userAuthorityList:[],
+      addUserStatus:false,
+      updateUserStatus:false,
+      delUserStatus:false,    
       titleMap: {
         update: '修改信息',
         create: '新增用户'
@@ -184,8 +188,34 @@ export default {
   },
   mounted() {
     this.getList()
+    this.userAuthorityList=this.$getLastChildrenMenu(this.$store.getters.rootLists,'userManagement')
+     console.log(this.userAuthorityList)  
+    for(let i=0;i<this.userAuthorityList.length;i++){
+       // console.log(this.userAuthorityList[i].name);
+      switch(this.userAuthorityList[i].name){
+        case '添加':
+          this.addUserStatus=this.userAuthorityList[i].status
+          break;
+        case '修改':
+          this.updateUserStatus=this.userAuthorityList[i].status
+          break;
+        case '停用':
+          this.outageUserStatus=this.userAuthorityList[i].status
+          break;
+        case '激活':
+          this.activateUserStatus=this.userAuthorityList[i].status
+          break;
+        case '冻结':
+          this.freezeUserStatus=this.userAuthorityList[i].status
+          break;          
+        default: ;
+      }
+    }    
   },  
   created() {
+     //权限设置
+    this.userAuthorityList=this.$getLastChildrenMenu(this.$store.getters.rootLists,'userManagement')
+     console.log(this.userAuthorityList)  
     // 请求第一页数据
     this.listQuery.currentPage = this.$route.query.currentPage ? parseInt(this.$route.query.currentPage) : 1
   },

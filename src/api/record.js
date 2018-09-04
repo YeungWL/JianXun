@@ -108,4 +108,7 @@ export function isOrgExist (data) {
 export function getTemplateList(data) {
     return service.post(OAUTH_API + '/buildLog/getTemplateList.do', qs.stringify(data))
 }
-
+// 组织关联模板
+export function orgBindTemplate(data) {
+    return service.post(OAUTH_API + '/buildLog/orgBindTemplate.do', qs.stringify(data))
+}

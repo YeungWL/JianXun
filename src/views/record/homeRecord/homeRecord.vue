@@ -52,7 +52,7 @@
       <div class="setting">
         <div class="project">
           <span class="left">添加日志</span>
-          <el-button icon="el-icon-plus" style="padding: 0;width: 30px;height: 32px;" @click="addItem, addDialog = true"></el-button>
+          <el-button icon="el-icon-plus" style="padding: 0;width: 30px;height: 32px;" @click="getTemplateList()"></el-button>
         </div>
         <div class="project">
           <span class="left">土建专业</span>
@@ -81,10 +81,12 @@
       <div>
         <el-form :inline="true" :model="formInline">
           <el-form-item label="日志名称">
-            <el-input v-model="formInline.user" placeholder="日志名称"></el-input>
+            <el-input v-model="formInline.templateName" placeholder="日志名称"></el-input>
           </el-form-item>
           <el-form-item label="工程模板">
-            <el-select v-model="formInline.user" placeholder="工程模板"></el-select>
+            <el-select v-model="formInline.templateId" placeholder="工程模板">
+              <el-option v-for="(item, index) in templateOption" :key="index" :label="item.name" :value="item.templateId"></el-option>
+            </el-select>
           </el-form-item>
         </el-form>
         <div>
@@ -92,7 +94,7 @@
         </div>
       </div>
       <div slot="footer" class="dialog-footer" style="text-align: center;">
-        <el-button type="primary" @click="addDialog = false">确 定</el-button>
+        <el-button type="primary" @click="addDialog = false, bindTemplate()">确 定</el-button>
       </div>
     </el-dialog>
 
@@ -264,7 +266,6 @@ export default {
       dialogFormVisible1: false,
       dialogFormVisible2: false,
       value: "",
-      value1: "",
       demoEvents: [],
       buttonShow: false,
       addDialog: false,
@@ -276,7 +277,10 @@ export default {
       itemJson: [],
       groupJson: [{ groupName: "111" }],
       layerJson: [],
+      templateOption: [],
       formInline: {
+        templateName: '',
+        templateId: '',
         user: ""
       },
       formData: {
@@ -382,7 +386,7 @@ export default {
             ) {
               // 这里应该到请求回来之后再是true
               this.buttonShow = true;
-              this.queryBuildLog();
+              // this.queryBuildLog();
             } else {
               this.buttonShow = false;
             }
@@ -413,7 +417,24 @@ export default {
         });
     },
     // 获取模板分页列表
-    getTemplateList() {},
+    getTemplateList() {
+      this.$api.getTemplateList().then(res => {
+        console.log(res)
+        if(res.errorCode === "1") {
+          this.addDialog = true
+          this.templateOption = res.data
+        }
+      })
+    },
+    bindTemplate() {
+      this.$api.orgBindTemplate({
+        orgId: this.orgId,
+        templateName: this.formInline.templateName,
+        templateId: this.formInline.templateId
+      }).then(res => {
+        console.log(res)
+      })
+    },
     // 修改分项工程项
     updateBuildItem(data) {
       if (data.itemName == "") {
@@ -557,7 +578,7 @@ export default {
             this.queryBuildLog();
             this.dialogFormVisible1 = false;
           }
-        });
+        })
     }
   },
   created() {
