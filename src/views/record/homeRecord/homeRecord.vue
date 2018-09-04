@@ -25,7 +25,7 @@
             <span>当前有效期至 : 2018年6月30号 </span>
             <a href="javascript:;" @click="show.isShow = !show.isShow">续期</a>
           </div>
-          <el-button type="primary" @click="dialogFormVisible1 = true" v-if="buttonShow" class="setion">设置</el-button>
+          <el-button type="primary" @click="dialogFormVisible1 = true, getAddTempList()" v-if="buttonShow" class="setion">设置</el-button>
         </div>
       </div>
     </div>
@@ -426,11 +426,20 @@ export default {
         }
       })
     },
+    // 组织关联模版
     bindTemplate() {
       this.$api.orgBindTemplate({
         orgId: this.orgId,
         templateName: this.formInline.templateName,
         templateId: this.formInline.templateId
+      }).then(res => {
+        console.log(res)
+      })
+    },
+    // 获取关联日志列表
+    getAddTempList() {
+      this.$api.getAddTempList({
+        orgTemplateId: "08dff9faac5741f287aca122df420291"
       }).then(res => {
         console.log(res)
       })

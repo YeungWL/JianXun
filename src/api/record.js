@@ -112,3 +112,11 @@ export function getTemplateList(data) {
 export function orgBindTemplate(data) {
     return service.post(OAUTH_API + '/buildLog/orgBindTemplate.do', qs.stringify(data))
 }
+// 获取日志列表
+export function getAddTempList(data) {
+    return service.post(OAUTH_API + '/buildLog/geCityPolicy.do', qs.stringify(data))
+}
+// 修改模版扩展名
+export function updateExtendName(data) {
+    return service.post(OAUTH_API + '/buildLog/updateExtendName.do', qs.stringify(data))
+}
