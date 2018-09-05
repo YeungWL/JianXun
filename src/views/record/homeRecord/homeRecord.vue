@@ -54,7 +54,7 @@
           <span class="left">添加日志</span>
           <el-button icon="el-icon-plus" style="padding: 0;width: 30px;height: 32px;" @click="getTemplateList"></el-button>
         </li>
-        <li class="project" v-for="(item, index) in logList" :key="item.id">
+        <li class="project" v-for="item in logList" :key="item.id">
           <span class="left">{{item.extendName ? item.extendName : item.tempName}}</span>
           <span>
             <el-button style="height: 32px;" type="primary" @click="showUpdate(item.id)">修改名称</el-button>
@@ -349,7 +349,6 @@ export default {
       this.$api.getMyProjectList({}).then(res => {
         if (res.errorCode === "1") {
           this.projectList = res.data
-          console.log(res)
         }
       });
     },
@@ -397,21 +396,21 @@ export default {
         projectId: this.selectProject,
         orgTemplateId: tId
       }).then(res => {
-        console.log(res)
-        // if (res.errorCode == "1") {
-        //   res.data[0].itemJson.map(value => {
-        //     value.edit = false;
-        //   });
-        //   res.data[0].groupJson.map(value => {
-        //     value.edit = false;
-        //   });
-        //   this.logData = res.data;
-        //   this.itemJson = res.data[0].itemJson;
-        //   this.groupJson = res.data[0].groupJson;
-        //   this.layerJson = res.data[0].layerJson;
-        //   console.log(res.data[0].itemJson);
-        // }
-      });
+        console.log(res.data[0])
+        if (res.errorCode == "1") {
+          this.settingProp = true
+          res.data[0].itemJson.map(value => {
+            value.edit = false
+          })
+          res.data[0].groupJson.map(value => {
+            value.edit = false
+          })
+          // this.logData = res.data
+          this.itemJson = res.data[0].itemJson
+          this.groupJson = res.data[0].groupJson
+          // this.layerJson = res.data[0].layerJson
+        }
+      })
     },
     // 获取模板分页列表
     getTemplateList() {
