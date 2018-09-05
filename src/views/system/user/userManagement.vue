@@ -1,7 +1,7 @@
 ﻿﻿<template>
   <div class="page-content-body">
       <div class="page-header clearfix">
-        <el-form class="search-form" :inline="true" :model="listQuery" ref="form">
+        <el-form class="search-form" :inline="true" :model="listQuery" ref="form"  v-show="searchUserStatus">
           <el-form-item label="账号：">
             <el-input v-model="listQuery.username" @change="handleSearch" clearable></el-input>
           </el-form-item>
@@ -15,7 +15,7 @@
             <el-button type="primary"  icon="el-icon-search" @click="handleSearch">查询</el-button>
           </el-form-item>
           <div class="btn-group fr">
-            <el-button type="primary" icon="el-icon-plus" @click="handleCreate" :disable="!addUserStatus">新增</el-button>
+            <el-button type="primary" icon="el-icon-plus" @click="handleCreate" v-show="addUserStatus">新增</el-button>
           </div> 
         </el-form>
       </div>
@@ -45,13 +45,13 @@
           <el-table-column prop="createTime" label="创建时间" min-width="150" sortable></el-table-column>
           <el-table-column label="操作" min-width="120">
             <template slot-scope="scope">              
-              <span class="btn" title="编辑" @click="handleUpdate(scope.row)"  :disable="!updateUserStatus"><i class="iconfont icon-edit editicon"></i></span>
+              <span class="btn" title="编辑" @click="handleUpdate(scope.row)" v-show="updateUserStatus"><i class="iconfont icon-edit editicon"></i></span>
               <span  v-if='scope.row.status == 0'>
-                <span class="btn" @click="getUserDelete(scope.row,1)">停用</span>
-                <span class="btn" @click="getUserDelete(scope.row,2)">冻结</span> 
+                <span class="btn" @click="getUserDelete(scope.row,1)" v-show="outageUserStatus">停用</span>
+                <span class="btn" @click="getUserDelete(scope.row,2)" v-show="freezeUserStatus">冻结</span> 
               </span>
-              <span class="btn" v-else-if='scope.row.status == 1' @click="getUserDelete(scope.row,0)">激活</span>
-              <span class="btn" v-else @click="getUserDelete(scope.row,0)">激活</span>
+              <span class="btn" v-else-if='scope.row.status == 1' @click="getUserDelete(scope.row,0)" v-show="activateUserStatus">激活</span>
+              <span class="btn" v-else @click="getUserDelete(scope.row,0)" v-show="activateUserStatus">激活</span>
             </template>
           </el-table-column>
         </el-table>
@@ -162,10 +162,13 @@ export default {
       roleOptions: [], 
       loading: false,      
       total: 0,
-      userAuthorityList:[],
-      addUserStatus:false,
-      updateUserStatus:false,
-      delUserStatus:false,    
+      userAuthorityList: [],
+      searchUserStatus: false,
+      addUserStatus: false,
+      updateUserStatus: false,
+      outageUserStatus: false,
+      activateUserStatus: false,
+      freezeUserStatus: false,    
       titleMap: {
         update: '修改信息',
         create: '新增用户'
@@ -185,14 +188,20 @@ export default {
         roleId: [{ required: true, message: '请选择权限', trigger: 'blur' }]
       }          
     }   
+  },  
+  created() {
+
+    // 请求第一页数据
+    this.listQuery.currentPage = this.$route.query.currentPage ? parseInt(this.$route.query.currentPage) : 1
   },
   mounted() {
     this.getList()
-    this.userAuthorityList=this.$getLastChildrenMenu(this.$store.getters.rootLists,'userManagement')
-     console.log(this.userAuthorityList)  
+    //权限设置
+    this.userAuthorityList=this.$getLastChildrenMenu('userManagement')
+    //  console.log(this.userAuthorityList)  
     for(let i=0;i<this.userAuthorityList.length;i++){
-       // console.log(this.userAuthorityList[i].name);
-      switch(this.userAuthorityList[i].name){
+      //  console.log(this.userAuthorityList[i].menuName);
+      switch(this.userAuthorityList[i].menuName){
         case '添加':
           this.addUserStatus=this.userAuthorityList[i].status
           break;
@@ -212,13 +221,6 @@ export default {
       }
     }    
   },  
-  created() {
-     //权限设置
-    this.userAuthorityList=this.$getLastChildrenMenu(this.$store.getters.rootLists,'userManagement')
-     console.log(this.userAuthorityList)  
-    // 请求第一页数据
-    this.listQuery.currentPage = this.$route.query.currentPage ? parseInt(this.$route.query.currentPage) : 1
-  },
   methods: {    
     // 获取列表数据
     getList() {

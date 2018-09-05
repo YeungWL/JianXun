@@ -188,14 +188,44 @@ export default {
         menuCode: [{ required: true, message: '请输入菜单编码', trigger: 'blur' }],
         menuUrl: [{ required: true, message: '请输入请求地址', trigger: 'blur' }],
         menuType: [{ required: true, message: '请选择菜单类型', trigger: 'blur' }]             
-      }
+      },
+      menuAuthorityList:[],
+      addmenuStatus:true,
+      updatemenuStatus:true,
+      deletemenuStatus:true,
+      addDeviceUserStatus:true,
+      updatePasswordStatus:true,
+      deleteDeviceUserStatus:true
     }
   },
   created() {
     this.getList();
      // 初始获取数据
     this.menuForm.parentId = [this.listQuery.parentId];   
-    // console.log("parentId："+this.menuForm.parentId)    
+    // console.log("parentId："+this.menuForm.parentId)  
+    this.menuAuthorityList=this.$getLastChildrenMenu('menuManagement'); 
+    console.log(this.menuAuthorityList); 
+     for(let i=0;i<this.menuAuthorityList.length;i++){
+      console.log(this.menuAuthorityList[i].name);
+      switch(this.menuAuthorityList[i].name){
+        case '添加':
+          this.addmenuStatus=this.menuAuthorityList[i].status;
+          break;
+        case '修改':
+          this.updatemenuStatus=this.menuAuthorityList[i].status;
+          break;
+        case '删除':
+          this.deletemenuStatus=this.menuAuthorityList[i].status;
+          break;
+        default: ;
+      }
+    }   
+  },
+  mounted() {
+    //权限设置
+    // this.menuAuthorityList=this.$getLastChildrenMenu('roleManagement');
+    
+
   },
   methods: {
     // 获取表格的数据

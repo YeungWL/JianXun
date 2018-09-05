@@ -123,7 +123,7 @@
 <script>
 export default {
   name: 'rolement',  
-  data() {
+  data() {       
     return {
       tableData: [],
       listQuery: {   
@@ -216,6 +216,43 @@ export default {
       }
       this.$api.menuList(params).then(res => {
         this.treeData = res.data;
+        console.log(this.treeData)
+
+      const handleUpdateCheckds = (tree, checkeds, isAdd = true, checkKey = 'no') => {
+          let findHalfCheckds = (item, checkeds, result = new Set()) => {
+              if (item.children) {
+                  let node = [...item.children];
+                  while (node.length) {
+                      let data = node.shift();
+                      if (!item.isRoot) {
+                          if (isAdd && checkeds.includes(data[checkKey] || data) && !checkeds.includes(item[checkKey] || item)) {
+                              result.add(item[checkKey] || item);
+                          } else if (!isAdd && !checkeds.includes(data[checkKey] || data) && checkeds.includes(item[checkKey] || item)) {
+                              result.add(item[checkKey] || item);
+                          }
+                      }
+                      if (data.children && data.children.length > 0) {
+                          node = node.concat(data.children);
+                      }
+                      findHalfCheckds(data, checkeds, result);
+                  }
+              }
+              return result;
+          };
+          let result,
+              halfCheckds = [...findHalfCheckds({
+                  isRoot: true,
+                  children: tree
+              }, checkeds)];
+          if (isAdd) {  //
+              result = [...new Set(checkeds.concat(halfCheckds))];
+          } else {
+              result = checkeds.filter(item => !halfCheckds.includes(item));
+          }
+          //console.log(halfCheckds);
+  
+          return result;
+        }; 
       })
     },  
     // 把勾选的数据，转成后台需要的格式
@@ -224,9 +261,17 @@ export default {
       this.getCheckedNodes().forEach((item, index) => {
         let menuObj = {}
         menuObj.menuId = item.menuId
-        menuObj.menuName = item.menuName
+        // menuObj.menuName = item.menuName
         menuIdArr.push(menuObj)
         // console.log(menuIdArr)
+      })
+      
+      this.getHalfCheckedKeys().forEach((item, index) => {
+        let menuObj = {}
+        menuObj.menuId = item
+        // menuObj.menuName = item.menuName
+        menuIdArr.push(menuObj)
+        console.log(menuIdArr)
       })
       return menuIdArr
     },
@@ -234,8 +279,15 @@ export default {
     getCheckedNodes() {
        return  this.$refs.tree.getCheckedNodes()
     },
+    // 获取半选中的节点所组成的数组
+    getHalfCheckedKeys() {
+       return  this.$refs.tree.getHalfCheckedKeys()
+    },
     handleCheckChange(data, checked, indeterminate) {
         this.getCheckedNodes()
+        this.getHalfCheckedKeys()
+        // console.log(this.getCheckedNodes())
+        // console.log(this.getHalfCheckedKeys())
     },
     // 搜索按钮
     handleSearch() {
@@ -322,7 +374,7 @@ export default {
     update(data) {
       let menuIdJson = JSON.stringify({'menuIdArr': this.getMenuIdArr()})
       this.roleForm.menuIdJson = menuIdJson  
-      //  console.log(menuIdJson)   
+       console.log(menuIdJson)   
       this.$refs.roleForm.validate(valid => {
         if (valid) {
           this.$api.updateRole(this.roleForm).then(response => {

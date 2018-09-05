@@ -25,7 +25,7 @@
             <span>当前有效期至 : 2018年6月30号 </span>
             <a href="javascript:;" @click="show.isShow = !show.isShow">续期</a>
           </div>
-          <el-button type="primary" @click="dialogFormVisible1 = true, getAddTempList()" v-if="buttonShow" class="setion">设置</el-button>
+          <el-button type="primary" @click="getAddTempList()" v-if="buttonShow" class="setion">设置</el-button>
         </div>
       </div>
     </div>
@@ -33,11 +33,11 @@
     <!-- 导出dialog -->
     <el-dialog title="导出" :visible.sync="dialogFormVisible" width="40%">
       <el-form :model="form">
-        <el-form-item label="起始日期" :label-width="formLabelWidth">
+        <el-form-item label="起始日期" label-width="120px">
           <el-date-picker v-model="form.beginTime" type="datetime" placeholder="开始日期">
           </el-date-picker>
         </el-form-item>
-        <el-form-item label="终止日期" :label-width="formLabelWidth">
+        <el-form-item label="终止日期" label-width="120px">
           <el-date-picker v-model="form.endTime" type="datetime" range-separator="至" placeholder="结束日期">
           </el-date-picker>
         </el-form-item>
@@ -49,28 +49,20 @@
 
     <!-- 设置的dialog -->
     <el-dialog title="设置" :visible.sync="dialogFormVisible1" width="560px" class="my-dialog">
-      <div class="setting">
-        <div class="project">
+      <ul class="setting">
+        <li class="project">
           <span class="left">添加日志</span>
-          <el-button icon="el-icon-plus" style="padding: 0;width: 30px;height: 32px;" @click="getTemplateList()"></el-button>
-        </div>
-        <div class="project">
-          <span class="left">土建专业</span>
+          <el-button icon="el-icon-plus" style="padding: 0;width: 30px;height: 32px;" @click="getTemplateList"></el-button>
+        </li>
+        <li class="project" v-for="(item, index) in logList" :key="item.id">
+          <span class="left">{{item.extendName ? item.extendName : item.tempName}}</span>
           <span>
-            <el-button style="height: 32px;" type="primary" @click="updateName = true">修改名称</el-button>
+            <el-button style="height: 32px;" type="primary" @click="showUpdate(item.id)">修改名称</el-button>
             <el-button style="height: 32px;" type="success" @click="inspect = true">预览</el-button>
-            <el-button style="height: 32px;" type="info" @click="settingPropTwo = true">设置参数</el-button>
+            <el-button style="height: 32px;" type="info" @click="queryBuildLog(item.id)">设置参数</el-button>
           </span>
-        </div>
-        <div class="project">
-          <span class="left">土建专业</span>
-          <span>
-            <el-button style="height: 32px;" type="primary">修改名称</el-button>
-            <el-button style="height: 32px;" type="success">预览</el-button>
-            <el-button style="height: 32px;" type="info">设置参数</el-button>
-          </span>
-        </div>
-      </div>
+        </li>
+      </ul>
       <div slot="footer" class="dialog-footer" style="text-align: center;">
         <el-button type="primary" @click="setBuildAttr">提 交</el-button>
       </div>
@@ -94,21 +86,21 @@
         </div>
       </div>
       <div slot="footer" class="dialog-footer" style="text-align: center;">
-        <el-button type="primary" @click="addDialog = false, bindTemplate()">确 定</el-button>
+        <el-button type="primary" @click="bindTemplate">确 定</el-button>
       </div>
     </el-dialog>
 
     <!-- 修改名称dialog -->
     <el-dialog title="修改日志名称" :visible.sync="updateName" class="my-dialog" width="500px">
       <div>
-        <el-form :inline="true" :model="formInline">
+        <el-form :inline="true" :model="updateFormInline">
           <el-form-item label="修改日志名称">
-            <el-input v-model="formInline.user" placeholder="修改日志名称"></el-input>
+            <el-input v-model="updateFormInline.extendName" placeholder="修改日志名称"></el-input>
           </el-form-item>
         </el-form>
       </div>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="updateName = false">确 定</el-button>
+        <el-button type="primary" @click="updateExtendName">确 定</el-button>
       </div>
     </el-dialog>
 
@@ -261,7 +253,6 @@ export default {
         beginTime: "",
         endTime: ""
       },
-      formLabelWidth: "120px",
       dialogFormVisible: false,
       dialogFormVisible1: false,
       dialogFormVisible2: false,
@@ -275,7 +266,7 @@ export default {
       settingPropTwo: false,
       logData: {},
       itemJson: [],
-      groupJson: [{ groupName: "111" }],
+      groupJson: [],
       layerJson: [],
       templateOption: [],
       formInline: {
@@ -287,8 +278,13 @@ export default {
         name: ''
       },
       numTime: "",
-      checkList: []
-    };
+      checkList: [],
+      logList: [],
+      updateFormInline: { // 修改模板扩展名数据
+        extendName: '',
+        orgTemplateId: ''
+      }
+    }
   },
   // watch: {
   //   test1() {
@@ -350,26 +346,23 @@ export default {
     },
     //获取项目列表
     getProjectList() {
-      this.$api
-        .getMyProjectList({
-          operateType: ""
-        })
-        .then(res => {
-          if (res.resultMsg !== "查询成功") return false;
-          this.projectList = res.data;
-          // console.log(res)
-        });
+      this.$api.getMyProjectList({}).then(res => {
+        if (res.errorCode === "1") {
+          this.projectList = res.data
+          console.log(res)
+        }
+      });
     },
     //获取自己参加的组织
     getMyOrg() {
       let params = {
         isMyCreate: 1,
         projectId: ""
-      };
+      }
       this.$api.getMyOrganization(params, {}).then(res => {
         if (res.resultMsg !== "查询成功") return false;
         this.organizationList = res.data;
-      });
+      })
     },
     // 选择组织
     orgChange(value) {
@@ -394,27 +387,31 @@ export default {
         });
     },
     // 负责人获取日志设置项
-    queryBuildLog() {
-      this.$api
-        .queryBuildLog({
-          orgId: this.orgId
-        })
-        .then(res => {
-          console.log(res);
-          if (res.errorCode == "1") {
-            res.data[0].itemJson.map(value => {
-              value.edit = false;
-            });
-            res.data[0].groupJson.map(value => {
-              value.edit = false;
-            });
-            this.logData = res.data;
-            this.itemJson = res.data[0].itemJson;
-            this.groupJson = res.data[0].groupJson;
-            this.layerJson = res.data[0].layerJson;
-            console.log(res.data[0].itemJson);
-          }
-        });
+    queryBuildLog(tId) {
+      if(this.selectProject == '') {
+        this.$message.warning('缺少参数')
+        return
+      }
+      this.$api.queryBuildLog({
+        orgId: this.orgId,
+        projectId: this.selectProject,
+        orgTemplateId: tId
+      }).then(res => {
+        console.log(res)
+        // if (res.errorCode == "1") {
+        //   res.data[0].itemJson.map(value => {
+        //     value.edit = false;
+        //   });
+        //   res.data[0].groupJson.map(value => {
+        //     value.edit = false;
+        //   });
+        //   this.logData = res.data;
+        //   this.itemJson = res.data[0].itemJson;
+        //   this.groupJson = res.data[0].groupJson;
+        //   this.layerJson = res.data[0].layerJson;
+        //   console.log(res.data[0].itemJson);
+        // }
+      });
     },
     // 获取模板分页列表
     getTemplateList() {
@@ -433,15 +430,40 @@ export default {
         templateName: this.formInline.templateName,
         templateId: this.formInline.templateId
       }).then(res => {
-        console.log(res)
+        if(res.errorCode === '1') {
+          this.addDialog = false
+          this.getAddTempList()
+        }
       })
     },
     // 获取关联日志列表
     getAddTempList() {
       this.$api.getAddTempList({
-        orgTemplateId: "08dff9faac5741f287aca122df420291"
+        orgId: this.orgId
       }).then(res => {
+        if(res.errorCode === '1') {
+          this.logList = res.data
+          this.dialogFormVisible1 = true
+        }
+      })
+    },
+    // 展示弹窗
+    showUpdate(tId) {
+      this.updateName = true
+      this.updateFormInline.orgTemplateId = tId
+    },
+    // 修改模板扩展名称
+    updateExtendName() {
+      if(this.updateFormInline.extendName == '') {
+        this.$message.warning('修改名称不能为空')
+        return
+      }
+      this.$api.updateExtendName(this.updateFormInline).then(res => {
         console.log(res)
+        if(res.errorCode === '1') {
+          this.updateName = false
+          this.getAddTempList()
+        }
       })
     },
     // 修改分项工程项

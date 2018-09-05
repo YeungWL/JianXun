@@ -22,7 +22,7 @@
                 </el-input>
               </el-form-item>
               <el-form-item class="login-yzm" prop="code">
-                <el-input placeholder="验证码" :maxlength="4" class='yzm' @blur="checkImgCode()" v-model="loginForm.code">
+                <el-input placeholder="验证码" :maxlength="4" class='yzm' @blur="checkImgCode()" v-model="loginForm.code" @keyup.enter.native="handleLogin">
                 </el-input>
                 <div class="yzm-pic"><img :src="codeUrl" alt="验证码" @click="getCodeUrl" ></div>
               </el-form-item>
@@ -34,7 +34,7 @@
                 </span>         
               </el-form-item>           
               <el-form-item class="loginBtn">
-                <el-button class="btn-login" type="success" :loading="loading"  @click.native.prevent="handleLogin">登录</el-button>
+                <el-button class="btn-login" type="success" :loading="loading"  @click="handleLogin">登录</el-button>
                 <!--<div class="mt20">
                     <p class="blue">使用第三方账号登录</p>
                     <div class="top10"><a target="_blank" title="QQ" href="../../assets/images/qqLogin.do" class="u-qq"></a><a target="_blank" title="微信" href="javascript:;" class="u-wecat"></a></div>
@@ -221,7 +221,7 @@ export default {
           menuName: '',
           menuCode: '',
           parentId: '',
-          isLeaf: '' 
+          isLeaf: '2' 
         })
         .then(_ => {
           console.log(_.data.data[0].url)

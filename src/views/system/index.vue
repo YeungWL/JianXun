@@ -9,12 +9,6 @@
                router>
         <el-menu-item :index="item.menuUrl" v-for="(item,index) in userManageList" :key="index" v-if="item.status"
                       :class="{'is-active':isActived(item.menuUrl)}">{{item.menuName}}</el-menu-item>
-      <!--  <el-menu-item index="/user/usergroup"
-                      :class="{'is-active':isActived('/user/usergroup')}">用户组管理</el-menu-item>
-        <el-menu-item index="/user/role"
-                      :class="{'is-active':isActived('/user/role')}">角色管理</el-menu-item>
-        <el-menu-item index="/user/usertag"
-                      :class="{'is-active':isActived('/user/usertag')}">用户标签管理</el-menu-item>-->
       </el-menu>
   </el-aside>
   <el-main>
@@ -31,12 +25,10 @@ export default {
     }
   },
   created() {
-    // 获取当前菜单
-    this.userManageList=this.$getChildrenMenu(this.$store.getters.rootLists,'system');
-    // console.log(this.$store.getters.rootLists)
   },
   mounted(){
-    this.userManageList=this.$getChildrenMenu(this.$store.getters.rootLists,'system');
+    // 获取当前菜单
+    this.userManageList=this.$getChildrenMenu('system');
   },
   watch:{
     'this.$store.getters.rootLists'(v){

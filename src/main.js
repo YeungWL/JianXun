@@ -123,8 +123,8 @@ Vue.prototype.getToken = function (){//changeData是函数名
 //   }
 // })
 // //获取子菜单数据
-Vue.prototype.$getChildrenMenu=function(data,menuCode){
-  let userAuthorityList=JSON.parse(data);
+Vue.prototype.$getChildrenMenu=function(menuCode){
+  let userAuthorityList=JSON.parse(this.$store.getters.rootLists);
   for(let i=0;i<userAuthorityList.length;i++){
     if(userAuthorityList[i].menuCode==menuCode){
        return userAuthorityList[i].childList;
@@ -133,7 +133,7 @@ Vue.prototype.$getChildrenMenu=function(data,menuCode){
   }
 };
 //获取最后子菜单数据
-Vue.prototype.$getLastChildrenMenu=function(data,menuCode){
+Vue.prototype.$getLastChildrenMenu=function(menuCode){
   let userAuthorityList=JSON.parse(this.$store.getters.rootLists);
   // console.log(userAuthorityList);
   for(let i=0;i<userAuthorityList.length;i++){
