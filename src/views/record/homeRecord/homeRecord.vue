@@ -187,7 +187,7 @@
           </el-form-item>
           <el-form-item label="技术负责人">
             <el-select v-model="formData.name" style="width:350px;" placeholder="技术负责人">
-
+              <el-option v-for="(item, index) in principalList" :key="index" :label="item.memberName" :value="item.memberUid"></el-option>
             </el-select>
           </el-form-item>
         </el-form>
@@ -200,10 +200,8 @@
         </div>
         <div class="power">
           <div style="padding:10px 0;">查阅权限</div>
-          <el-checkbox-group v-model="checkList">
-            <el-checkbox label="监理1标"></el-checkbox>
-            <el-checkbox label="监理1标"></el-checkbox>
-            <el-checkbox label="监理1标"></el-checkbox>
+          <el-checkbox-group v-model="selectList">
+            <el-checkbox :checked="item.selected == 1" :label="item" v-for="(item, index) in orgGrantJson" :key="index">{{item.orgName}}</el-checkbox>
           </el-checkbox-group>
         </div>
       </div>
@@ -276,8 +274,10 @@ export default {
       formData: {
         name: ''
       },
+      principalList: [],
       numTime: "",
       checkList: [],
+      selectList: [],
       logList: [],
       updateFormInline: { // 修改模板扩展名数据
         extendName: '',
@@ -409,19 +409,26 @@ export default {
       }).then(res => {
         console.log(res.data[0])
         if (res.errorCode == "1") {
-          this.settingProp = true
-          res.data[0].itemJson.map(value => {
-            value.edit = false
-          })
-          res.data[0].groupJson.map(value => {
-            value.edit = false
-          })
-          res.data[0].orgTemplateId = tId
-          this.logData = res.data[0]
-          this.itemJson = res.data[0].itemJson
-          this.groupJson = res.data[0].groupJson
+          // 房屋建设设置dialog
+          // this.settingProp = true
+          // res.data[0].itemJson.map(value => {
+          //   value.edit = false
+          // })
+          // res.data[0].groupJson.map(value => {
+          //   value.edit = false
+          // })
+          // res.data[0].orgTemplateId = tId
+          // this.logData = res.data[0]
+          // this.itemJson = res.data[0].itemJson
+          // this.groupJson = res.data[0].groupJson
+          // this.orgGrantJson = res.data[0].orgGrantJson
+          // this.layerJson = res.data[0].layerJson
+          
+          // 市政工程设置dialog
+          this.settingPropTwo = true
           this.orgGrantJson = res.data[0].orgGrantJson
-          this.layerJson = res.data[0].layerJson
+          this.principalList = res.data[0].principalList
+
         }
       })
     },
@@ -605,11 +612,11 @@ export default {
       let layer = {
         layerJson: this.layerJson
       }
-      let result = this.orgGrantJson.map(item => {
+      let result = this.checkList.map(item => {
         return {
           orgId: item.orgId,
           orgName: item.orgName,
-          orgTemplateId: item.orgTemplateId,
+          id: item.orgTemplateId,
           selected: 1
         }
       })
