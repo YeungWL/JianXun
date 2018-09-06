@@ -64,7 +64,7 @@
         </li>
       </ul>
       <div slot="footer" class="dialog-footer" style="text-align: center;">
-        <el-button type="primary" @click="setBuildAttr">提 交</el-button>
+        <el-button type="primary">提 交</el-button>
       </div>
     </el-dialog>
 
@@ -163,14 +163,12 @@
         <div class="power">
           <div style="padding:10px 0;">查阅权限</div>
           <el-checkbox-group v-model="checkList">
-            <el-checkbox label="监理1标"></el-checkbox>
-            <el-checkbox label="监理1标"></el-checkbox>
-            <el-checkbox label="监理1标"></el-checkbox>
+            <el-checkbox :checked="item.selected == 1" :label="item" v-for="(item, index) in orgGrantJson" :key="index">{{item.orgName}}</el-checkbox>
           </el-checkbox-group>
         </div>
       </div>
       <div slot="footer" class="dialog-footer" style="text-align: center;">
-        <el-button type="primary" @click="settingProp = false">提 交</el-button>
+        <el-button type="primary" @click="setBuildAttr">提 交</el-button>
       </div>
     </el-dialog>
 
@@ -268,6 +266,7 @@ export default {
       itemJson: [],
       groupJson: [],
       layerJson: [],
+      orgGrantJson: [],
       templateOption: [],
       formInline: {
         templateName: '',
@@ -383,7 +382,19 @@ export default {
               this.buttonShow = false;
             }
           }
-        });
+        })
+    },
+    // 查阅权限改变
+    testChange(val) {
+      let result = val.map(item => {
+        return {
+          orgId: item.orgId,
+          orgName: item.orgName,
+          orgTemplateId: item.orgTemplateId,
+          selected: 1
+        }
+      })
+      console.log(result)
     },
     // 负责人获取日志设置项
     queryBuildLog(tId) {
@@ -405,10 +416,12 @@ export default {
           res.data[0].groupJson.map(value => {
             value.edit = false
           })
-          // this.logData = res.data
+          res.data[0].orgTemplateId = tId
+          this.logData = res.data[0]
           this.itemJson = res.data[0].itemJson
           this.groupJson = res.data[0].groupJson
-          // this.layerJson = res.data[0].layerJson
+          this.orgGrantJson = res.data[0].orgGrantJson
+          this.layerJson = res.data[0].layerJson
         }
       })
     },
@@ -543,17 +556,15 @@ export default {
         data.edit = !data.edit;
         return;
       }
-      this.$api
-        .updateBuildGroup({
+      this.$api.updateBuildGroup({
           groupId: data.groupId,
           groupName: data.groupName
-        })
-        .then(res => {
+        }).then(res => {
           if (res.errorCode == "1") {
             this.$message.success("修改成功");
             data.edit = !data.edit;
           }
-        });
+        })
     },
     // 删除工作组项
     delBuildGroup(data, index) {
@@ -587,26 +598,37 @@ export default {
     setBuildAttr() {
       let item = {
         itemJson: this.itemJson
-      };
+      }
       let group = {
         groupJson: this.groupJson
-      };
+      }
       let layer = {
         layerJson: this.layerJson
-      };
-      this.$api
-        .setBuildAttr({
-          templateId: "",
-          orgId: this.logData[0].orgId,
+      }
+      let result = this.orgGrantJson.map(item => {
+        return {
+          orgId: item.orgId,
+          orgName: item.orgName,
+          orgTemplateId: item.orgTemplateId,
+          selected: 1
+        }
+      })
+      let orgBind = {
+        'orgBindJson': result
+      }
+      this.$api.setBuildAttr({
+          orgId: this.logData.orgId,
+          orgTemplateId: this.logData.orgTemplateId,
+          approveTime: this.numTime,
+          projectId: this.selectProject,
           itemJson: JSON.stringify(item),
           groupJson: JSON.stringify(group),
-          layerJson: JSON.stringify(layer)
-        })
-        .then(res => {
-          console.log(res);
+          layerJson: JSON.stringify(layer),
+          orgBindJson: JSON.stringify(orgBind)
+        }).then(res => {
+          console.log(res)
           if (res.errorCode == "1") {
-            this.queryBuildLog();
-            this.dialogFormVisible1 = false;
+            this.settingProp = false
           }
         })
     }
