@@ -180,13 +180,13 @@
             <el-input v-model="formData.name" style="width:350px;" placeholder="工程名称"></el-input>
           </el-form-item>
           <el-form-item label="单位工程名称">
-            <el-input v-model="formData.name" style="width:350px;" placeholder="单位工程名称"></el-input>
+            <el-input v-model="formData.unitName" style="width:350px;" placeholder="单位工程名称"></el-input>
           </el-form-item>
           <el-form-item label="施工单位">
-            <el-input v-model="formData.name" style="width:350px;" placeholder="施工单位"></el-input>
+            <el-input v-model="formData.buildName" style="width:350px;" placeholder="施工单位"></el-input>
           </el-form-item>
           <el-form-item label="技术负责人">
-            <el-select v-model="formData.name" style="width:350px;" placeholder="技术负责人">
+            <el-select v-model="formData.principalId" style="width:350px;" placeholder="技术负责人">
               <el-option v-for="(item, index) in principalList" :key="index" :label="item.memberName" :value="item.memberUid"></el-option>
             </el-select>
           </el-form-item>
@@ -194,19 +194,19 @@
         <div class="logTime" style="border-top:1px solid #DCDFE6;border-bottom:1px solid #DCDFE6;padding: 10px 0;">
           <span>组织负责人审阅日志时间: </span>
           <span>
-            <el-input-number v-model="numTime" controls-position="right" :min="1" :max="24" size="mini" style="width:83px;"></el-input-number>
+            <el-input-number v-model="settingTime" controls-position="right" :min="1" :max="24" size="mini" style="width:83px;"></el-input-number>
             <span>- 24</span>
           </span>
         </div>
         <div class="power">
           <div style="padding:10px 0;">查阅权限</div>
           <el-checkbox-group v-model="selectList">
-            <el-checkbox :checked="item.selected == 1" :label="item" v-for="(item, index) in orgGrantJson" :key="index">{{item.orgName}}</el-checkbox>
+            <el-checkbox :label="item" v-for="(item, index) in orgGrantJson" :key="index">{{item.orgName}}</el-checkbox>
           </el-checkbox-group>
         </div>
       </div>
       <div slot="footer" class="dialog-footer" style="text-align: center;">
-        <el-button type="primary" @click="settingPropTwo = false">提 交</el-button>
+        <el-button type="primary" @click="setBuild">提 交</el-button>
       </div>
     </el-dialog>
 
@@ -271,11 +271,17 @@ export default {
         templateId: '',
         user: ""
       },
+      resultData: {},
       formData: {
-        name: ''
+        id: '',
+        name: '',
+        unitName: '',
+        buildName: '',
+        principalId: ''
       },
       principalList: [],
       numTime: "",
+      settingTime: '',
       checkList: [],
       selectList: [],
       logList: [],
@@ -385,17 +391,17 @@ export default {
         })
     },
     // 查阅权限改变
-    testChange(val) {
-      let result = val.map(item => {
-        return {
-          orgId: item.orgId,
-          orgName: item.orgName,
-          orgTemplateId: item.orgTemplateId,
-          selected: 1
-        }
-      })
-      console.log(result)
-    },
+    // testChange(val) {
+    //   let result = val.map(item => {
+    //     return {
+    //       orgId: item.orgId,
+    //       orgName: item.orgName,
+    //       orgTemplateId: item.orgTemplateId,
+    //       selected: 1
+    //     }
+    //   })
+    //   console.log(result)
+    // },
     // 负责人获取日志设置项
     queryBuildLog(tId) {
       if(this.selectProject == '') {
@@ -423,12 +429,25 @@ export default {
           // this.groupJson = res.data[0].groupJson
           // this.orgGrantJson = res.data[0].orgGrantJson
           // this.layerJson = res.data[0].layerJson
+          // this.numTime = res.data[0].approveTime
           
           // 市政工程设置dialog
           this.settingPropTwo = true
+          res.data[0].orgTemplateId = tId
+          this.resultData = res.data[0]
+          this.settingTime = res.data[0].approveTime
           this.orgGrantJson = res.data[0].orgGrantJson
+          for(let i = 0; i < res.data[0].orgGrantJson.length; i++) {
+            if(res.data[0].orgGrantJson[i].selected == 1) {
+              this.selectList.push(res.data[0].orgGrantJson[i])
+            }
+          }
           this.principalList = res.data[0].principalList
-
+          this.formData.name = res.data[0].cityPolicy.name
+          this.formData.unitName = res.data[0].cityPolicy.unitName
+          this.formData.buildName = res.data[0].cityPolicy.buildName
+          this.formData.principalId = res.data[0].cityPolicy.principalId
+          this.formData.id = res.data[0].cityPolicy.cityId || ''
         }
       })
     },
@@ -601,6 +620,35 @@ export default {
           this.$message.warning("已取消删除");
         });
     },
+    setBuild() {
+      let resultArr = []
+      resultArr.push(this.formData)
+      let cityPolicy = {
+        'cityPolicyJson': resultArr
+      }
+      let result = this.selectList.map(item => {
+        return {
+          orgId: item.orgId,
+          orgName: item.orgName,
+          orgTemplateId: item.orgTemplateId,
+          selected: 1
+        }
+      })
+      let orgBind = {
+        'orgBindJson': result
+      }
+      console.log(orgBind)
+      this.$api.setBuildAttr({
+        orgId: this.resultData.orgId,
+        orgTemplateId: this.resultData.orgTemplateId,
+        approveTime: this.settingTime,
+        projectId: this.selectProject,
+        cityPolicyJson: JSON.stringify(cityPolicy),
+        orgBindJson: JSON.stringify(orgBind)
+      }).then(res => {
+        console.log(res)
+      })
+    },
     // 负责人设置分项内容
     setBuildAttr() {
       let item = {
@@ -612,14 +660,17 @@ export default {
       let layer = {
         layerJson: this.layerJson
       }
-      let result = this.checkList.map(item => {
-        return {
-          orgId: item.orgId,
-          orgName: item.orgName,
-          id: item.orgTemplateId,
-          selected: 1
-        }
-      })
+      let result = []
+        console.log(11)
+        result = this.checkList.map(item => {
+          return {
+            orgId: item.orgId,
+            orgName: item.orgName,
+            orgTemplateId: item.orgTemplateId,
+            selected: 0
+          }
+        })
+      
       let orgBind = {
         'orgBindJson': result
       }
