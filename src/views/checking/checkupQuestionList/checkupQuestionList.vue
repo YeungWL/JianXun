@@ -53,7 +53,7 @@
           <el-table-column prop="queDesc" label="问题描述" min-width="150"  show-overflow-tooltip></el-table-column>
           <el-table-column label="操作" min-width="120">
             <template slot-scope="scope"> 
-              <span class="btn" title="编辑" @click="handleUpdate(scope.row)"><i class="iconfont icon-edit editicon"></i></span>             
+              <span class="btn" title="编辑" @click="handleUpdate(scope.row)"><i class="iconfont icon-edit editicon"></i></span>         <span class="btn" title="查看" @click="handleView(scope.row.questionId)"><i class="iconfont icon-view viewicon"></i></span> 
               <span class="btn" v-if='scope.row.isDeleted == "N"' 
                 @click="handelDelete(scope.row,'Y')" title="删除">
                 <i class="iconfont icon-del delicon"></i>
@@ -182,7 +182,7 @@ export default {
       total: 0,
       multipleSelection:[],
       usedCapacity: 30,// 容量
-      searchDialogVisible: true,
+      searchDialogVisible: false,
       rules: {
         name: [{ required: true, message: '请输入模板名称', trigger: 'blur', pattern: /^[\u4E00-\u9FA5A-Za-z0-9]+$/, message: '允许中文、英文字母、数字！'}],
         batchCode: [{ required: true, message: '请输入编码', trigger: 'blur'}],
@@ -402,7 +402,13 @@ export default {
           this.$message.error(error)
           return false
         })      
-    }   
+    },
+    handleView(questionId) {
+      this.$router.push({
+        path: "/checking/history",
+        query: { questionId: questionId }
+      })
+    }    
   }    
 }
 </script>
