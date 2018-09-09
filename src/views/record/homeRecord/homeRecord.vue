@@ -284,7 +284,7 @@ export default {
       },
       resultData: {},
       formData: {
-        id: '',
+        cityId: '',
         name: '',
         unitName: '',
         buildName: '',
@@ -473,7 +473,7 @@ export default {
             this.formData.unitName = res.data[0].cityPolicy.unitName
             this.formData.buildName = res.data[0].cityPolicy.buildName
             this.formData.principalId = res.data[0].cityPolicy.principalId
-            this.formData.id = res.data[0].cityPolicy.cityId || ''
+            this.formData.cityId = res.data[0].cityPolicy.cityId || ''
           }
         }
       })
@@ -652,10 +652,8 @@ export default {
         });
     },
     setBuild() {
-      let resultArr = []
-      resultArr.push(this.formData)
       let cityPolicy = {
-        'cityPolicyJson': resultArr
+        'cityPolicyJson': this.formData
       }
       let result = this.selectList.map(item => {
         return {
