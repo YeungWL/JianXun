@@ -56,6 +56,7 @@ export default {
     return {
       orgId: this.$route.query.orgId,
       date: this.$route.query.date,
+      orgTemplateId: this.$route.query.orgTemplateId,
       attrData: [],
       projectList: [],
       group: [],
@@ -96,8 +97,7 @@ export default {
     },
     //获取用户关联的工程
     getProjectList() {
-      this.$api
-        .getBuildLogItemList({
+      this.$api.getBuildLogItemList({
           projectOrgId: this.orgId
         })
         .then(res => {
@@ -125,7 +125,8 @@ export default {
       this.date = this.date.replace(/\//g, '-')
       let params = {
         projectOrgId: this.orgId,
-        date: this.date
+        date: this.date,
+        orgTemplateId: this.orgTemplateId
       }
       this.$api.getBuildLogProgressList(params).then(res => {
         if (res.resultMsg !== '查询成功') return false
@@ -164,13 +165,14 @@ export default {
     buildLog() {
       this.$api.buildLog({
         orgId: this.orgId,
+        orgTemplateId: this.orgTemplateId,
         buildContent: JSON.stringify(this.buildContent),
         mainBuildAttr: JSON.stringify(this.attrData)
       }).then(res => {
         console.log(res)
         if(res.errorCode == '1') {
           this.$message.success('提交成功')
-          this.$route.push({path: '/record/homeRecord'})
+          this.$router.push({path: '/record'})
         }
       })
     }

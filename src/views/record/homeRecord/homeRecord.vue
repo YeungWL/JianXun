@@ -15,6 +15,12 @@
               </el-option>
             </el-select>
           </el-form-item>
+          <el-form-item label="模版名称" v-show="selectOrg !== ''">
+            <el-select v-model="orgTemplate" placeholder="请选择模版" value-key="id">
+              <el-option v-for="item in logList" :key="item.id" :label="item.extendName ? item.extendName : item.tempName" :value="item">
+              </el-option>
+            </el-select>
+          </el-form-item>
         </el-form>
       </div>
       <div class="calinder">
@@ -25,7 +31,7 @@
             <span>当前有效期至 : 2018年6月30号 </span>
             <a href="javascript:;" @click="show.isShow = !show.isShow">续期</a>
           </div>
-          <el-button type="primary" @click="getAddTempList()" v-if="buttonShow" class="setion">设置</el-button>
+          <el-button type="primary" @click="getAddTempList(0)" v-if="buttonShow" class="setion">设置</el-button>
         </div>
       </div>
     </div>
@@ -58,8 +64,8 @@
           <span class="left">{{item.extendName ? item.extendName : item.tempName}}</span>
           <span>
             <el-button style="height: 32px;" type="primary" @click="showUpdate(item.id)">修改名称</el-button>
-            <el-button style="height: 32px;" type="success" @click="inspect = true">预览</el-button>
-            <el-button style="height: 32px;" type="info" @click="queryBuildLog(item.id)">设置参数</el-button>
+            <el-button style="height: 32px;" type="success" @click="showInspect(item.path)">预览</el-button>
+            <el-button style="height: 32px;" type="info" @click="queryBuildLog(item.id, item.typeCode)">设置参数</el-button>
           </span>
         </li>
       </ul>
@@ -107,7 +113,10 @@
     <!-- 预览dialog -->
     <el-dialog title="预览" :visible.sync="inspect" class="my-dialog">
       <div>
-        <div style="text-align: center;">预览</div>
+        <!-- <div style="text-align: center;">预览</div> -->
+        <div>
+          <img :src="imgSrc" alt="预览图片。。。" style="display: block;width: 90%;margin: 0 auto;">
+        </div>
       </div>
       <div slot="footer" class="dialog-footer" style="text-align: center;">
         <el-button type="primary" @click="inspect = false">确 定</el-button>
@@ -238,8 +247,10 @@ export default {
       show: {
         isShow: false
       },
-      selectProject: "",
-      selectOrg: "",
+      imgSrc: '',
+      selectProject: "", // 项目ID
+      selectOrg: "", // 组织ID
+      orgTemplate: {}, // 模版项的选择项
       projectList: [],
       organizationList: [],
       orgId: "",
@@ -315,11 +326,7 @@ export default {
       let month = date.getMonth() + 1;
       let days = date.getDate();
       let year = date.getFullYear();
-      if (
-        (numDays < days && numMonth == month) ||
-        numMonth < month ||
-        years < year
-      ) {
+      if ((numDays < days && numMonth == month) || numMonth < month || years < year) {
         if (this.orgId == "") {
           this.$message("请选择一个组织");
           return false;
@@ -333,17 +340,30 @@ export default {
         });
       }
       if (numDays == days && numMonth == month && year == years) {
-        if (this.orgId == "") {
-          this.$message("请选择一个组织");
+        if (this.orgId == "" || this.orgTemplateId) {
+          this.$message("组织或模版不能为空");
           return false;
         }
-        this.$router.push({
-          name: "writeRecord",
-          query: {
-            orgId: this.orgId,
-            date: day.date
-          }
-        });
+        if(this.orgTemplate.typeCode == '001') {
+          this.$router.push({
+            name: "shiRecord",
+            query: {
+              orgId: this.orgId,
+              date: day.date,
+              orgTemplateId: this.orgTemplate.id
+            }
+          });
+        }
+        if(this.orgTemplate.typeCode == '003') {
+          this.$router.push({
+            name: "writeRecord",
+            query: {
+              orgId: this.orgId,
+              date: day.date,
+              orgTemplateId: this.orgTemplate.id
+            }
+          });
+        }
       }
     },
     onResultChange(val) {
@@ -370,12 +390,11 @@ export default {
     },
     // 选择组织
     orgChange(value) {
-      this.orgId = value;
-      this.$api
-        .isChargeMan({
+      this.orgId = value
+      this.getAddTempList(1)
+      this.$api.isChargeMan({
           projectOrgId: value
-        })
-        .then(res => {
+        }).then(res => {
           if (res.errorCode == "1") {
             if (
               res.data[0].isChargeMan == "0" ||
@@ -403,7 +422,7 @@ export default {
     //   console.log(result)
     // },
     // 负责人获取日志设置项
-    queryBuildLog(tId) {
+    queryBuildLog(tId, typeCode) {
       if(this.selectProject == '') {
         this.$message.warning('缺少参数')
         return
@@ -415,39 +434,47 @@ export default {
       }).then(res => {
         console.log(res.data[0])
         if (res.errorCode == "1") {
-          // 房屋建设设置dialog
-          // this.settingProp = true
-          // res.data[0].itemJson.map(value => {
-          //   value.edit = false
-          // })
-          // res.data[0].groupJson.map(value => {
-          //   value.edit = false
-          // })
-          // res.data[0].orgTemplateId = tId
-          // this.logData = res.data[0]
-          // this.itemJson = res.data[0].itemJson
-          // this.groupJson = res.data[0].groupJson
-          // this.orgGrantJson = res.data[0].orgGrantJson
-          // this.layerJson = res.data[0].layerJson
-          // this.numTime = res.data[0].approveTime
-          
-          // 市政工程设置dialog
-          this.settingPropTwo = true
-          res.data[0].orgTemplateId = tId
-          this.resultData = res.data[0]
-          this.settingTime = res.data[0].approveTime
-          this.orgGrantJson = res.data[0].orgGrantJson
-          for(let i = 0; i < res.data[0].orgGrantJson.length; i++) {
-            if(res.data[0].orgGrantJson[i].selected == 1) {
-              this.selectList.push(res.data[0].orgGrantJson[i])
+          if(typeCode == '003') {
+            // 房屋建设设置dialog
+            this.settingProp = true
+            res.data[0].itemJson.map(value => {
+              value.edit = false
+            })
+            res.data[0].groupJson.map(value => {
+              value.edit = false
+            })
+            for(let i = 0; i < res.data[0].orgGrantJson.length; i++) {
+              if(res.data[0].orgGrantJson[i].selected == 1) {
+                this.checkList.push(res.data[0].orgGrantJson[i])
+              }
             }
+            res.data[0].orgTemplateId = tId
+            this.logData = res.data[0]
+            this.itemJson = res.data[0].itemJson
+            this.groupJson = res.data[0].groupJson
+            this.orgGrantJson = res.data[0].orgGrantJson
+            this.layerJson = res.data[0].layerJson
+            this.numTime = res.data[0].approveTime
           }
-          this.principalList = res.data[0].principalList
-          this.formData.name = res.data[0].cityPolicy.name
-          this.formData.unitName = res.data[0].cityPolicy.unitName
-          this.formData.buildName = res.data[0].cityPolicy.buildName
-          this.formData.principalId = res.data[0].cityPolicy.principalId
-          this.formData.id = res.data[0].cityPolicy.cityId || ''
+          if(typeCode == '001') {
+            // 市政工程设置dialog
+            this.settingPropTwo = true
+            res.data[0].orgTemplateId = tId
+            this.resultData = res.data[0]
+            this.settingTime = res.data[0].approveTime
+            this.orgGrantJson = res.data[0].orgGrantJson
+            for(let i = 0; i < res.data[0].orgGrantJson.length; i++) {
+              if(res.data[0].orgGrantJson[i].selected == 1) {
+                this.selectList.push(res.data[0].orgGrantJson[i])
+              }
+            }
+            this.principalList = res.data[0].principalList
+            this.formData.name = res.data[0].cityPolicy.name
+            this.formData.unitName = res.data[0].cityPolicy.unitName
+            this.formData.buildName = res.data[0].cityPolicy.buildName
+            this.formData.principalId = res.data[0].cityPolicy.principalId
+            this.formData.id = res.data[0].cityPolicy.cityId || ''
+          }
         }
       })
     },
@@ -470,18 +497,22 @@ export default {
       }).then(res => {
         if(res.errorCode === '1') {
           this.addDialog = false
-          this.getAddTempList()
+          this.getAddTempList(0)
         }
       })
     },
     // 获取关联日志列表
-    getAddTempList() {
+    getAddTempList(valueItem) {
       this.$api.getAddTempList({
         orgId: this.orgId
       }).then(res => {
         if(res.errorCode === '1') {
           this.logList = res.data
-          this.dialogFormVisible1 = true
+          if(valueItem == 0) {
+            this.dialogFormVisible1 = true
+          } else {
+            this.$message.warning(res.resultMsg)
+          }
         }
       })
     },
@@ -648,6 +679,12 @@ export default {
       }).then(res => {
         console.log(res)
       })
+    },
+    // 预览弹窗
+    showInspect(value) {
+      this.inspect = true
+      console.log(value)
+      this.imgSrc = value
     },
     // 负责人设置分项内容
     setBuildAttr() {
