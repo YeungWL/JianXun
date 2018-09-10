@@ -63,6 +63,8 @@ $red:#e85657;
 .el-container {
   padding-top: 80px;
   overflow: hidden;
+  background: #ecf0f5;
+  min-height: 100%;
   .el-aside {
     flex-shrink: 0;
     border-right: 1px solid $gray;
@@ -407,6 +409,9 @@ $red:#e85657;
     flex-wrap: wrap;
 } 
 .ui-form {
+  .el-form-item {
+    margin-bottom: 10px;
+ }
   .line {
     text-align: center;
   }

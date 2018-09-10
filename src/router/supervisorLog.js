@@ -9,10 +9,10 @@ const payCharge = resolve =>
 const homeRecord = resolve =>
   require(['@/views/supervisorLog/homeRecord/homeRecord'], resolve)
 // 日志编写
-// const writeRecord = resolve =>
-//   require(['@/views/supervisorLog/homeRecord/writeRecord/writeRecord'], resolve)
+const writeSupervisoRecord = resolve =>
+   require(['@/views/supervisorLog/homeRecord/writeRecord/writeRecord'], resolve)
 // 日志详情
-// const detail = resolve => require(['@ /views/supervisorLog/homeRecord/detail/detail'], resolve)
+const detail = resolve => require(['@/views/supervisorLog/homeRecord/detail/detail'], resolve)
 export default {
   path: '/supervisorLog',
   component: supervisorLog,
@@ -32,17 +32,17 @@ export default {
       name: 'homeRecord',
       meta: { requireAuth: true }
     },
-    // {
-    //   path: '/supervisorLog/writeRecord',
-    //   component: writeRecord,
-    //   name: 'writeRecord',
-    //   meta: { requireAuth: true }
-    // },
-    // {
-    //   path: '/supervisorLog/detail',
-    //   component: detail,
-    //   name: 'detail',
-    //   meta: { requireAuth: true }
-    // }
+    {
+      path: '/supervisorLog/writeRecord',
+      component: writeSupervisoRecord,
+      name: 'writeSupervisoRecord',
+      meta: { requireAuth: true }
+    },
+    {
+      path: '/supervisorLog/detail',
+      component: detail,
+      name: 'detail',
+      meta: { requireAuth: true }
+    }
   ]
 }

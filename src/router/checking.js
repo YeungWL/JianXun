@@ -4,6 +4,8 @@
 const checking = resolve => require(['@/views/checking/index'], resolve)
 /**现场检查 => 问题列表 */
 const checkupQuestionList = resolve => require(['@/views/checking/checkupQuestionList/checkupQuestionList'], resolve)
+/**现场检查 => 整改 */
+const rectifyCheckupQuestion = resolve => require(['@/views/checking/checkupQuestionList/rectifyCheckupQuestion'], resolve)
 /**现场检查 => 历史记录 */
 const history = resolve => require(['@/views/checking/checkupQuestionList/history'], resolve)
 
@@ -18,6 +20,12 @@ export default {
       path: '/checking/checkupQuestionList',
       component: checkupQuestionList,
       name: 'checkupQuestionList',
+      meta: { requireAuth: true }
+    },
+    {
+      path: '/checking/rectifyCheckupQuestion',
+      component: rectifyCheckupQuestion,
+      name: 'rectifyCheckupQuestion',
       meta: { requireAuth: true }
     },
     {

@@ -140,7 +140,7 @@
       <div style="margin: 30px 20px 10px 10px">
         <div class="ui-form">
           <el-form ref="saveOrgLawAttr" :model="saveOrgLawAttr" label-width="90px" size="mini">
-            <el-row :gutter="23">
+            <el-row :gutter="24">
               <el-col :span="13">
                 <el-form-item label="文件名称：">
                   <el-input v-model="saveOrgLawAttr.lawName"></el-input>
@@ -152,7 +152,7 @@
                 </el-form-item>
               </el-col>
             </el-row>
-            <el-row :gutter="23">
+            <el-row :gutter="24">
               <el-col :span="9">
                 <el-form-item label="发布机构：">
                   <el-input v-model="saveOrgLawAttr.deptUnit"></el-input>
@@ -171,7 +171,7 @@
               </el-col>
             </el-row>
             <el-row>
-              <el-col :span="23">
+              <el-col :span="24">
                 <el-form-item>
                   <ul>
                     <li v-for="item in itemJson" :key="item.index" :label="item.fileName" :value="item.fileName">
@@ -184,7 +184,7 @@
               </el-col>
             </el-row>
             <el-row>
-              <el-col :span="23">
+              <el-col :span="24">
                 <el-form-item>
                   <textarea style="resize:none" class="ckeditor" id="editor1" name="content"></textarea>
                 </el-form-item>

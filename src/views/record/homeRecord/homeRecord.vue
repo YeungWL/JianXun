@@ -327,20 +327,22 @@ export default {
       let days = date.getDate();
       let year = date.getFullYear();
       if ((numDays < days && numMonth == month) || numMonth < month || years < year) {
-        if (this.orgId == "") {
-          this.$message("请选择一个组织");
+        console.log(this.orgTemplate)
+        if (this.orgId == "" || JSON.stringify(this.orgTemplate) == '{}') {
+          this.$message("组织或模版不能为空");
           return false;
         }
         this.$router.push({
           name: "detail",
           query: {
             orgId: this.orgId,
-            logDate: day.date
+            logDate: day.date,
+            templateId: this.orgTemplate.templateId
           }
         });
       }
       if (numDays == days && numMonth == month && year == years) {
-        if (this.orgId == "" || this.orgTemplateId) {
+        if (this.orgId == "" || JSON.stringify(this.orgTemplate) == '{}') {
           this.$message("组织或模版不能为空");
           return false;
         }
@@ -503,7 +505,7 @@ export default {
     },
     // 获取关联日志列表
     getAddTempList(valueItem) {
-      this.$api.getAddTempList({
+      this.$api.getAddTempListData({
         orgId: this.orgId
       }).then(res => {
         if(res.errorCode === '1') {
@@ -735,12 +737,14 @@ export default {
 
 <style lang="scss" scoped>
 .homeRecord {
+  margin: 20px;
   display: block;
+  background: #ffffff;
   .container {
-    max-width: 850px;
+    max-width: 940px;
     min-width: 720px;
     // width: 850px;
-    margin: 20px;
+    padding: 20px;
     .calinder {
       .btn {
         display: flex;

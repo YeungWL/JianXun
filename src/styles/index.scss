@@ -48,7 +48,14 @@ button, input, select, textarea {
     height: 100%;
 }
 /* 内页公共部分*/
-.page-content-body{padding:20px;}
+.page-content-body{
+    margin: 20px;
+    background: #fff;
+    padding: 20px;
+    border: 1px solid #e7ecf3;
+    position: relative;
+    min-height: 100%;
+}
 .float_l,.fl{float:left;}
 .float_r,.fr{float:right;}
 .clearfix:after{

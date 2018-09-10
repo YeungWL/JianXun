@@ -190,6 +190,8 @@ export default {
 <style lang="scss" scoped>
 .write {
   margin: 20px;
+  padding: 10px;
+  background: #ffffff;
   .title {
     width: 100%;
     // margin-top: 20px;

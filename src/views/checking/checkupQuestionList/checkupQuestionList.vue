@@ -53,7 +53,8 @@
           <el-table-column prop="queDesc" label="问题描述" min-width="150"  show-overflow-tooltip></el-table-column>
           <el-table-column label="操作" min-width="120">
             <template slot-scope="scope"> 
-              <span class="btn" title="编辑" @click="handleUpdate(scope.row)"><i class="iconfont icon-edit editicon"></i></span>         <span class="btn" title="查看" @click="handleView(scope.row.questionId)"><i class="iconfont icon-view viewicon"></i></span> 
+              <span class="btn" title="编辑" @click="handleUpdate(scope.row.id)"><i class="iconfont icon-edit editicon"></i></span>         
+              <span class="btn" title="查看" @click="handleView(scope.row.id)"><i class="iconfont icon-view viewicon"></i></span> 
               <span class="btn" v-if='scope.row.isDeleted == "N"' 
                 @click="handelDelete(scope.row,'Y')" title="删除">
                 <i class="iconfont icon-del delicon"></i>
@@ -74,7 +75,7 @@
       </div>
 
     <!-- 高级查询 -->
-    <el-dialog title="高级查询"
+    <!--<el-dialog title="高级查询"
                :visible.sync="searchDialogVisible"
                :close-on-click-modal='false'
                width="50%" class="my-dialog">
@@ -133,7 +134,7 @@
         <el-button @click="handleClose">取 消</el-button>
         <el-button type="primary" @click="search()">查 询</el-button>
       </span>
-    </el-dialog>       
+    </el-dialog>       -->
   </div>
 </template>
 <script>
@@ -327,20 +328,7 @@ export default {
         this.logsForm['typeCode'] = ''
         this.logsForm['path'] = ''     
       })  
-    },    
-    // 编辑弹窗
-    handleUpdate(data) {   
-      this.dialogStatus = 'update'
-      this.logsDialogVisible = true
-      this.$nextTick(_ => {
-        this.$refs.logsForm.resetFields()
-        this.logsForm.templateId = data.templateId
-        this.logsForm.name = data.name
-        this.logsForm.batchCode = data.batchCode
-        this.logsForm.typeCode = data.typeCode
-        this.logsForm.path = ''
-      })
-    },     
+    },       
     // 新增提交
     create() {
       let _this = this
@@ -363,29 +351,6 @@ export default {
         }
       })
     },
-    // 编辑提交
-    update(data) {  
-      let _this = this
-      let imgurl = _this.$refs.img.dataUrl.replace("data:image/png;base64,", "")       
-      _this.logsForm.path = imgurl
-      _this.$refs.logsForm.validate(valid => {
-        if (valid) {
-          _this.$api.updateAttrTemplate(_this.logsForm).then(response => {
-            if (response.errorCode === '1') {
-              _this.getList()
-              _this.$message.success('修改成功！')
-              _this.logsDialogVisible = false
-            } else {
-              _this.$message.warning(response.resultMsg)
-            }
-          }).catch(error => {
-            _this.$message.error(error)
-          })
-        } else {
-          return false
-        }
-      })
-    },        
     handelDelete(data,val) {
         this.$api.deleteQues({           
             questionId: data.questionId
@@ -403,6 +368,14 @@ export default {
           return false
         })      
     },
+    // 整改
+    handleUpdate(questionId) {   
+      this.$router.push({
+        path: "/checking/rectifyCheckupQuestion",
+        query: { questionId: questionId }
+      })
+    }, 
+    // 查看历史记录   
     handleView(questionId) {
       this.$router.push({
         path: "/checking/history",

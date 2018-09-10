@@ -113,7 +113,7 @@ export function orgBindTemplate(data) {
     return service.post(OAUTH_API + '/buildLog/orgBindTemplate.do', qs.stringify(data))
 }
 // 获取日志列表
-export function getAddTempList(data) {
+export function getAddTempListData(data) {
     return service.post(OAUTH_API + '/buildLog/getAddTempList.do', qs.stringify(data))
 }
 // 修改模版扩展名

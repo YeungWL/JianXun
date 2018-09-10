@@ -11,7 +11,7 @@
       </div>
     </div>
     <div class="content">
-      1. 预检情况(包括质量自检、互检和交接检存在问题及改进措施等):
+      <iframe :src="srcUrl" width="100%" height="100%"></iframe>
     </div>
     <div class="btn" @click="$router.push({name:'homeRecord'})">
       <el-button type="primary">返回</el-button>
@@ -30,19 +30,18 @@ export default {
       count: 1,
       month: '',
       day: '',
+      srcUrl: 'http://120.25.121.72/jianzhumobile/mobile/buildLog/info.html?orgId=1111&createDate=2018-04-12&templateId=1&logId=2222&initData=0&memberId=1',
       orgId: this.$route.query.orgId,
       logDate: this.$route.query.logDate,
-      token: this.getToken(),
-      accessToken: localStorage.getItem('accessToken')
+      templateId: this.$route.query.templateId,
+      initData:"0" ,
+      memberId: localStorage.getItem('userId')
     }
   },
   methods: {
     //获取当前点击的时间的数据
     getHistoryList() {
-      this.$api
-        .historyList({
-          token: this.token,
-          accessToken: this.accessToken,
+      this.$api.historyList({
           orgId: this.orgId,
           logDate: this.logDate
         })
@@ -101,6 +100,9 @@ export default {
       }).then(res => {
         console.log(res)
       })
+    },
+    getLogHtml() {
+      this.srcUrl = 'http://120.25.121.72/jianzhumobile/mobile/buildLog/info.html?orgId='+this.orgId+'&createDate='+this.logDate+'&templateId='+this.templateId+'&logId=2222&initData='+this.initData+'&memberId='+this.memberId
     }
   },
   created() {
@@ -119,8 +121,10 @@ export default {
 
 <style lang="scss" scoped>
 .detail {
-  width: 80%;
+  height: 95%;
   margin: 20px;
+  padding: 10px;
+  background: #ffffff;
   .topBar {
     display: flex;
     justify-content: space-between;
@@ -130,14 +134,12 @@ export default {
   }
   .content {
     width: 100%;
-    height: 500px;
-    border: 1px solid #bbb;
+    height: 85%;
+    // border: 1px solid #bbb;
     margin-top: 20px;
   }
   .btn {
-    width: 100%;
-    position: relative;
-    left: 50%;
+    text-align: center;
     margin-top: 20px;
   }
 }
