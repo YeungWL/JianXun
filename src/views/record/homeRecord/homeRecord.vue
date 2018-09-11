@@ -172,7 +172,7 @@
         <div class="power">
           <div style="padding:10px 0;">查阅权限</div>
           <el-checkbox-group v-model="checkList">
-            <el-checkbox :checked="item.selected == 1" :label="item" v-for="(item, index) in orgGrantJson" :key="index">{{item.orgName}}</el-checkbox>
+            <el-checkbox :label="item" v-for="(item, index) in orgGrantJson" :key="index">{{item.orgName}}</el-checkbox>
           </el-checkbox-group>
         </div>
       </div>
@@ -342,6 +342,7 @@ export default {
         });
       }
       if (numDays == days && numMonth == month && year == years) {
+        // 点击之前要先判断?====?
         if (this.orgId == "" || JSON.stringify(this.orgTemplate) == '{}') {
           this.$message("组织或模版不能为空");
           return false;
@@ -674,16 +675,18 @@ export default {
         orgTemplateId: this.resultData.orgTemplateId,
         approveTime: this.settingTime,
         projectId: this.selectProject,
-        cityPolicyJson: JSON.stringify(cityPolicy),
+        cityPolicyJson: JSON.stringify(this.formData),
         orgBindJson: JSON.stringify(orgBind)
       }).then(res => {
         console.log(res)
+        if(res.errorCode == '1') {
+          this.settingPropTwo = false
+        }
       })
     },
     // 预览弹窗
     showInspect(value) {
       this.inspect = true
-      console.log(value)
       this.imgSrc = value
     },
     // 负责人设置分项内容

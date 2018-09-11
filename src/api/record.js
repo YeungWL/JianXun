@@ -84,10 +84,6 @@ export function getUserOrgLevel (data) {
 export function getUserMainAttr (data) {
     return service.post(OAUTH_API + '/buildLog/getUserMainAttr.do',qs.stringify(data))
 } 
-//获取用户填写的日志详情
-export function buildingDetail (data) {
-    return service.post(OAUTH_API + '/buildLog/detail.do',qs.stringify(data))
-} 
 //获取组织分项工程项
 export function getBuildLogItemList (data) {
     return service.post(OAUTH_API + '/buildLog/getBuildLogItemList.do',qs.stringify(data))

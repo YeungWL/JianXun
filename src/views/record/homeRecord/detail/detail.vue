@@ -6,15 +6,21 @@
         <span>{{year}}年{{ month}}月{{ day}}日</span>
         <el-button type="primary">后一天</el-button>
       </div>
+      <div class="select-box">
+        <el-select placeholder="请选择模板" v-model="template" class="detail-select" @change="changeTemplate" value-key="id">
+          <el-option v-for="item in logList" :key="item.id" :label="item.extendName ? item.extendName : item.tempName" :value="item.templateId"></el-option>
+        </el-select>
+      </div>
       <div class="dataBefore">
-        <el-button type="primary">原始数据</el-button>
+        <el-button type="primary" @click="getLogHtml('1'), showBtn = !showBtn" v-show="showBtn">原始数据</el-button>
+        <el-button type="primary" @click="getLogHtml('0'), showBtn = !showBtn" v-show="!showBtn">终版数据</el-button>
       </div>
     </div>
     <div class="content">
       <iframe :src="srcUrl" width="100%" height="100%"></iframe>
     </div>
-    <div class="btn" @click="$router.push({name:'homeRecord'})">
-      <el-button type="primary">返回</el-button>
+    <div class="btn">
+      <el-button type="primary" @click="$router.push({name:'homeRecord'})">返回</el-button>
     </div>
   </div>
 </template>
@@ -22,7 +28,6 @@
 export default {
   data() {
     return {
-      textarea2: '',
       date: [],
       startDate: '',
       endDate: '',
@@ -30,11 +35,13 @@ export default {
       count: 1,
       month: '',
       day: '',
-      srcUrl: 'http://120.25.121.72/jianzhumobile/mobile/buildLog/info.html?orgId=1111&createDate=2018-04-12&templateId=1&logId=2222&initData=0&memberId=1',
+      srcUrl: '',
+      logList: [],
+      template: '',
+      showBtn: true,
       orgId: this.$route.query.orgId,
       logDate: this.$route.query.logDate,
       templateId: this.$route.query.templateId,
-      initData:"0" ,
       memberId: localStorage.getItem('userId')
     }
   },
@@ -92,17 +99,32 @@ export default {
         // console.log(res)
       })
     },
-    // 获取用户填写的日志详情
-    buildingDetail() {
-      this.$api.buildingDetail({
-        orgId: this.orgId,
-        createDate: this.logDate
+    getAddTempList() {
+      this.$api.getAddTempListData({
+        orgId: this.orgId
       }).then(res => {
-        console.log(res)
+        if(res.errorCode == '1') {
+          console.log(res)
+          this.logList = res.data
+        }
       })
     },
-    getLogHtml() {
-      this.srcUrl = 'http://120.25.121.72/jianzhumobile/mobile/buildLog/info.html?orgId='+this.orgId+'&createDate='+this.logDate+'&templateId='+this.templateId+'&logId=2222&initData='+this.initData+'&memberId='+this.memberId
+    // 改变select选择框
+    changeTemplate(value) {
+      this.templateId = value
+      if(this.showBtn) {
+        this.getLogHtml(0)
+      }else {
+        this.getLogHtml(1)
+      }
+    },
+    // 获取日志的html页面
+    getLogHtml(initData) {
+      this.srcUrl = 'http://120.25.121.72/jianzhumobile/mobile/buildLog/info.html?orgId='+this.orgId+'&createDate='+this.logDate+'&templateId='+this.templateId+'&logId=fba269889719439781c6fa65cca4b5c2&initData='+initData+'&memberId='+this.memberId
+    },
+    // 根据日期获取日志信息
+    historyListByTime() {
+      this.$api.historyListByTime()
     }
   },
   created() {
@@ -114,7 +136,8 @@ export default {
     this.month = Number(this.date[1])
     this.day = Number(this.date[2])
     this.getHistoryList()
-    // this.buildingDetail()
+    this.getLogHtml('0')
+    this.getAddTempList()
   }
 }
 </script>
@@ -135,12 +158,15 @@ export default {
   .content {
     width: 100%;
     height: 85%;
-    // border: 1px solid #bbb;
+    border: 1px solid #bbb;
     margin-top: 20px;
   }
   .btn {
     text-align: center;
     margin-top: 20px;
+  }
+  .detail-select /deep/.el-input__icon{
+    line-height: 32px;
   }
 }
 </style>
