@@ -329,7 +329,7 @@ export default {
       if ((numDays < days && numMonth == month) || numMonth < month || years < year) {
         console.log(this.orgTemplate)
         if (this.orgId == "" || JSON.stringify(this.orgTemplate) == '{}') {
-          this.$message("组织或模版不能为空");
+          this.$message("项目、组织或模版不能为空");
           return false;
         }
         this.$router.push({
@@ -345,7 +345,7 @@ export default {
         // 点击之前要先判断?====?
         console.log(this.orgTemplate)
         if (this.orgId == "" || JSON.stringify(this.orgTemplate) == '{}') {
-          this.$message("组织或模版不能为空");
+          this.$message("项目、组织或模版不能为空");
           return false;
         }
         this.$api.isCanEdit({
@@ -394,13 +394,15 @@ export default {
         }
       });
     },
-    // 选择
+    // 选择项目
     projectChange() {
       this.$api.getBuildOrgList({
         projectId: this.selectProject
       }).then(res => {
         if(res.errorCode == '1') {
           this.organizationList = res.data
+          this.selectOrg = ''
+          this.orgTemplate = {}
         }
       })
     },
