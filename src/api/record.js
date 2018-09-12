@@ -57,7 +57,7 @@ export function buildLog (data) {
 } 
 //能否编辑施工日志
 export function isCanEdit (data) {
-    return service.post(OAUTH_API + '/buildLog/isCanEdit.do',qs.stringify(data))
+    return service.post(OAUTH_API + '/buildLog/isCanEdit.do', qs.stringify(data))
 } 
 //是否是组织负责人
 export function isChargeMan (data) {
@@ -115,4 +115,8 @@ export function getAddTempListData(data) {
 // 修改模版扩展名
 export function updateExtendName(data) {
     return service.post(OAUTH_API + '/buildLog/updateExtendName.do', qs.stringify(data))
+}
+// 根据项目id查询我所在的组织和
+export function getBuildOrgList(data) {
+    return service.post(OAUTH_API + '/getBuildOrgList.do', qs.stringify(data))
 }

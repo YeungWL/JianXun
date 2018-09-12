@@ -4,12 +4,12 @@
       <div class="select">
         <el-form :inline="true">
           <el-form-item label="项目名称">
-            <el-select v-model="selectProject" placeholder="请选择项目">
+            <el-select v-model="selectProject" placeholder="请选择项目" @change="projectChange">
               <el-option v-for="item in projectList" :key="item.projectId" :label="item.proName" :value="item.projectId">
               </el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="组织名称">
+          <el-form-item label="组织名称" v-show="selectProject !== ''">
             <el-select v-model="selectOrg" placeholder="请选择组织" @change="orgChange">
               <el-option v-for="item in organizationList" :key="item.projectOrgId" :label="item.orgName" :value="item.projectOrgId">
               </el-option>
@@ -343,30 +343,44 @@ export default {
       }
       if (numDays == days && numMonth == month && year == years) {
         // 点击之前要先判断?====?
+        console.log(this.orgTemplate)
         if (this.orgId == "" || JSON.stringify(this.orgTemplate) == '{}') {
           this.$message("组织或模版不能为空");
           return false;
         }
-        if(this.orgTemplate.typeCode == '001') {
-          this.$router.push({
-            name: "shiRecord",
-            query: {
-              orgId: this.orgId,
-              date: day.date,
-              orgTemplateId: this.orgTemplate.id
+        this.$api.isCanEdit({
+          projectOrgId: this.orgId,
+          orgTemplateId: this.orgTemplate.id
+        }).then(res => {
+          if(res.errorCode == '1') {
+            if((res.data[0].role == '1' && res.data[0].status == '1') || (res.data[0].role == '0' && res.data[0].status == '1')) {
+              if(this.orgTemplate.typeCode == '001') {
+                this.$router.push({
+                  name: "shiRecord",
+                  query: {
+                    orgId: this.orgId,
+                    date: day.date,
+                    orgTemplateId: this.orgTemplate.id
+                  }
+                })
+              }
+              if(this.orgTemplate.typeCode == '003') {
+                this.$router.push({
+                  name: "writeRecord",
+                  query: {
+                    orgId: this.orgId,
+                    date: day.date,
+                    orgTemplateId: this.orgTemplate.id
+                  }
+                })
+              }
+            }else {
+              console.log(res)
+              this.$message.warning('不可以填写日志')
             }
-          });
-        }
-        if(this.orgTemplate.typeCode == '003') {
-          this.$router.push({
-            name: "writeRecord",
-            query: {
-              orgId: this.orgId,
-              date: day.date,
-              orgTemplateId: this.orgTemplate.id
-            }
-          });
-        }
+          }
+        })
+        
       }
     },
     onResultChange(val) {
@@ -380,7 +394,17 @@ export default {
         }
       });
     },
-    //获取自己参加的组织
+    // 选择
+    projectChange() {
+      this.$api.getBuildOrgList({
+        projectId: this.selectProject
+      }).then(res => {
+        if(res.errorCode == '1') {
+          this.organizationList = res.data
+        }
+      })
+    },
+    // 获取自己参加的组织
     getMyOrg() {
       let params = {
         isMyCreate: 1,
@@ -662,7 +686,7 @@ export default {
         return {
           orgId: item.orgId,
           orgName: item.orgName,
-          orgTemplateId: item.orgTemplateId,
+          grantId: item.grantId,
           selected: 1
         }
       })
@@ -733,7 +757,6 @@ export default {
   },
   created() {
     this.getProjectList();
-    this.getMyOrg();
   }
 };
 </script>
