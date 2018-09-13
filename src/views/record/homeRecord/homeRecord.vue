@@ -4,19 +4,19 @@
       <div class="select">
         <el-form :inline="true">
           <el-form-item label="项目名称">
-            <el-select v-model="selectProject" placeholder="请选择项目" @change="projectChange">
+            <el-select v-model="selectProject" placeholder="请选择项目" @change="projectChange" style="width:200px;">
               <el-option v-for="item in projectList" :key="item.projectId" :label="item.proName" :value="item.projectId">
               </el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="组织名称" v-show="selectProject !== ''">
-            <el-select v-model="selectOrg" placeholder="请选择组织" @change="orgChange">
+            <el-select v-model="selectOrg" placeholder="请选择组织" @change="orgChange" style="width:200px;">
               <el-option v-for="item in organizationList" :key="item.projectOrgId" :label="item.orgName" :value="item.projectOrgId">
               </el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="模版名称" v-show="selectOrg !== ''">
-            <el-select v-model="orgTemplate" placeholder="请选择模版" value-key="id">
+            <el-select v-model="orgTemplate" placeholder="请选择模版" value-key="id" style="width:200px;">
               <el-option v-for="item in logList" :key="item.id" :label="item.extendName ? item.extendName : item.tempName" :value="item">
               </el-option>
             </el-select>
@@ -327,7 +327,6 @@ export default {
       let days = date.getDate();
       let year = date.getFullYear();
       if ((numDays < days && numMonth == month) || numMonth < month || years < year) {
-        console.log(this.orgTemplate)
         if (this.orgId == "" || JSON.stringify(this.orgTemplate) == '{}') {
           this.$message("项目、组织或模版不能为空");
           return false;
@@ -342,8 +341,6 @@ export default {
         });
       }
       if (numDays == days && numMonth == month && year == years) {
-        // 点击之前要先判断?====?
-        console.log(this.orgTemplate)
         if (this.orgId == "" || JSON.stringify(this.orgTemplate) == '{}') {
           this.$message("项目、组织或模版不能为空");
           return false;
@@ -403,6 +400,7 @@ export default {
           this.organizationList = res.data
           this.selectOrg = ''
           this.orgTemplate = {}
+          this.buttonShow = false
         }
       })
     },
@@ -803,7 +801,7 @@ export default {
     margin-top: 20px;
   }
   .setting {
-    padding: 20px 0;
+    padding: 20px 40px;
   }
   .project {
     width: 482px;

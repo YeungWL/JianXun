@@ -2,9 +2,9 @@
   <div class="detail">
     <div class="topBar">
       <div class="fy">
-        <el-button type="primary" @click="getPreList">前一天</el-button>
+        <el-button type="primary" @click="getBeforeDate">前一天</el-button>
         <span>{{year}}年{{ month}}月{{ day}}日</span>
-        <el-button type="primary">后一天</el-button>
+        <el-button type="primary" @click="getAfterDate">后一天</el-button>
       </div>
       <div class="select-box">
         <el-select placeholder="请选择模板" v-model="template" class="detail-select" @change="changeTemplate" value-key="id">
@@ -41,8 +41,12 @@ export default {
       showBtn: true,
       orgId: this.$route.query.orgId,
       logDate: this.$route.query.logDate,
+      beforeDate: '',
+      afterDate: '',
+      today: '',
       templateId: this.$route.query.templateId,
-      memberId: localStorage.getItem('userId')
+      memberId: localStorage.getItem('userId'),
+      testDate: this.$route.query.logDate
     }
   },
   methods: {
@@ -56,48 +60,64 @@ export default {
           console.log(res)
         })
     },
-    // 获取前一天数据
-    getPreList() {
-      let big = [1, 3, 5, 7, 9, 10, 12]
-      this.day = this.day - this.count
-      // 判断大小月
-      if (this.day < 1) {
-        this.month--
-        for (let i = 0; i < big.length; i++) {
-          if (this.month === big[i]) {
-            this.day = 31
-            break
-          } else {
-            this.day = 30
-          }
-        }
-        // 判断平年闰年
-        if (this.month === 2) {
-          if (
-            (this.year % 4 == 0 && this.year % 100 !== 0) ||
-            this.year % 400 == 0
-          ) {
-            this.day = 29
-          } else {
-            this.day = 28
-          }
-        }
-        // 年份减一
-        if (this.month <= 0) {
-          this.year = this.year - 1
-          this.month = 12
-          this.day = 31
-        }
+    // 获取前一天
+    getBeforeDate() {
+      let date = new Date(this.logDate)
+      date.setDate(date.getDate() - 1)
+      this.month = date.getMonth() + 1
+      this.day= date.getDate()
+      this.year = date.getFullYear()
+      this.beforeDate = date.getFullYear() + '-' + this.month + '-' + this.day
+      this.logDate = date.getFullYear() + '/' + this.month + '/' + this.day
+      // let big = [1, 3, 5, 7, 8, 10, 12]
+      // this.day = this.day - this.count
+      // // 判断大小月
+      // if (this.day < 1) {
+      //   this.month--
+      //   for (let i = 0; i < big.length; i++) {
+      //     if (this.month === big[i]) {
+      //       this.day = 31
+      //       break
+      //     } else {
+      //       this.day = 30
+      //     }
+      //   }
+      //   // 判断平年闰年
+      //   if (this.month === 2) {
+      //     if ((this.year % 4 == 0 && this.year % 100 !== 0) || this.year % 400 == 0) {
+      //       this.day = 29
+      //     } else {
+      //       this.day = 28
+      //     }
+      //   }
+      //   // 年份减一
+      //   if (this.month <= 0) {
+      //     this.year = this.year - 1
+      //     this.month = 12
+      //     this.day = 31
+      //   }
+      // }
+      // let logDate = this.year + '-' + this.month + '-' + this.day
+
+      // this.$api.historyListByTime().then(res => {
+      // })
+    },
+    // 获取后一天
+    getAfterDate() {
+      let date = new Date(this.logDate)
+      let today = new Date()
+      today.setDate(today.getDate() - 1)
+      if(date >= new Date(today.toLocaleDateString())) {
+        console.log(date, new Date(today.toLocaleDateString()))
+        this.$message.warning('不可以往后查看了')
+        return
       }
-      this.logDate = this.year + '-' + this.month + '-' + this.day
-      let params = {
-        startDate: this.date,
-        endDate: this.endDate,
-        orgId: this.orgId
-      }
-      this.$api.historyListByTime(params).then(res => {
-        // console.log(res)
-      })
+      date.setDate(date.getDate() + 1)
+      this.month = date.getMonth() + 1
+      this.day= date.getDate()
+      this.year = date.getFullYear()
+      this.afterDate = date.getFullYear() + '-' + this.month + '-' + this.day
+      this.logDate = date.getFullYear() + '/' + this.month + '/' + this.day
     },
     getAddTempList() {
       this.$api.getAddTempListData({
@@ -120,7 +140,7 @@ export default {
     },
     // 获取日志的html页面
     getLogHtml(initData) {
-      this.srcUrl = 'http://120.25.121.72/jianzhumobile/mobile/buildLog/info.html?orgId='+this.orgId+'&createDate='+this.logDate+'&templateId='+this.templateId+'&logId=fba269889719439781c6fa65cca4b5c2&initData='+initData+'&memberId='+this.memberId
+      this.srcUrl = 'http://120.25.121.72/jianzhumobile/mobile/buildLog/info.html?orgId='+this.orgId+'&createDate='+this.today+'&templateId='+this.templateId+'&logId=fba269889719439781c6fa65cca4b5c2&initData='+initData+'&memberId='+this.memberId
     },
     // 根据日期获取日志信息
     historyListByTime() {
@@ -128,14 +148,12 @@ export default {
     }
   },
   created() {
-    this.logDate = this.logDate.replace(/\//g, '-')
-    let date = this.logDate
-    date = date.split('-')
-    this.date = date
-    this.year = Number(this.date[0])
-    this.month = Number(this.date[1])
-    this.day = Number(this.date[2])
-    this.getHistoryList()
+    this.today = this.logDate.replace(/\//g, '-')
+    let date = new Date(this.logDate)
+    this.month = date.getMonth() + 1
+    this.day= date.getDate()
+    this.year = date.getFullYear()
+    // this.getHistoryList()
     this.getLogHtml('0')
     this.getAddTempList()
   }
