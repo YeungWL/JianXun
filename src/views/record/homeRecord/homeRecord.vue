@@ -123,12 +123,12 @@
       </div>
     </el-dialog>
 
-    <!-- 设置参数dialog1 -->
+    <!-- 设置参数dialog1 (房屋工程) -->
     <el-dialog title="设置参数" :visible.sync="settingProp" class="my-dialog" width="560px">
       <div class="setting">
         <div class="project">
           <span class="left">分项工程</span>
-          <el-button icon="el-icon-plus" style="padding: 0;width: 30px;height: 32px;"></el-button>
+          <el-button icon="el-icon-plus" style="padding: 0;width: 30px;height: 32px;" @click="addItem"></el-button>
         </div>
         <ul class="projectList">
           <li v-for="(item, index) in itemJson" :key="index">
@@ -181,7 +181,7 @@
       </div>
     </el-dialog>
 
-    <!-- 设置参数dialog2 -->
+    <!-- 设置参数dialog2 (市政工程) -->
     <el-dialog title="设置参数" :visible.sync="settingPropTwo" class="my-dialog" width="560px">
       <div class="setting">
         <el-form ref="form" :model="formData" label-width="100px">
@@ -316,7 +316,6 @@ export default {
   // },
   methods: {
     dayChange(day) {
-      console.log(day);
       let numDay = day.date;
       numDay = numDay.split("/");
       let years = numDay[0];
@@ -331,14 +330,30 @@ export default {
           this.$message("项目、组织或模版不能为空");
           return false;
         }
-        this.$router.push({
-          name: "detail",
-          query: {
-            orgId: this.orgId,
-            logDate: day.date,
-            templateId: this.orgTemplate.templateId
+        console.log(day.date.replace(/\//g, '-'))
+        let endDate = new Date(day.date)
+        endDate.setDate(endDate.getDate() + 1)
+        this.$api.historyListByTime({
+          orgId: this.orgId,
+          orgTemplateId: this.orgTemplate.id,
+          startDate: day.date.replace(/\//g, '-'),
+          endDate: endDate.toLocaleDateString().replace(/\//g, '-')
+        }).then(res => {
+          console.log(res)
+          if(res.errorCode == '1') {
+            if(res.data.length > 0) {
+              this.$router.push({
+                name: "detail",
+                query: {
+                  orgId: this.orgId,
+                  logDate: day.date,
+                  templateId: this.orgTemplate.templateId,
+                  logId: res.data[0].logId
+                }
+              })
+            }
           }
-        });
+        })
       }
       if (numDays == days && numMonth == month && year == years) {
         if (this.orgId == "" || JSON.stringify(this.orgTemplate) == '{}') {

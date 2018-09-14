@@ -12,8 +12,8 @@
         </el-select>
       </div>
       <div class="dataBefore">
-        <el-button type="primary" @click="getLogHtml('1'), showBtn = !showBtn" v-show="showBtn">原始数据</el-button>
-        <el-button type="primary" @click="getLogHtml('0'), showBtn = !showBtn" v-show="!showBtn">终版数据</el-button>
+        <el-button type="primary" @click="getLogHtml('1', countDate), showBtn = !showBtn" v-show="showBtn">原始数据</el-button>
+        <el-button type="primary" @click="getLogHtml('0', countDate), showBtn = !showBtn" v-show="!showBtn">终版数据</el-button>
       </div>
     </div>
     <div class="content">
@@ -28,9 +28,6 @@
 export default {
   data() {
     return {
-      date: [],
-      startDate: '',
-      endDate: '',
       year: '',
       count: 1,
       month: '',
@@ -41,12 +38,10 @@ export default {
       showBtn: true,
       orgId: this.$route.query.orgId,
       logDate: this.$route.query.logDate,
-      beforeDate: '',
-      afterDate: '',
-      today: '',
+      countDate: '',
       templateId: this.$route.query.templateId,
       memberId: localStorage.getItem('userId'),
-      testDate: this.$route.query.logDate
+      logId: this.$route.query.logId
     }
   },
   methods: {
@@ -67,8 +62,15 @@ export default {
       this.month = date.getMonth() + 1
       this.day= date.getDate()
       this.year = date.getFullYear()
-      this.beforeDate = date.getFullYear() + '-' + this.month + '-' + this.day
+      this.countDate = date.getFullYear() + '-' + this.month + '-' + this.day
+      // 使用yyyy/m/d 浏览器兼容
       this.logDate = date.getFullYear() + '/' + this.month + '/' + this.day
+      // 重新获取HTML页面
+      if(this.showBtn) {
+        this.getLogHtml(0, this.countDate)
+      }else {
+        this.getLogHtml(1, this.countDate)
+      }
       // let big = [1, 3, 5, 7, 8, 10, 12]
       // this.day = this.day - this.count
       // // 判断大小月
@@ -108,7 +110,6 @@ export default {
       let today = new Date()
       today.setDate(today.getDate() - 1)
       if(date >= new Date(today.toLocaleDateString())) {
-        console.log(date, new Date(today.toLocaleDateString()))
         this.$message.warning('不可以往后查看了')
         return
       }
@@ -116,8 +117,14 @@ export default {
       this.month = date.getMonth() + 1
       this.day= date.getDate()
       this.year = date.getFullYear()
-      this.afterDate = date.getFullYear() + '-' + this.month + '-' + this.day
+      this.countDate = date.getFullYear() + '-' + this.month + '-' + this.day
       this.logDate = date.getFullYear() + '/' + this.month + '/' + this.day
+      // 重新获取HTML页面
+      if(this.showBtn) {
+        this.getLogHtml(0, this.countDate)
+      }else {
+        this.getLogHtml(1, this.countDate)
+      }
     },
     getAddTempList() {
       this.$api.getAddTempListData({
@@ -133,28 +140,37 @@ export default {
     changeTemplate(value) {
       this.templateId = value
       if(this.showBtn) {
-        this.getLogHtml(0)
+        this.getLogHtml(0, this.countDate)
       }else {
-        this.getLogHtml(1)
+        this.getLogHtml(1, this.countDate)
       }
     },
     // 获取日志的html页面
-    getLogHtml(initData) {
-      this.srcUrl = 'http://120.25.121.72/jianzhumobile/mobile/buildLog/info.html?orgId='+this.orgId+'&createDate='+this.today+'&templateId='+this.templateId+'&logId=fba269889719439781c6fa65cca4b5c2&initData='+initData+'&memberId='+this.memberId
+    getLogHtml(initData, date) {
+      this.srcUrl = 'http://120.25.121.72/jianzhumobile/mobile/buildLog/info.html?orgId='+this.orgId+'&createDate='+date+'&templateId='+this.templateId+'&logId='+this.logId+'&initData='+initData+'&memberId='+this.memberId
     },
     // 根据日期获取日志信息
     historyListByTime() {
-      this.$api.historyListByTime()
+      let endDate = new Date(this.logDate)
+      endDate.setDate(endDate.getDate() + 1)
+      this.$api.historyListByTime({
+        orgId: this.orgId,
+        orgTemplateId: this.orgTemplateId,
+        startDate: this.countDate,
+        endDate: endDate.toLocaleDateString().replace(/\//g, '-')
+      }).then(res => {
+        console.log(res)
+      })
     }
   },
   created() {
-    this.today = this.logDate.replace(/\//g, '-')
+    this.countDate = this.logDate.replace(/\//g, '-')
     let date = new Date(this.logDate)
     this.month = date.getMonth() + 1
     this.day= date.getDate()
     this.year = date.getFullYear()
     // this.getHistoryList()
-    this.getLogHtml('0')
+    this.getLogHtml('0', this.countDate)
     this.getAddTempList()
   }
 }
@@ -175,7 +191,7 @@ export default {
   }
   .content {
     width: 100%;
-    height: 85%;
+    height: 82%;
     border: 1px solid #bbb;
     margin-top: 20px;
   }

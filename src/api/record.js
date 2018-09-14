@@ -120,3 +120,7 @@ export function updateExtendName(data) {
 export function getBuildOrgList(data) {
     return service.post(OAUTH_API + '/getBuildOrgList.do', qs.stringify(data))
 }
+// 获取市政消息
+export function getCityPolicy(data) {
+    return service.post(OAUTH_API + '/buildLog/geCityPolicy.do', qs.stringify(data))
+}

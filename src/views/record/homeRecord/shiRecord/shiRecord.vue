@@ -2,13 +2,13 @@
   <div class="write">
     <el-form :inline="true" >
       <el-form-item label="工程名称" >
-        <el-input v-model="contentItem.layerNo" placeholder="请输入工程名称" style="width:250px;"></el-input>
+        <el-input v-model="contentItem.name" placeholder="请输入工程名称" style="width:250px;"></el-input>
       </el-form-item>
       <el-form-item label="单位工程名称">
-        <el-input v-model="contentItem.layerNo" placeholder="请输入单位工程名称" style="width:250px;"></el-input>
+        <el-input v-model="contentItem.unitName" placeholder="请输入单位工程名称" style="width:250px;"></el-input>
       </el-form-item>
       <el-form-item label="施工单位">
-        <el-input v-model="contentItem.layerNo" placeholder="请输入施工单位" style="width:250px;"></el-input>
+        <el-input v-model="contentItem.buildName" placeholder="请输入施工单位" style="width:250px;"></el-input>
       </el-form-item>
       <el-form-item label="管理人员数量">
         <el-input v-model="contentItem.managerCount" placeholder="请输入管理人员数量" style="width:250px;"></el-input>
@@ -38,6 +38,9 @@ export default {
   data() {
     return {
       contentItem: {
+        name: '',
+        unitName: '',
+        buildName: '',
         managerCount: '',
         workCount: ''
       },
@@ -84,10 +87,26 @@ export default {
           this.$router.push({path: '/record/homeRecord'})
         }
       })
+    },
+    // 获取市政信息
+    getCityPolicy() {
+      this.$api.getCityPolicy({
+        orgTemplateId: this.orgTemplateId
+      }).then(res => {
+        console.log(res)
+        if(res.errorCode == '1') {
+          this.contentItem.name = res.data[0].name
+          this.contentItem.unitName = res.data[0].unitName
+          this.contentItem.buildName = res.data[0].buildName
+          this.contentItem.managerCount = res.data[0].managerCount
+          this.contentItem.workCount = res.data[0].workCount
+        }
+      })
     }
   },
   created() {
     this.getBuildAttrList()
+    this.getCityPolicy()
   }
 }
 </script>
