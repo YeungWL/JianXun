@@ -37,19 +37,43 @@
     </div>
 
     <!-- 导出dialog -->
-    <el-dialog title="导出" :visible.sync="dialogFormVisible" width="40%">
-      <el-form :model="form">
-        <el-form-item label="起始日期" label-width="120px">
-          <el-date-picker v-model="form.beginTime" type="datetime" placeholder="开始日期">
-          </el-date-picker>
+    <el-dialog title="导出" :visible.sync="dialogFormVisible" width="430px">
+      <el-form :model="exportForm" label-width="100px">
+        <el-form-item label="模板名称">
+          <el-select v-model="exportForm.orgTemplate" value-key="id" style="width:200px;">
+            <el-option v-for="item in logList"
+                      :key="item.id"
+                      :label="item.extendName ? item.extendName : item.tempName"
+                      :value="item"></el-option>
+          </el-select>
         </el-form-item>
-        <el-form-item label="终止日期" label-width="120px">
-          <el-date-picker v-model="form.endTime" type="datetime" range-separator="至" placeholder="结束日期">
-          </el-date-picker>
+        <el-form-item label="起始时间">
+          <el-date-picker v-model="exportForm.beginTime" 
+                          type="date"
+                          placeholder="起始时间"
+                          style="width: 200px;"
+                          :picker-options="pickerOptions"></el-date-picker>
         </el-form-item>
+        <el-form-item label="终止日期">
+          <el-date-picker :disabled="exportForm.beginTime == ''"
+                          v-model="exportForm.endTime"
+                          type="date"
+                          placeholder="终止日期"
+                          style="width:200px;"
+                          :picker-options="pickerOptions"></el-date-picker>
+        </el-form-item>
+        <!-- <el-form-item label="导出的时间段">
+          <el-date-picker v-model="exportForm.exportTime"
+                          type="daterange"
+                          range-separator="至"
+                          start-placeholder="开始日期"
+                          end-placeholder="结束日期"
+                          :picker-options="pickerOptions"
+                          size="large"></el-date-picker>
+        </el-form-item> -->
       </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="dialogFormVisible = false">导 出</el-button>
+      <div slot="footer" class="dialog-footer" style="text-align: center;">
+        <el-button type="primary" @click="exportLog">导 出</el-button>
       </div>
     </el-dialog>
 
@@ -254,7 +278,9 @@ export default {
       projectList: [],
       organizationList: [],
       orgId: "",
-      form: {
+      exportForm: {
+        orgTemplate: {},
+        exportTime: '',
         name: "",
         type: [],
         beginTime: "",
@@ -299,6 +325,11 @@ export default {
       updateFormInline: { // 修改模板扩展名数据
         extendName: '',
         orgTemplateId: ''
+      },
+      pickerOptions: {
+        disabledDate(time) {
+          return time.getTime() > Date.now()
+        }
       }
     }
   },
@@ -768,6 +799,18 @@ export default {
             this.settingProp = false
           }
         })
+    },
+    // 导出施工日志
+    exportLog() {
+      this.$api.exportLog({
+        orgTemplateId: this.exportForm.orgTemplate.id,
+        projectOrgId: this.orgId,
+        templateId: this.exportForm.orgTemplate.templateId,
+        startDate: this.exportForm.beginTime,
+        endDate: this.exportForm.endTime
+      }).then(res => {
+        console.log(res)
+      })
     }
   },
   created() {
