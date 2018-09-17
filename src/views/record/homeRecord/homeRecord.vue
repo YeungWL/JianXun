@@ -26,7 +26,7 @@
       <div class="calinder">
         <vue-event-calendar :events="demoEvents" @day-changed="dayChange"></vue-event-calendar>
         <div class="btn">
-          <el-button type="primary" @click="dialogFormVisible = true" class="rzbtn">导出日志</el-button>
+          <el-button type="primary" @click="downloadDialog" class="rzbtn">导出日志</el-button>
           <div class="content">
             <span>当前有效期至 : 2018年6月30号 </span>
             <a href="javascript:;" @click="show.isShow = !show.isShow">续期</a>
@@ -52,6 +52,7 @@
                           type="date"
                           placeholder="起始时间"
                           style="width: 200px;"
+                          value-format="yyyy-MM-dd"
                           :picker-options="pickerOptions"></el-date-picker>
         </el-form-item>
         <el-form-item label="终止日期">
@@ -60,6 +61,7 @@
                           type="date"
                           placeholder="终止日期"
                           style="width:200px;"
+                          value-format="yyyy-MM-dd"
                           :picker-options="pickerOptions"></el-date-picker>
         </el-form-item>
         <!-- <el-form-item label="导出的时间段">
@@ -267,6 +269,7 @@ import renewal from "@/components/renewal";
 export default {
   components: { renewal },
   data() {
+    let myDate = new Date()
     return {
       show: {
         isShow: false
@@ -328,7 +331,7 @@ export default {
       },
       pickerOptions: {
         disabledDate(time) {
-          return time.getTime() > Date.now()
+          return time > new Date()
         }
       }
     }
@@ -382,6 +385,8 @@ export default {
                   logId: res.data[0].logId
                 }
               })
+            } else {
+              this.$message.warning(res.resultMsg)
             }
           }
         })
@@ -469,10 +474,7 @@ export default {
           projectOrgId: value
         }).then(res => {
           if (res.errorCode == "1") {
-            if (
-              res.data[0].isChargeMan == "0" ||
-              res.data[0].isChargeMan == "1"
-            ) {
+            if (res.data[0].isChargeMan == "0" || res.data[0].isChargeMan == "1") {
               // 这里应该到请求回来之后再是true
               this.buttonShow = true;
               // this.queryBuildLog();
@@ -705,12 +707,10 @@ export default {
       })
         .then(() => {
           if (data.groupId !== "") {
-            this.$api
-              .delBuildGroup({
+            this.$api.delBuildGroup({
                 groupId: data.groupId,
                 isDeleted: "Y"
-              })
-              .then(res => {
+              }).then(res => {
                 if (res.errorCode == "1") {
                   this.$message.success("删除成功");
                   this.queryBuildLog();
@@ -802,15 +802,56 @@ export default {
     },
     // 导出施工日志
     exportLog() {
-      this.$api.exportLog({
-        orgTemplateId: this.exportForm.orgTemplate.id,
-        projectOrgId: this.orgId,
-        templateId: this.exportForm.orgTemplate.templateId,
-        startDate: this.exportForm.beginTime,
-        endDate: this.exportForm.endTime
-      }).then(res => {
-        console.log(res)
-      })
+      // this.$api.exportLog({
+      //   orgTemplateId: this.exportForm.orgTemplate.id,
+      //   projectOrgId: this.orgId,
+      //   templateId: this.exportForm.orgTemplate.templateId,
+      //   startDate: this.exportForm.beginTime,
+      //   endDate: this.exportForm.endTime
+      // }).then(res => {
+      //   console.log(res)
+      // })
+      if(JSON.stringify(this.exportForm.orgTemplate) == '{}') {
+        this.$message.warning('请选择模板')
+        return
+      }
+      if(this.exportForm.endTime < this.exportForm.beginTime) {
+        this.$message.warning('终止日期不能小于起始日期')
+        return
+      }
+      let body = document.getElementsByTagName('body')[0]
+      let form = document.createElement('form')
+      form.setAttribute('style', 'display: none;')
+      form.setAttribute('target', '_blank')
+      body.appendChild(form)
+      form.action = process.env.BASE_API + '/jianzhumobile/mobile/buildLog/buildLogEport.do'
+      form.method = 'post'
+      let strHtml = `<input type="hidden" name="accessToken" value="${
+        localStorage.getItem('accessToken')
+      }" /><input type="hidden" name="token" value="${
+        this.getToken()
+      }" /><input type="hidden" name="orgTemplateId" value="${
+        this.exportForm.orgTemplate.id
+      }" /><input type="hidden" name="projectOrgId" value="${
+        this.orgId
+      }" /><input type="hidden" name="templateId" value="${
+        this.exportForm.orgTemplate.templateId
+      }" /><input type="hidden" name="startDate" value="${
+        this.exportForm.beginTime
+      }" /><input type="hidden" name="endDate" value="${
+        this.exportForm.endTime
+      }" />`
+      form.innerHTML = strHtml
+      form.submit()
+      form.parentNode.removeChild(form)
+    },
+    // 导出日志对话框
+    downloadDialog() {
+      if(this.selectOrg == '') {
+        this.$message.warning('请选择项目或组织')
+        return
+      }
+      this.dialogFormVisible = true
     }
   },
   created() {

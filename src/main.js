@@ -54,6 +54,10 @@ Vue.prototype.$cookie = cookie
 Vue.prototype.getToken = function (){//changeData是函数名
   return "PC_JIANXUN_APP2018";
 }
+
+Vue.prototype.baseURL = function (){//changeData是函数名
+  return "http://120.25.121.72";
+}
 // 改变数据格式
 // let f = (objItem = [], rootsArr = []) => {
 //   if (objItem.length > 0) {

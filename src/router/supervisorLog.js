@@ -2,9 +2,8 @@
  *  日志管理
  * */
 const supervisorLog = resolve => require(['@/views/supervisorLog/index'], resolve)
-/** 资费管理 */
-const payCharge = resolve =>
-  require(['@/views/supervisorLog/payCharge/payCharge'], resolve)
+
+
 /** 日志主页 */
 const homeRecord = resolve =>
   require(['@/views/supervisorLog/homeRecord/homeRecord'], resolve)
@@ -12,7 +11,8 @@ const homeRecord = resolve =>
 const writeSupervisoRecord = resolve =>
    require(['@/views/supervisorLog/homeRecord/writeRecord/writeRecord'], resolve)
 // 日志详情
-const detail = resolve => require(['@/views/supervisorLog/homeRecord/detail/detail'], resolve)
+const supervisorDetail = resolve =>
+   require(['@/views/supervisorLog/homeRecord/detail/detail'], resolve)
 export default {
   path: '/supervisorLog',
   component: supervisorLog,
@@ -20,12 +20,6 @@ export default {
   name: 'supervisorLog',
   meta: { requireAuth: true },
   children: [
-    {
-      path: '/supervisorLog/payCharge',
-      component: payCharge,
-      name: 'payCharge',
-      meta: { requireAuth: true }
-    },
     {
       path: '/supervisorLog/homeRecord',
       component: homeRecord,
@@ -40,8 +34,8 @@ export default {
     },
     {
       path: '/supervisorLog/detail',
-      component: detail,
-      name: 'detail',
+      component: supervisorDetail,
+      name: 'supervisorDetail',
       meta: { requireAuth: true }
     }
   ]

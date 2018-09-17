@@ -22,7 +22,6 @@ export default {
   data() {
     return {
       orgId: this.$route.query.orgId,
-      date: this.$route.query.date,
       tempId: this.$route.query.tempId,
       logId: this.$route.query.logId,
       isCanEdit: this.$route.query.isCanEdit,

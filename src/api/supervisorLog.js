@@ -62,3 +62,13 @@ export function inputPage(data) {
 export function saveSupervision(data) {
   return service.post(OAUTH_API + '/supervision/saveSupervision.do', qs.stringify(data))
 }
+
+// 监理日志 - 8、获取监理日志历史记录数据
+export function getSupervisionHistoryList(data) {
+  return service.post(OAUTH_API + '/supervision/getSupervisionHistoryList.do', qs.stringify(data))
+}
+
+// 监理日志 - 7、是否能编辑施工日志
+export function whetherCanEdit(data) {
+  return service.post(OAUTH_API + '/supervision/whetherCanEdit.do', qs.stringify(data))
+}

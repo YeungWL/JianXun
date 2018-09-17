@@ -125,6 +125,6 @@ export function getCityPolicy(data) {
     return service.post(OAUTH_API + '/buildLog/geCityPolicy.do', qs.stringify(data))
 }
 // 导出施工日志
-export function exportLog(data) {
-    return service.post(OAUTH_API + '/buildLog/buildLogEport.do', qs.stringify(data))
-}
+// export function exportLog(data) {
+//     return service.post(OAUTH_API + '/buildLog/buildLogEport.do', qs.stringify(data))
+// }

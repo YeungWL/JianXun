@@ -26,7 +26,7 @@ export default {
       openeds: ['1'],
       activeIndex: '1-1',
       asideArr: [
-        {title: '监理日志', content: ['日志主页', '资费管理']}
+        {title: '监理日志', content: ['日志主页']}
       ]
     }
   },
@@ -34,7 +34,6 @@ export default {
     // console.log(this.$route.name)
     switch (this.$route.name) {
       case 'homeRecord': this.activeIndex = '1-1'; break
-      case 'payCharge': this.activeIndex = '1-2'; break
     }
   },
   methods: {
@@ -43,7 +42,6 @@ export default {
       this.activeIndex = key
       switch (key) {
         case '1-1': this.$router.push({ path: 'homeRecord' }); break
-        case '1-2': this.$router.push({ path: 'payCharge' }); break
       }
     }
   }

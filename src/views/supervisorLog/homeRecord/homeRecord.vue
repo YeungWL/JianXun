@@ -1,6 +1,6 @@
 <template>
-  <div class="homeRecord">
-    <div class="my-dialog scwj-dialog">
+  <div class="homeRecord"  v-loading="loading" element-loading-text="拼命加载中">
+    <div class="my-dialog scwj-dialog" >
       <el-form size="mini">
         <el-row :gutter="24">
           <el-col :span="8">
@@ -32,14 +32,10 @@
     </div>
 
     <div class="calinder">
-      <vue-event-calendar :events="demoEvents" @day-changed="dayChange"></vue-event-calendar>
-      <div class="btn">
+      <vue-event-calendar :events="logHistoryList" @day-changed="dayChange" style="width:55%"></vue-event-calendar>
+      <div style="padding-left:40%" v-if="buttonShow">
         <el-button type="primary" @click="dialogSettingFormVisible = true" class="rzbtn">导出日志</el-button>
-        <div class="content">
-          <span>当前有效期至 : 2018年6月30号 </span>
-          <a href="javascript:;" @click="show.isShow = !show.isShow">续期</a>
-        </div>
-        <el-button type="primary" @click="handleSetting()" v-if="buttonShow" class="setion">设置</el-button>
+        <el-button type="primary" @click="handleSetting()" class="setion">设置</el-button>
       </div>
     </div>
 
@@ -168,6 +164,9 @@ export default {
   },
   data() {
     return {
+      /* 加载 */
+      loading: false,
+
       // 当前选择的项目
       selectProject: "",
 
@@ -187,12 +186,13 @@ export default {
       logList: [],
 
       // 什么东东来着
-      demoEvents: [],
+      // demoEvents: [
+      // ],
 
-      // 续期内容是否显示
-      show: {
-        isShow: false
-      },
+      //监理日志历史记录
+      logHistoryList: [],
+
+      demoEvents: [],
 
       // 设置对话框开关
       dialogSettingFormVisible: false,
@@ -230,6 +230,9 @@ export default {
       // 新监理日志名称
       inputNewLogName: "",
 
+      // 是当天日期被点击
+      checkWrite: false,
+
       // 导出日志
       form: {
         name: "",
@@ -245,8 +248,14 @@ export default {
         endTime: ""
       },
 
+      // 用户身份
+      userRole: [],
+
+      show: {
+        isShow: false
+      },
       // need to confirm start
-      orgId: "",
+
       setting: {
         major: "",
         district: "",
@@ -261,7 +270,7 @@ export default {
       BeReferOrgs: [],
       currentTempId: "",
       currentLogId: "",
-      isCanEdit: true, 
+      isCanEdit: true
       // need to confirm end
     };
   },
@@ -270,6 +279,8 @@ export default {
     handleProjectChange() {
       this.selectOrg = "";
       this.organizationList = [];
+      this.selectLog = "";
+      this.logList = [];
 
       if (this.selectProject.length === 0) {
         this.$api.getNotBindOrgs().then(res => {
@@ -290,7 +301,7 @@ export default {
     // 响应当前组织变动处理事件
     handleOrgChange(value) {
       this.getAddTempList();
-      this.orgId = value;
+      this.selectOrg = value;
       this.$api
         .isChargeMan({
           projectOrgId: value
@@ -313,11 +324,29 @@ export default {
     handleLogChange(value) {
       this.currentProjectName = value.projectName;
       this.currentProjectTime = value.setTime;
+      this.currentTempId = value.tempId;
+      this.currentLogId = value.id;
+
+      console.log("currentTempId : " + this.currentTempId);
+      console.log("currentLogId : " + this.currentLogId);
+      this.getSupervisionHistoryList();
+      this.whetherCanEdit();
     },
 
     // 日历处理事件
     dayChange(day) {
       console.log(day);
+
+      if (this.selectOrg === "") {
+        this.$message("请选择一个组织");
+        return false;
+      }
+
+      if (this.selectLog == "") {
+        this.$message("请选择一个监理日志");
+        return false;
+      }
+
       let numDay = day.date;
       numDay = numDay.split("/");
       let years = numDay[0];
@@ -327,48 +356,25 @@ export default {
       let month = date.getMonth() + 1;
       let days = date.getDate();
       let year = date.getFullYear();
+
       if (
         (numDays < days && numMonth == month) ||
         numMonth < month ||
         years < year
       ) {
-        if (this.orgId == "") {
-          this.$message("请选择一个组织");
-          return false;
-        }
-
-        if (this.selectLog == "") {
-          this.$message("请选择一个监理日志");
-          return false;
-        }
         this.$router.push({
-          name: "detail",
+          name: "supervisorDetail",
           query: {
-            orgId: this.orgId,
-            logDate: day.date
+            orgId: this.selectOrg,
+            createDate: day.date,
+            logId: this.currentLogId,
+            tempId: this.currentTempId
           }
         });
       }
       if (numDays == days && numMonth == month && year == years) {
-        if (this.orgId == "") {
-          this.$message("请选择一个组织");
-          return false;
-        }
-        if (this.selectLog == "") {
-          this.$message("请选择一个监理日志");
-          return false;
-        }
-
-        this.$router.push({
-          name: "writeSupervisoRecord",
-          query: {
-            date: day.date,
-            tempId: this.selectLog.tempId,
-            logId: this.selectLog.id,
-            orgId: this.selectOrg,
-            isCanEdit: this.isCanEdit
-          }
-        });
+        this.checkWrite = true;
+        this.whetherCanEdit();
       }
     },
 
@@ -388,12 +394,14 @@ export default {
         logId: item.id
       };
       this.editExtendNameInfo = editExtendNameInfoTmp;
-      this.inputNewLogName="";
+      this.inputNewLogName = "";
       this.dialogUpdateExtendNameFormVisible = true;
     },
 
     // 处理设置参数按钮点击事件
     handleLogParaUpdate(item) {
+      this.currentProjectName = item.projectName;
+      this.currentProjectTime = item.setTime;
       this.getBeReferOrgs(item);
     },
 
@@ -481,6 +489,7 @@ export default {
 
     //获取项目列表
     getProjectList() {
+      this.loading = true;
       this.$api
         .getMyInPro({
           operateType: ""
@@ -498,7 +507,7 @@ export default {
             proCount: "",
             proDesc: "",
             proLogo: "",
-            proName: "未关联",
+            proName: "未关联项目的组织",
             projectId: "",
             shortName: "",
             startTime: "",
@@ -507,6 +516,7 @@ export default {
           });
 
           this.selectProject = "";
+          this.loading = false;
         });
     },
 
@@ -521,6 +531,7 @@ export default {
       });
     },
 
+    // 获取未关联项目的组织
     getNotBindOrgs() {
       let params = {
         projectId: this.selectProject
@@ -531,28 +542,82 @@ export default {
       });
     },
 
-    // 负责人获取日志设置项
-    queryBuildLog() {
-      this.$api
-        .queryBuildLog({
-          orgId: this.orgId
-        })
-        .then(res => {
-          console.log(res);
-          if (res.errorCode == "1") {
-            res.data[0].itemJson.map(value => {
-              value.edit = false;
+    getSupervisionHistoryList() {
+      let params = {
+        orgId: this.selectOrg,
+        logDate: "2018-09",
+        tempId: this.currentTempId,
+        logId: this.currentLogId
+      };
+      this.$api.getSupervisionHistoryList(params, {}).then(res => {
+        if (res.resultMsg !== "查询成功") return false;
+        this.logHistoryList = res.data;
+        this.demoEvents = [];
+        this.UpdateHistoryList();
+      });
+    },
+
+    UpdateHistoryList() {
+      var tmpLogHistoryList = [];
+      for (var i = 0; i < this.logHistoryList.length; i++) {
+        let params = {
+          date: this.logHistoryList[i].startDate.replace(
+            new RegExp("-", "gm"),
+            "/"
+          ),
+          title: "",
+          orgId: this.logHistoryList[i].orgId,
+          startDate: this.logHistoryList[i].startDate,
+          logId: this.logHistoryList[i].logId,
+          historyId: this.logHistoryList[i].historyId,
+          tempId: this.logHistoryList[i].tempId
+        };
+
+        tmpLogHistoryList.push(params);
+      }
+      this.logHistoryList = tmpLogHistoryList;
+    },
+
+    //根据当前用户的身份，做不同操作
+    whetherCanEdit() {
+      console.log(
+        "orgId:" +
+          this.selectOrg +
+          "\ntempId:" +
+          this.currentTempId +
+          "\nlogId:" +
+          this.currentLogId
+      );
+
+      let params = {
+        orgId: this.selectOrg,
+        tempId: this.currentTempId,
+        logId: this.currentLogId
+      };
+      this.$api.whetherCanEdit(params, {}).then(res => {
+        if (res.errorCode === "1") {
+          this.userRole = res.data;
+          if (this.checkWrite === true) {
+            if (this.userRole.status === 1) {
+              this.isCanEdit = false;
+              console.log("ABC");
+            } else {
+              this.isCanEdit = true;
+              console.log("DEF");
+            }
+
+            this.$router.push({
+              name: "writeSupervisoRecord",
+              query: {
+                tempId: this.selectLog.tempId,
+                logId: this.selectLog.id,
+                orgId: this.selectOrg,
+                isCanEdit: this.isCanEdit
+              }
             });
-            res.data[0].groupJson.map(value => {
-              value.edit = false;
-            });
-            this.logData = res.data;
-            this.itemJson = res.data[0].itemJson;
-            this.groupJson = res.data[0].groupJson;
-            this.layerJson = res.data[0].layerJson;
-            console.log(res.data[0].itemJson);
           }
-        });
+        }
+      });
     },
 
     // 获取模板分页列表
