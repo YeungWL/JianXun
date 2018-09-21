@@ -13,7 +13,7 @@ export function getMyInPro(data) {
   return service.post(OAUTH_API + '/ck/getMyInPro.do', qs.stringify(data))
 }
 
-//现场检查 - 13、获取未关联的组织列表
+// 现场检查 - 13、获取未关联的组织列表
 export function getNotBindOrgs(data) {
   return service.post(OAUTH_API + '/ck/getNotBindOrgs.do', qs.stringify(data))
 }
@@ -53,7 +53,7 @@ export function setPermission(data) {
   return service.post(OAUTH_API + '/supervision/setPermission.do', qs.stringify(data))
 }
 
-// 监理日志 - 4、查阅授权
+// 监理日志 - 5、填写监理日志页面
 export function inputPage(data) {
   return service.post(OAUTH_API + '/supervision/inputPage.do', qs.stringify(data))
 }
@@ -71,4 +71,14 @@ export function getSupervisionHistoryList(data) {
 // 监理日志 - 7、是否能编辑施工日志
 export function whetherCanEdit(data) {
   return service.post(OAUTH_API + '/supervision/whetherCanEdit.do', qs.stringify(data))
+}
+
+// 监理日志 - 17、导出日志
+export function exportFile(data) {
+  return service.get(OAUTH_API + '/supervision/exportFile.do', qs.stringify(data))
+}
+
+// 监理日志 - 15、H5监理日志预览页面
+export function previewPage(data) {
+  return service.get(OAUTH_API + '/supervision/previewPage.do', qs.stringify(data))
 }

@@ -3,13 +3,13 @@
       <div class="page-header clearfix">
         <el-form class="" :inline="true" :model="listQuery" ref="form">
           <el-form-item label="项目：">
-            <el-select v-model="listQuery.projectId" placeholder="请选择" @change="selectOrgList" style="width:400px;">
+            <el-select v-model="listQuery.projectId" placeholder="请选择" @change="selectOrgList">
               <el-option v-for="item in project" :key="item.projectId" :label="item.proName" :value="item.projectId">
               </el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="组织：">
-            <el-select v-model="listQuery.orgId" placeholder="请选择" @change="selectOrg" style="width:400px;">
+            <el-select v-model="listQuery.orgId" placeholder="请选择" @change="selectOrg">
               <el-option v-for="item in orgList" :key="item.projectOrgId" :label="item.orgName" :value="item.projectOrgId">
                 <span>{{item.orgName}}{{item.status}}</span>
               </el-option>
@@ -17,6 +17,7 @@
           </el-form-item> 
           <div class="btn-group fr">
             <el-button type="primary"  icon="el-icon-search" @click="handleSearch">高级查询</el-button> 
+            <el-button icon="el-icon-setting" v-show="isChargeManShow">设置</el-button>
           </div>                        
         </el-form>
       </div>
@@ -70,7 +71,7 @@
       <div class="progress-bar">
         <div class="title"><i class="el-icon-question"></i>当前容量:</div>
         <div  class="progress"><el-progress :percentage="usedCapacity" color="#8e71c7" :show-text="false"></el-progress></div>
-        <span class="progress-size">30M/100M</span>
+        <span class="progress-size">{{usedCapacity}}M/{{totalCapacity}}M</span>
         <span type="text" class="btn">扩容</span>
       </div>
 
@@ -148,10 +149,9 @@ export default {
   name: 'buildingDiary',
   data() {
     return {
+      isChargeManShow: false,// 是否显示设置授权按钮
       project: [],
-      // projectValue:'',
       orgList: [],
-      // projectOrgId: '',
       org: {},            
       tableData: [],
       checkAll: false,
@@ -182,7 +182,8 @@ export default {
       loading: false,      
       total: 0,
       multipleSelection:[],
-      usedCapacity: 30,// 容量
+      usedCapacity: 0,// 容量-已用
+      totalCapacity: 100, // 容量-总
       searchDialogVisible: false,
       rules: {
         name: [{ required: true, message: '请输入模板名称', trigger: 'blur', pattern: /^[\u4E00-\u9FA5A-Za-z0-9]+$/, message: '允许中文、英文字母、数字！'}],
@@ -201,17 +202,24 @@ export default {
     // this.listQuery.currentPage = this.$route.query.currentPage ? parseInt(this.$route.query.currentPage) : 1
   },
   methods: { 
-    selectOrgList(orgList) {
-      if (orgList.length) {
-        this.listQuery.orgId = orgList[0].projectOrgId
-        this.org = orgList[0]
+    // 选择项目
+    selectOrgList(projectOrgId) {
+      // console.log(projectOrgId)
+      if (projectOrgId.length&&projectOrgId != '001') {
+        this.listQuery.orgId = projectOrgId[0].projectOrgId
+        this.org = projectOrgId[0]
         this.getOrgList()
+      } else if(projectOrgId === '001'){
+        this.getNotBindOrgs()
       } else {
         this.listQuery.orgId = ''
       }
     },
+    // 选择组织
     selectOrg(projectOrgId) {
       this.getList()
+      this.isChargeMan(projectOrgId)
+      this.getCapacity(projectOrgId)
       for (let i = 0; i < this.orgList.length; i++) {
         if (this.orgList[i].projectOrgId == projectOrgId) {
           this.org = this.orgList[i]
@@ -219,11 +227,41 @@ export default {
         }
       }
     },
+    // 是否是组织负责人
+    isChargeMan(id) {
+      this.$api.isChargeMan({
+          projectOrgId: id
+        }).then(response => {     
+        if (response.errorCode === '1') {
+          //0正组织负责人有权限设置授权组织
+          if (response.data[0].isChargeMan == "0") {
+              this.isChargeManShow = true
+            } else {
+              this.isChargeManShow = false;
+            }          
+        }      
+      }) 
+    }, 
+    // 获取容量
+    getCapacity(id) {
+      this.$api.capacity({
+          orgId: id
+      }).then(response => {     
+        if (response.errorCode === '1') {
+          this.usedCapacity = response.data[0].usedCapacity
+          this.totalCapacity = response.data[0].totalCapacity
+        }      
+      }) 
+    },       
     // 获取用户参与的项目列表
     getMyInPro() {
       this.$api.getMyInPro().then(response => {     
         if (response.errorCode === '1') {          
           this.project = response.data
+          // console.log(this.project)
+          this.project.push({
+            proName:"未关联",projectId:"001"
+          })
         }      
       }) 
     },
@@ -234,7 +272,15 @@ export default {
           this.orgList = response.data
         }      
       }) 
-    },          
+    },
+    // 获取未关联的组织列表
+    getNotBindOrgs() {
+      this.$api.getNotBindOrgs().then(response => {     
+        if (response.errorCode === '1') {          
+          this.orgList = response.data
+        }      
+      }) 
+    },              
     // 获取列表数据
     getList() {
       this.loading = true

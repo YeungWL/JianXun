@@ -13,8 +13,8 @@
         <el-table-column label="操作" min-width="120">
           <template slot-scope="scope">
             <el-button type="primary" size="mini" @click="modifyProject(scope.row)" >修改</el-button>
-            <el-button type="success" size="mini" @click="attorn(scope.row)" :disabled="btnDisabled">转让</el-button>
-            <el-button size="mini" @click="fronze">冻结</el-button>
+            <!-- <el-button type="success" size="mini" @click="attorn(scope.row)" :disabled="btnDisabled">转让</el-button>
+            <el-button size="mini" @click="fronze">冻结</el-button> -->
           </template>
         </el-table-column>
       </el-table>

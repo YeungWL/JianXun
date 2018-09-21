@@ -12,7 +12,7 @@
       </span>
       <div class="btn">
         <el-button type="primary" @click="addDepartment">添加部门</el-button>
-        <el-button type="primary">添加组织负责人</el-button>
+        <!-- <el-button type="primary">添加组织负责人</el-button> -->
       </div>
     </div>
     <div class="tables page-main customTable">
@@ -22,11 +22,19 @@
         <el-table-column prop="memberList" label="部门负责人">
           <template slot-scope="scope">
             <span v-if="!scope.row.manageList.length">空缺</span>
-            <span :class="{'activeRed':item.headRole === '0','activeYellow':item.headRole === '1','activeBlue':item.headRole === '2','activeGreen':item.headRole === '3'}"
+            <el-tag style="margin:0 10px 10px 0"
+                    v-for="(item,index) in scope.row.manageList"
+                    :key="index"
+                    closable
+                    :class="{'activeRed':item.headRole === '0','activeYellow':item.headRole === '1','activeBlue':item.headRole === '2','activeGreen':item.headRole === '3'}"
+                    @close="handleClose(item)"
+                    v-else>{{item.memberName}}</el-tag>
+            <!-- <span :class="{'activeRed':item.headRole === '0','activeYellow':item.headRole === '1','activeBlue':item.headRole === '2','activeGreen':item.headRole === '3'}"
                   style="margin-right:20px"
+                  :type="{'success':item.headRole === '0','warning':item.headRole === '1','info':item.headRole === '2','danger':item.headRole === '3'}"
                   v-for="(item,index) in scope.row.manageList"
                   :key="index"
-                  v-else>{{item.memberName}}</span>
+                  v-else>{{item.memberName}}</span> -->
           </template>
         </el-table-column>
         <el-table-column prop="commonList" label="部门成员">
@@ -634,16 +642,24 @@ export default {
     font-size: 14px;
   }
   .activeRed {
-    color: red;
+    color: #F56C6C;
+    border: 1px solid rgba(#F56C6C,.2);
+    background-color: rgba(#F56C6C,.1);
   }
   .activeYellow {
-    color: pink;
+    color: #E6A23C;
+    border: 1px solid rgba(#E6A23C,.2);
+    background-color: rgba(#E6A23C,.1);
   }
   .activeBlue {
-    color: blue;
+    color: #909399;
+    border: 1px solid rgba(#909399,.2);
+    background-color: rgba(#909399,.1);
   }
   .activeGreen {
-    color: green;
+    color: #67C23A;
+    border: 1px solid rgba(#67C23A,.2);
+    background-color: rgba(#67C23A,.1);
   }
 }
 </style>

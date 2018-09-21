@@ -209,3 +209,21 @@ export function getManageProjectList(data) {
 export function doApplyOrg(data) {
   return service.post(ORGS_API + '/pj/doApplyOrg.do', qs.stringify(data))
 }
+/* 
+  权限控制 - 获取项目已授权的组织列表
+*/
+export function getGrantOrgList(data) {
+  return service.post(ORGS_API + '/pj/getGrantOrgList.do', qs.stringify(data))
+}
+/* 
+  权限控制 - 根据组织ID查询授权与我的组织列表
+*/
+export function getMyOrgList(data) {
+  return service.post(ORGS_API + '/pj/getMyOrgList.do', qs.stringify(data))
+}
+/* 
+  权限控制 - 设置授权组织权限
+*/
+export function setOrgGrant(data) {
+  return service.post(ORGS_API + '/pj/setOrgGrant.do', qs.stringify(data))
+}

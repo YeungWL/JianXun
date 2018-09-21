@@ -39,7 +39,7 @@ export default {
       orgId: this.$route.query.orgId,
       logDate: this.$route.query.logDate,
       countDate: '',
-      templateId: this.$route.query.templateId,
+      orgTemplateId: this.$route.query.orgTemplateId,
       memberId: localStorage.getItem('userId'),
       logId: this.$route.query.logId
     }
@@ -147,21 +147,21 @@ export default {
     },
     // 获取日志的html页面
     getLogHtml(initData, date) {
-      this.srcUrl = 'http://120.25.121.72/jianzhumobile/mobile/buildLog/info.html?orgId='+this.orgId+'&createDate='+date+'&templateId='+this.templateId+'&logId='+this.logId+'&initData='+initData+'&memberId='+this.memberId
+      this.srcUrl = 'http://120.25.121.72/jianzhumobile/mobile/buildLog/info.html?orgId='+this.orgId+'&createDate='+date+'&orgTemplateId ='+this.orgTemplateId +'&logId='+this.logId+'&initData='+initData+'&memberId='+this.memberId
     },
     // 根据日期获取日志信息
-    historyListByTime() {
-      let endDate = new Date(this.logDate)
-      endDate.setDate(endDate.getDate() + 1)
-      this.$api.historyListByTime({
-        orgId: this.orgId,
-        orgTemplateId: this.orgTemplateId,
-        startDate: this.countDate,
-        endDate: endDate.toLocaleDateString().replace(/\//g, '-')
-      }).then(res => {
-        console.log(res)
-      })
-    }
+    // historyListByTime() {
+    //   let endDate = new Date(this.logDate)
+    //   endDate.setDate(endDate.getDate() + 1)
+    //   this.$api.historyListByTime({
+    //     orgId: this.orgId,
+    //     orgTemplateId: this.orgTemplateId,
+    //     startDate: this.countDate,
+    //     endDate: endDate.toLocaleDateString().replace(/\//g, '-')
+    //   }).then(res => {
+    //     console.log(res)
+    //   })
+    // }
   },
   created() {
     this.countDate = this.logDate.replace(/\//g, '-')

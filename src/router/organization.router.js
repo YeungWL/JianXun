@@ -4,15 +4,18 @@ const organizationManage = resolve => require(['@/views/organization/organizatio
 const organizationPosition = resolve => require(['@/views/organization/organizationPosition'], resolve)
 const connection = resolve => require(['@/views/organization/connection'], resolve)
 const showConnection = resolve => require(['@/views/organization/showConnection'], resolve)
+const organizationPower = resolve => require(['@/views/organization/organizationPower/power'], resolve)
+
 export default {
   path: '/organization',
   component: organization,
   name: 'organization',
+  redirect: '/organization/structure',
   meta: {
     requireAuth: false
   },
-  redirect: '/organization/structure',
-  children: [{
+  children: [
+    {
       path: '/organization/structure',
       component: organizationStructure,
       name: 'frame'
@@ -35,6 +38,11 @@ export default {
       path: '/organization/showConnection',
       component: showConnection,
       name: 'showConnection'
+    },
+    {
+      path: '/organization/power',
+      component: organizationPower,
+      name: 'organizationPower'
     }
   ]
 }

@@ -206,7 +206,7 @@ export default {
               }              
             })
             .catch(error => {
-              this.$message.error(error);
+              // this.$message.error(error);
               this.getCodeUrl();
             });
         } else {
@@ -232,7 +232,7 @@ export default {
         })
         .catch(error => {
           this.$router.push('/login')
-          this.$message.error(error.code)
+          // this.$message.error(error.code)
         })
     },           
     // //设置cookie

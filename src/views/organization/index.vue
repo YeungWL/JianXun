@@ -27,7 +27,7 @@ export default {
       openeds: ['1'],
       activeIndex: '1-1',
       asideArr: [
-        {title: '组织管理', content: ['组织框架', '管理组织','管理组织岗位','关联项目','已关联']}
+        {title: '组织管理', content: ['组织框架', '管理组织','管理组织岗位','关联项目','已关联', '权限控制']}
       ]
     }
   },
@@ -39,6 +39,7 @@ export default {
       case 'managePosition': this.activeIndex = '1-3'; break
       case 'connection': this.activeIndex = '1-4'; break
       case 'showConnection': this.activeIndex = '1-5'; break
+      case 'organizationPower': this.activeIndex = '1-6'; break
     }
   },
   methods: {
@@ -51,7 +52,7 @@ export default {
         case '1-3': this.$router.push({ path: '/organization/position' }); break
         case '1-4': this.$router.push({ path: '/organization/connection' }); break
         case '1-5': this.$router.push({ path: '/organization/showConnection' }); break
-
+        case '1-6': this.$router.push({ path: '/organization/power'}); break
       }
     }
   }

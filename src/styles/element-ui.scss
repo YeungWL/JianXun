@@ -551,11 +551,22 @@ $red:#e85657;
 .events-wrapper {
   display: none !important;
 }
-.__vev_calendar-wrapper {
+.__vev_calendar-wrapper{
   margin: 0 !important;
-}
-.cal-wrapper {
-  padding: 30px 0 0 20px !important;
+  height: 100%;
+  .cal-wrapper {
+    padding: 30px 0 0 20px !important;
+    height: 100%;
+    .cal-body{
+      height: 80%;
+      .dates{
+        height: 100%;
+      }
+      .item{
+        height: 14%;
+      }
+    }
+  }
 }
 
 @media screen and (min-width: 768px) {

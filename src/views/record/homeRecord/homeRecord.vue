@@ -2,20 +2,20 @@
   <div class="homeRecord">
     <div class="container">
       <div class="select">
-        <el-form :inline="true">
+        <el-form :inline="true" class="listForm">
           <el-form-item label="项目名称">
             <el-select v-model="selectProject" placeholder="请选择项目" @change="projectChange" style="width:200px;">
               <el-option v-for="item in projectList" :key="item.projectId" :label="item.proName" :value="item.projectId">
               </el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="组织名称" v-show="selectProject !== ''">
+          <el-form-item label="组织名称">
             <el-select v-model="selectOrg" placeholder="请选择组织" @change="orgChange" style="width:200px;">
               <el-option v-for="item in organizationList" :key="item.projectOrgId" :label="item.orgName" :value="item.projectOrgId">
               </el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="模版名称" v-show="selectOrg !== ''">
+          <el-form-item label="模版名称">
             <el-select v-model="orgTemplate" placeholder="请选择模版" value-key="id" style="width:200px;">
               <el-option v-for="item in logList" :key="item.id" :label="item.extendName ? item.extendName : item.tempName" :value="item">
               </el-option>
@@ -381,7 +381,7 @@ export default {
                 query: {
                   orgId: this.orgId,
                   logDate: day.date,
-                  templateId: this.orgTemplate.templateId,
+                  orgTemplateId: this.orgTemplate.id,
                   logId: res.data[0].logId
                 }
               })
@@ -863,14 +863,15 @@ export default {
 <style lang="scss" scoped>
 .homeRecord {
   margin: 20px;
-  display: block;
+  height: 95%;
   background: #ffffff;
   .container {
     max-width: 940px;
     min-width: 720px;
-    // width: 850px;
+    height: 100%;
     padding: 20px;
     .calinder {
+      height: 87%;
       .btn {
         display: flex;
         margin: 0 30px;
@@ -896,8 +897,10 @@ export default {
   .el-date-editor.el-input {
     width: 250px;
   }
-  .el-form-item {
-    margin-top: 20px;
+  .listForm{
+    .el-form-item {
+      margin-bottom: 0px;
+    }
   }
   .setting {
     padding: 20px 40px;

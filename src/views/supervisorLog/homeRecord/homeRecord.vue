@@ -1,6 +1,6 @@
 <template>
-  <div class="homeRecord"  v-loading="loading" element-loading-text="拼命加载中">
-    <div class="my-dialog scwj-dialog" >
+  <div class="homeRecord" v-loading="loading" element-loading-text="拼命加载中">
+    <div class="my-dialog scwj-dialog">
       <el-form size="mini">
         <el-row :gutter="24">
           <el-col :span="8">
@@ -34,7 +34,7 @@
     <div class="calinder">
       <vue-event-calendar :events="logHistoryList" @day-changed="dayChange" style="width:55%"></vue-event-calendar>
       <div style="padding-left:40%" v-if="buttonShow">
-        <el-button type="primary" @click="dialogSettingFormVisible = true" class="rzbtn">导出日志</el-button>
+        <el-button type="primary" @click="handleExportFile()" class="rzbtn">导出日志</el-button>
         <el-button type="primary" @click="handleSetting()" class="setion">设置</el-button>
       </div>
     </div>
@@ -53,7 +53,7 @@
                 <span class="left">{{item.extendName}}</span>
                 <span>
                   <el-button style="height: 32px;" type="primary" @click="handleExtendNameUpdate(item)">修改名称</el-button>
-                  <el-button style="height: 32px;" type="success">预览</el-button>
+                  <el-button style="height: 32px;" type="success" @click="handlePreView(item)">预览</el-button>
                   <el-button style="height: 32px;" type="info" @click="handleLogParaUpdate(item)">设置参数</el-button>
                 </span>
               </div>
@@ -109,8 +109,13 @@
           <span></span>
         </div>
         <hr />
+        <span>查阅权限</span>
         <div class="project">
-          <span>查阅权限</span>
+          <ul>
+            <li v-for="item in SettingOrgList" :key="item.index" :label="item.orgName" :value="item.orgName">
+              <el-checkbox v-model="item.isAuthor">{{item.orgName}}</el-checkbox>
+            </li>
+          </ul>
         </div>
       </div>
       <div slot="footer" class="dialog-footer" style="text-align: center;">
@@ -134,34 +139,51 @@
       </div>
     </el-dialog>
 
+    <!-- 预览监理日志的dialog -->
+    <el-dialog title="预览" :visible.sync="dialogPreviewFormVisible" width="1060px" class="my-dialog">
+      <div class="setting">
+        <iframe :src="srcUrl" width="800px" height="1100px"></iframe>
+      </div>
+      <div slot="footer" class="dialog-footer" style="text-align: center;">
+        <el-button type="primary" @click="dialogPreviewFormVisible=false">关闭</el-button>
+      </div>
+    </el-dialog>
+
     <!-- 导出dialog -->
-    <el-dialog title="导出" :visible.sync="dialogExportFormVisible">
+    <el-dialog title="导出" :visible.sync="dialogExportFormVisible" center>
       <el-form :model="form">
+
+        <el-form-item label="日志名称" :label-width="formLabelWidth">
+          <el-select v-model="form.selectLog" placeholder="请选择日志" @change="handleLogChange">
+            <el-option v-for="item in logList" :key="item.id" :label="item.extendName" :value="item">
+            </el-option>
+          </el-select>
+        </el-form-item>
+
         <el-form-item label="起始日期" :label-width="formLabelWidth">
-          <el-date-picker v-model="form.beginTime" type="datetime" placeholder="开始日期">
+          <el-date-picker type="date" placeholder="开始日期" v-model="form.beginTime" value-format="yyyy-MM-dd">
           </el-date-picker>
+
         </el-form-item>
         <el-form-item label="终止日期" :label-width="formLabelWidth">
-          <el-date-picker v-model="form.endTime" type="datetime" range-separator="至" placeholder="结束日期">
+          <el-date-picker type="date" range-separator="至" placeholder="结束日期" v-model="form.endTime" value-format="yyyy-MM-dd">
           </el-date-picker>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="fileFormatDialogVisible = false">关 闭</el-button>
+        <el-button type="primary" @click="exportLogFile()">导出</el-button>
+        <el-button @click="dialogExportFormVisible = false">关 闭</el-button>
       </span>
     </el-dialog>
 
-    <!-- 续期的dialog -->
-    <renewal :msg="show" @on-result-change="onResultChange"></renewal>
+
   </div>
 </template>
 
 <script>
-import renewal from "@/components/renewal";
+import axios from "axios";
 export default {
-  components: {
-    renewal
-  },
+  components: {},
   data() {
     return {
       /* 加载 */
@@ -194,6 +216,12 @@ export default {
 
       demoEvents: [],
 
+      //预览链接
+      srcUrl: "",
+
+      //授权同一项目组织列表
+      SettingOrgList: [],
+
       // 设置对话框开关
       dialogSettingFormVisible: false,
 
@@ -202,6 +230,9 @@ export default {
 
       // 添加日志对话框开关
       dialogAddLogFormVisible: false,
+
+      // 预览模板弹框
+      dialogPreviewFormVisible: false,
 
       // 名称info储存
       editExtendNameInfo: [],
@@ -235,26 +266,18 @@ export default {
 
       // 导出日志
       form: {
-        name: "",
-        region: "",
-        date1: "",
-        date2: "",
-        delivery: false,
-        type: [],
-        resource: "",
-        desc: "",
-        district: "",
+        selectLog: [],
         beginTime: "",
         endTime: ""
       },
-
-      // 用户身份
-      userRole: [],
 
       show: {
         isShow: false
       },
       // need to confirm start
+
+      token: this.getToken(),
+      accessToken: localStorage.getItem("accessToken"),
 
       setting: {
         major: "",
@@ -320,6 +343,11 @@ export default {
         });
     },
 
+    // 响应到处按钮处理事件
+    handleExportFile() {
+      this.exportFile();
+    },
+
     // 响应当前监理日志变动处理事件
     handleLogChange(value) {
       this.currentProjectName = value.projectName;
@@ -333,6 +361,13 @@ export default {
       this.whetherCanEdit();
     },
 
+    // 响应设置页面点击预览处理事件
+    handlePreView(item) {
+      this.srcUrl =
+        "http://120.25.121.72//jianzhumobile/mobile/supervision/previewPage.do?tempId=" +
+        item.tempId;
+      this.dialogPreviewFormVisible = true;
+    },
     // 日历处理事件
     dayChange(day) {
       console.log(day);
@@ -381,9 +416,7 @@ export default {
     // 设置按钮处理事件
     handleSetting() {
       this.getAddTempList();
-      if (this.logList.length > 0) {
-        this.dialogSettingFormVisible = true;
-      }
+      this.dialogSettingFormVisible = true;
     },
 
     // 处理修改按钮点击事件
@@ -432,6 +465,17 @@ export default {
 
     // 设置日志
     setPermission() {
+      var orgRefIds = "";
+      for (var i = 0; i < this.SettingOrgList.length; i++) {
+        if (this.SettingOrgList[i].isAuthor === true) {
+          if (orgRefIds === "") {
+            orgRefIds = this.SettingOrgList[i].projectOrgId;
+          } else {
+            orgRefIds = orgRefIds + "-" + this.SettingOrgList[i].projectOrgId;
+          }
+        }
+      }
+
       let params = {
         projectName: this.currentProjectName,
         setTime: this.currentProjectTime,
@@ -439,7 +483,7 @@ export default {
         logId: this.currentLogId,
         projectId: this.selectProject,
         orgId: this.selectOrg,
-        orgRefIds: ""
+        orgRefIds: orgRefIds
       };
       this.$api.setPermission(params, {}).then(res => {
         if (res.errorCode === "1") {
@@ -467,6 +511,7 @@ export default {
     },
 
     getBeReferOrgs(item) {
+      this.SettingOrgList = [];
       this.currentTempId = item.tempId;
       this.currentLogId = item.id;
       let params = {
@@ -479,6 +524,24 @@ export default {
         if (res.errorCode === "1") {
           this.dialogSettingDetailVisible = true;
           this.BeReferOrgs = res.data;
+
+          for (var i = 0; i < res.data[0].beReferOrgs.length; i++) {
+
+
+            var orgData = {
+              projectOrgId: res.data[0].beReferOrgs[i].projectOrgId,
+              orgName: res.data[0].beReferOrgs[i].orgName,
+              isAuthor:
+                res.data[0].beReferOrgs[i].isAuthor === "2" ? true : false,
+              index: i
+            };
+            this.SettingOrgList.push(orgData);
+
+            console.log(
+              "this.BeReferOrgs " + res.data[0].beReferOrgs[i].orgName
+              +　 "　　this.BeReferOrgs " + res.data[0].beReferOrgs[i].isAuthor
+            );
+          }
         }
       });
     },
@@ -596,9 +659,9 @@ export default {
       };
       this.$api.whetherCanEdit(params, {}).then(res => {
         if (res.errorCode === "1") {
-          this.userRole = res.data;
+          console.log("res.data[0].status：" + res.data[0].status);
           if (this.checkWrite === true) {
-            if (this.userRole.status === 1) {
+            if (res.data[0].status === "1") {
               this.isCanEdit = false;
               console.log("ABC");
             } else {
@@ -627,6 +690,52 @@ export default {
           this.templateList = res.data;
         }
       });
+    },
+
+    // 导出日志
+    exportFile() {
+      this.dialogExportFormVisible = true;
+    },
+
+    exportLogFile() {
+      var date = new Date();
+      var nowDay = date.getDate();
+      let big = [1, 3, 5, 7, 8, 10, 12];
+      this.day = this.day + this.count;
+
+      if (this.day === nowDay) {
+        this.isCanClick = true;
+        return false;
+      }
+
+      var date = new Date();
+      var nowDay = date.getDate();
+
+      this.day = this.day + this.count;
+
+      if (this.day === nowDay) {
+        this.isCanClick = true;
+        return false;
+      }
+
+      var strUrl =
+        this.baseURL() +
+        "/jianzhumobile/mobile/supervision/exportFile.do?" +
+        "startDate=" +
+        this.form.beginTime +
+        "&endDate=" +
+        this.form.endTime +
+        "&accessToken=" +
+        this.accessToken +
+        "&token=" +
+        this.token +
+        "&orgId=" +
+        this.selectOrg +
+        "&logId=" +
+        this.form.selectLog.id +
+        "&tempId=" +
+        this.form.selectLog.tempId;
+      window.open(strUrl);
     }
   },
   created() {

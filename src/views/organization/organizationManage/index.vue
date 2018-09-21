@@ -3,7 +3,7 @@
     <div class="organizationManage_header">
       <el-form :inline="true" :model="listQuery">
         <el-form-item label="组织编码">
-          <el-input placeholder="请输入组织编码" v-model="listQuery.orgCode"></el-input>
+          <el-input placeholder="请输入组织编码" v-model="listQuery.orgCode" style="width: 500px;"></el-input>
         </el-form-item>
         <el-form-item label="组织创建人">
           <el-input placeholder="请输入组织创建人" v-model="listQuery.creator"></el-input>
@@ -17,13 +17,10 @@
         <el-form-item>
           <el-button type="primary" @click="getOrgsList">搜索</el-button>
         </el-form-item>
+        <el-form-item>
+          <el-button @click="createDialog = true">创建组织</el-button>
+        </el-form-item>
       </el-form>
-
-      <el-row :gutter="10">
-        <el-col :sm="12" :md="2" :xs="12">
-          <el-button size='small' @click="createDialog = true">创建组织</el-button>
-        </el-col>
-      </el-row>
     </div>
 
     <div class="organizationManage_table page-main customTable">

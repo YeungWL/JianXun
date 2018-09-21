@@ -43,7 +43,7 @@ export default {
           this.attrData = res.data[0].attrList;
         }
       });
-      return this.isCanEdit
+      // return this.isCanEdit
     },
 
     // 创建日志
@@ -53,7 +53,8 @@ export default {
         let params = {
           attrCode: this.attrData[i].attrCode,
           historyId: this.attrData[i].historyId,
-          content: this.attrData[i].content
+          content: this.attrData[i].content,
+          attrId: this.attrData[i].attrId,
         };
         tmpAttData.push(params);
       }
