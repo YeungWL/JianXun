@@ -191,7 +191,8 @@
         <div class="enclosure_revise">
           <div style="margin: 10px 10px 10px 10px">
             <div>
-              <input id="FileSelect" type="file" @change="getFile($event)">
+              <input id="FileSelect" type="file" @change="getFile($event)"  style="display:none">
+              <el-button  @click="buttonGetFile">添加附件</el-button>
             </div>
             <div>
               <P>附件：</P>
@@ -250,7 +251,8 @@
               </el-col>
               <el-col :span="9">
                 <form>
-                  <input id="FileSelect2" type="file" @change="getFile($event)">
+                  <input id="FileSelect2" type="file" @change="getFile($event)" style="display:none">
+                  <el-button  @click="buttonGetFile">添加附件</el-button>
                 </form>
               </el-col>
             </el-row>
@@ -418,6 +420,12 @@ export default {
           this.projectList = res.data;
         }
       });
+    },
+
+    buttonGetFile() {
+      if (this.fileReviseDialogVisible === true)
+        document.getElementById("FileSelect").click();
+      else document.getElementById("FileSelect2").click();
     },
 
     //获取文库属性列表

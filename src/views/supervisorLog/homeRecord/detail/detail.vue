@@ -206,9 +206,10 @@ export default {
     
     //关闭监理日志历史记录界面
     close() {
-      this.$router.replace({
-        path: "/supervisorLog/homeRecord"
-      });
+       this.$router.go(-1);
+      // this.$router.replace({
+      //   path: "/supervisorLog/homeRecord"
+      // });
     }
 
   },

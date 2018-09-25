@@ -1,7 +1,8 @@
 <template>
-  <div class="organizationStructure page-content-body">
+<div class="page-content-body">
+  <div class="organizationStructure">
     <message v-model="showMessage" :visitor="visitor"></message>
-    <div>
+    <div class="page-header clearfix">
       <el-form :inline="true">
         <el-form-item label="项目：">
           <el-select v-model="orgList" placeholder="请选择" @change="selectOrgList" style="width:320px;">
@@ -22,16 +23,15 @@
       <el-row>
         <Organization-View :render-data="structure" :prop="setting">
           <template slot="card" slot-scope="prop">
-            <ul class="department">
+            <ul class="department" :class="prop.departmentName==='组织负责人' ?'departmentManager':''">
               <li class="departmentName">
                 {{prop.departmentName}}
               </li>
               <li class="member" :key="member.departmentId" v-for="member in prop.memberList" @dblclick="openMessage(member)">
                 <img class="avatar" :src="member.logoUrl" alt="">
+                <i class="tag" v-show="member.headRole !='4'" :class="member.headRole==='0'|| member.headRole==='2'?'tagzz':'tagfz'">{{member.headRole|headRole}}</i>
                 <span>
-                  <span class="fl">姓名</span>
                   <span>{{member.memberName}}</span>
-                  <span class="fr">({{member.headRole|headRole}})</span>
                 </span>
               </li>
             </ul>
@@ -40,39 +40,84 @@
       </el-row>
     </div>
   </div>
+</div>
 </template>
 <style lang="scss">
 .organizationStructure {
   margin: 10px;
   overflow-y: auto;
+  .root{ 
+    .branch {
+      .card .line-row, .card  .line-column{
+         background-color: #6c8fb2;
+      }
+    
+      .card-solt{
+        min-height: 85px;
+        border-color: #6c8fb2;
+        background: #d7e2ee;
+      }
+    }
+   }
   .department {
-    width: 200px;
+    width: 147px;
     padding-bottom: 10px;
+    &.departmentManager{
+      width: auto;
+      .member {
+        display: inline-block;
+        & > span {
+        text-align: left;
+        padding-left: 20px;        
+        }
+      }
+    }
     .departmentName {
       line-height: 30px;
       font-size: 15px;
       font-weight: 900;
-      // margin-bottom: 5px;
+      background: #6c8fb2;
+      color: #fff;
     }
-
     .member {
-      padding: 0px 5px;
+      padding: 0px 10px;
       line-height: 30px;
       margin: 5px 0px;
       cursor: pointer;
+      position: relative;
       .avatar {
-        display: inline-block;
+        // display: inline-block;
         vertical-align: middle;
         width: 30px;
         height: 30px;
+        float: left;
       }
       & > span {
         display: inline-block;
-        width: 120px;
-        border-bottom: 1px solid black;
+        width: 80px;
         box-sizing: border-box;
         height: 24px;
-
+        text-align: left;
+        padding-left: 15px;        
+        }
+      .tag{
+        color: #fff;
+        font-size: 12px;
+        padding: 0 5px;
+        width: auto;
+        font-style: normal;
+        margin-left: -10px; 
+        position: absolute;
+        top: 15px;
+        height: 14px;
+        line-height: 14px;
+        left: 40px;       
+        &.tagzz{
+          background:#f56c6c;
+        }
+        &.tagfz{
+          background:#e6a23c;
+        }          
         .fl {
           float: left;
         }
@@ -83,7 +128,7 @@
     }
   }
   .content {
-    width: 900px;
+    // width: 900px;
     display: flex;
     flex-direction: column;
     align-items: center;

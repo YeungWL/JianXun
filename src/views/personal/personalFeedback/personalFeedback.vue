@@ -47,7 +47,7 @@ export default {
     //提交反馈内容
     feedbackContent(){
       let _this = this
-       let imgurl =_this.src.replace("data:image/png;base64,", "")
+       let imgurl =_this.src.replace(/^data:image\/(jpeg|png|gif);base64,/, "")
        let params={
              photoUrl:imgurl,
              content:_this.feedbackForm.remarks

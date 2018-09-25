@@ -79,9 +79,12 @@ export default {
 
     //关闭填写监理日志界面
     close() {
-      this.$router.replace({
-        path: "/supervisorLog/homeRecord"
-      });
+       this.$router.go(-1);
+
+
+      // this.$router.replace({
+      //   path: "/supervisorLog/homeRecord"
+      // });
     }
   },
 

@@ -17,7 +17,8 @@
           </el-form-item> 
           <div class="btn-group fr">
             <el-button type="primary"  icon="el-icon-search" @click="handleSearch">高级查询</el-button> 
-            <el-button icon="el-icon-setting" v-show="isChargeManShow">设置</el-button>
+            <el-button type="primary" icon="el-icon-plus" @click="handleCreate">新增</el-button>
+            <el-button icon="el-icon-setting" v-show="isChargeManShow"  @click="handleSetting">设置</el-button>
           </div>                        
         </el-form>
       </div>
@@ -56,11 +57,9 @@
             <template slot-scope="scope"> 
               <span class="btn" title="编辑" @click="handleUpdate(scope.row.id)"><i class="iconfont icon-edit editicon"></i></span>         
               <span class="btn" title="查看" @click="handleView(scope.row.id)"><i class="iconfont icon-view viewicon"></i></span> 
-              <span class="btn" v-if='scope.row.isDeleted == "N"' 
-                @click="handelDelete(scope.row,'Y')" title="删除">
+              <span class="btn"  @click="handelDelete(scope.row)" title="删除" style="display:none;">
                 <i class="iconfont icon-del delicon"></i>
               </span>
-              <span class="btn" v-else @click="handelDelete(scope.row,'N')">恢复</span> 
             </template>
           </el-table-column>
         </el-table>
@@ -76,7 +75,7 @@
       </div>
 
     <!-- 高级查询 -->
-    <!--<el-dialog title="高级查询"
+    <el-dialog title="高级查询"
                :visible.sync="searchDialogVisible"
                :close-on-click-modal='false'
                width="50%" class="my-dialog">
@@ -93,14 +92,14 @@
               </el-checkbox-group>
             </el-form-item>
             <el-form-item label="属性：" prop="questionAttrs">
-              <el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="">全部</el-checkbox>
-              <el-checkbox-group v-model="listQuery.questionAttrs" @change="" class="check_item">
+              <el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" >全部</el-checkbox>
+              <el-checkbox-group v-model="listQuery.questionAttrs"  class="check_item">
                 <el-checkbox v-for="item in questionAttrs" :label="item.name" :key="item.bianma">{{item.name}}</el-checkbox>
               </el-checkbox-group>
             </el-form-item>
             <el-form-item label="类别：" prop="checkupTypes">
-              <el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="">全部</el-checkbox>
-              <el-checkbox-group v-model="listQuery.checkupTypes" @change="" class="check_item">
+              <el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" >全部</el-checkbox>
+              <el-checkbox-group v-model="listQuery.checkupTypes"  class="check_item">
                 <el-checkbox v-for="item in checkupTypes" :label="item.name" :key="item.bianma">{{item.name}}</el-checkbox>
               </el-checkbox-group>
             </el-form-item>
@@ -135,7 +134,7 @@
         <el-button @click="handleClose">取 消</el-button>
         <el-button type="primary" @click="search()">查 询</el-button>
       </span>
-    </el-dialog>       -->
+    </el-dialog>       
   </div>
 </template>
 <script>
@@ -154,15 +153,6 @@ export default {
       orgList: [],
       org: {},            
       tableData: [],
-      checkAll: false,
-      checkMemberTypeAll: false,
-      checkedMemberType: [],
-      checkedCities: ['上海', '北京'],
-      cities: cityOptions, 
-      memberType: memberTypeOptions, 
-      questionAttrs: [],   
-      checkupTypes: [],
-      status: [{'id':'0','name':'未整改'},{ 'id':'1','name':'已整改'}, {'id':'2','name':'已复查'}],
       isIndeterminate: false,        
       listQuery: { 
         projectId: '',
@@ -185,17 +175,22 @@ export default {
       usedCapacity: 0,// 容量-已用
       totalCapacity: 100, // 容量-总
       searchDialogVisible: false,
-      rules: {
-        name: [{ required: true, message: '请输入模板名称', trigger: 'blur', pattern: /^[\u4E00-\u9FA5A-Za-z0-9]+$/, message: '允许中文、英文字母、数字！'}],
-        batchCode: [{ required: true, message: '请输入编码', trigger: 'blur'}],
-        typeCode: [{ required: true, message: '请输入类型', trigger: 'blur' }]
-      }             
+      checkAll: false,
+      checkMemberTypeAll: false,
+      checkedMemberType: [],
+      checkedCities: ['上海', '北京'],
+      cities: cityOptions, 
+      memberType: memberTypeOptions, 
+      questionAttrs: [],   
+      checkupTypes: [],
+      status: [{'id':'0','name':'未整改'},{ 'id':'1','name':'已整改'}, {'id':'2','name':'已复查'}],      
+            
     }   
   },
   mounted() {
     this.getMyInPro()
-      this.getQuestionAttr()
-      this.getCheckupType()    
+    this.getQuestionAttr()
+    this.getCheckupType()    
   },  
   created() {
     // 请求第一页数据
@@ -363,41 +358,19 @@ export default {
       this.isIndeterminate = checkedCount > 0 && checkedCount < this.memberType.length;
       // console.log(value)
     },    
-    // 新增弹窗
+    // 新增问题
     handleCreate() {
-      this.dialogStatus = "create"
-      this.logsDialogVisible = true
-      this.$nextTick(_ => {
-        this.$refs.logsForm.resetFields()
-        this.logsForm['name'] = ''
-        this.logsForm['batchCode'] = ''
-        this.logsForm['typeCode'] = ''
-        this.logsForm['path'] = ''     
-      })  
-    },       
-    // 新增提交
-    create() {
-      let _this = this
-      let imgurl = _this.$refs.img.dataUrl.replace("data:image/png;base64,", "")       
-      _this.logsForm.path = imgurl
-      delete this.logsForm.templateId  
-      _this.$refs.logsForm.validate(valid => {
-        if (valid) {
-          _this.$api.addAttrTemplate(_this.logsForm).then(response => {
-            if (response.errorCode === '1') {
-              _this.getList()
-              _this.$message.success('新建成功！')
-              _this.logsDialogVisible = false
-            } else {
-              _this.$message.warning(response.resultMsg)
-            }
-          })
-        } else {
-          return false
-        }
+      if(this.listQuery.orgId === ''){
+        this.$message.warning('请选择组织！')
+        return
+      }
+      this.$router.push({
+        path: "/checking/addCheckupQuestion",
+        query: { projectId: this.listQuery.projectId, orgId: this.listQuery.orgId }
       })
-    },
-    handelDelete(data,val) {
+    },       
+    // 不需要删除功能
+    handelDelete(data) {
         this.$api.deleteQues({           
             questionId: data.questionId
         })
@@ -427,7 +400,14 @@ export default {
         path: "/checking/history",
         query: { questionId: questionId }
       })
-    }    
+    },
+    // 设置组织授权
+    handleSetting() {
+      this.$router.push({
+        path: "/checking/checkupOrgPermission",
+        query: { projectId: this.listQuery.projectId, orgId: this.listQuery.orgId }
+      })      
+    }        
   }    
 }
 </script>

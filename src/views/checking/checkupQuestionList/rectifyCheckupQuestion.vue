@@ -79,8 +79,8 @@
       </div>
       <section>
         <div class="ui-form">
-          <el-form label-width="100px" class='flex-form' v-model="rectifyForm">
-            <el-form-item label="整改描述："  class="flex-100">
+          <el-form label-width="100px" class='flex-form'  ref="rectifyForm" :model="rectifyForm" :rules="rules">
+            <el-form-item label="整改描述："  class="flex-100"  prop="replyDesc">
               <el-input type="textarea" v-model="rectifyForm.replyDesc"></el-input>
             </el-form-item>    
             <el-form-item label="图片："  class="flex-100" >
@@ -124,12 +124,16 @@ export default {
       },
       replyVoListForm:[],
       rectifyForm: {
+        questionId: this.$route.query.questionId,
         replyDesc: '',
         pictureJson: ''
       },      
       readonly: true,
       imgList: [],
-      size: 0,        
+      size: 0, 
+      rules: {
+        replyDesc: [{ required: true, message: '请输入整改描述', trigger: 'blur'}]
+      }               
     }
   },
   mounted() {
@@ -178,7 +182,7 @@ export default {
             let pictureListArr = []
             for (let i = 0; i < this.vue.imgList.length; i++) {
                 pictureListArr.push({
-                  pictureUrl: this.vue.imgList[i].file.src
+                 pictureUrl: this.vue.imgList[i].file.src.replace(/^data:image\/(jpeg|png|gif);base64,/, "")
                 })
             }
             // console.log( pictureListArr) 
@@ -193,16 +197,19 @@ export default {
     },
     // 提交
     handleSubmit() {
-        console.log("this.rectifyForm.pictureJson"+ this.rectifyForm.pictureJson) 
+        // console.log("this.rectifyForm.pictureJson"+ this.rectifyForm.pictureJson) 
+        // console.log(this.rectifyForm) 
+      this.$refs.rectifyForm.validate(valid => {
+        if(valid){
           this.$api.rectifyCheckupQuestion(this.rectifyForm).then(response => {
             if (response.errorCode === '1') {
-   
               this.$message.success(response.resultMsg)
-
             } else {
               this.$message.warning(response.resultMsg)
             }
           })
+        }
+      })
     },            
     // 返回
     goBack() {

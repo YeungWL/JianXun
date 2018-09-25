@@ -333,7 +333,7 @@ export default {
     // 上传用户头像
     handleUpload() { 
       let _this = this
-      let imgurl = _this.$refs.img.dataUrl.replace("data:image/png;base64,", "")
+      let imgurl = _this.$refs.img.dataUrl.replace(/^data:image\/(jpeg|png|gif);base64,/, "")
       // console.log("imgurl"+imgurl)          
       let params = {
         fileUrl: imgurl,

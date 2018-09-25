@@ -166,7 +166,8 @@
               </el-col>
               <el-col :span="8">
                 <el-form-item label="添加附件:">
-                  <input id="FileSelect" type="file" @change="getFile($event)">
+                  <input id="FileSelect" type="file" @change="getFile($event)"  style="display:none">
+                  <el-button  @click="buttonGetFile">添加附件</el-button>
                 </el-form-item>
               </el-col>
             </el-row>
@@ -245,7 +246,8 @@
         <div class="enclosure_revise">
           <div style="margin: 10px 10px 10px 10px;" class="pos-fix">
             <div>
-              <input id="FileSelect2" type="file" @change="getFile($event)">
+              <input id="FileSelect2" type="file" @change="getFile($event)" style="display:none">
+              <el-button  @click="buttonGetFile">添加附件</el-button>
             </div>
             <div>
               <P>附件如下：</P>
@@ -570,10 +572,16 @@ export default {
     handleRemove(file, fileList) {},
     handlePreview(file) {},
 
+    buttonGetFile() {
+      if (this.fileReviseDialogVisible === true)
+        document.getElementById("FileSelect2").click();
+      else document.getElementById("FileSelect").click();
+    },
+
     getFile(event) {
       if (this.fileReviseDialogVisible === true)
-        var oInput = document.getElementById("FileSelect");
-      else var oInput = document.getElementById("FileSelect2");
+        var oInput = document.getElementById("FileSelect2");
+      else var oInput = document.getElementById("FileSelect");
 
       if (this.itemJson.length >= 10) {
         this.$message({

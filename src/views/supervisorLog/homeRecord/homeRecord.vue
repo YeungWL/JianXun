@@ -22,7 +22,7 @@
           <el-col :span="8">
             <el-form-item label="日志名称" label-width="90px">
               <el-select v-model="selectLog" placeholder="请选择日志" @change="handleLogChange">
-                <el-option v-for="item in logList" :key="item.id" :label="item.extendName" :value="item">
+                <el-option v-for="item in logList" :key="item.id" :label="item.extendName" :value="item.index">
                 </el-option>
               </el-select>
             </el-form-item>
@@ -32,10 +32,10 @@
     </div>
 
     <div class="calinder">
-      <vue-event-calendar :events="logHistoryList" @day-changed="dayChange" style="width:55%"></vue-event-calendar>
-      <div style="padding-left:40%" v-if="buttonShow">
+      <vue-event-calendar :events="logHistoryList" @day-changed="dayChange" style="width:55%" ></vue-event-calendar>
+      <div style="padding-left:40%"  >
         <el-button type="primary" @click="handleExportFile()" class="rzbtn">导出日志</el-button>
-        <el-button type="primary" @click="handleSetting()" class="setion">设置</el-button>
+        <el-button type="primary" @click="handleSetting()" class="setion" v-if="buttonShow">设置</el-button>
       </div>
     </div>
 
@@ -109,14 +109,18 @@
           <span></span>
         </div>
         <hr />
-        <span>查阅权限</span>
-        <div class="project">
-          <ul>
-            <li v-for="item in SettingOrgList" :key="item.index" :label="item.orgName" :value="item.orgName">
-              <el-checkbox v-model="item.isAuthor">{{item.orgName}}</el-checkbox>
-            </li>
-          </ul>
+       
+        <div v-if="isRealChargeMan" >
+          <span>查阅权限</span>
+          <div class="project">
+            <ul>
+              <li v-for="item in SettingOrgList" :key="item.index" :label="item.orgName" :value="item.orgName">
+                <el-checkbox v-model="item.isAuthor">{{item.orgName}}</el-checkbox>
+              </li>
+            </ul>
+          </div>
         </div>
+      
       </div>
       <div slot="footer" class="dialog-footer" style="text-align: center;">
         <el-button type="primary" @click="setPermission()">提 交</el-button>
@@ -154,8 +158,8 @@
       <el-form :model="form">
 
         <el-form-item label="日志名称" :label-width="formLabelWidth">
-          <el-select v-model="form.selectLog" placeholder="请选择日志" @change="handleLogChange">
-            <el-option v-for="item in logList" :key="item.id" :label="item.extendName" :value="item">
+          <el-select v-model="form.selectLog" placeholder="请选择日志">
+            <el-option v-for="item in logList" :key="item.id" :label="item.extendName" :value="item.index">
             </el-option>
           </el-select>
         </el-form-item>
@@ -202,7 +206,7 @@ export default {
       organizationList: [],
 
       // 当前选择的日志信息
-      selectLog: [],
+      selectLog: "",
 
       // 可供选择的监理日志列表
       logList: [],
@@ -266,10 +270,13 @@ export default {
 
       // 导出日志
       form: {
-        selectLog: [],
+        selectLog: "",
         beginTime: "",
         endTime: ""
       },
+
+      //是否是组织负责人
+      isRealChargeMan: false,
 
       show: {
         isShow: false
@@ -289,7 +296,7 @@ export default {
       value1: "",
       buttonShow: false,
       logData: {},
-      logList: [],
+
       BeReferOrgs: [],
       currentTempId: "",
       currentLogId: "",
@@ -304,6 +311,7 @@ export default {
       this.organizationList = [];
       this.selectLog = "";
       this.logList = [];
+      this.logHistoryList = [];
 
       if (this.selectProject.length === 0) {
         this.$api.getNotBindOrgs().then(res => {
@@ -323,14 +331,19 @@ export default {
 
     // 响应当前组织变动处理事件
     handleOrgChange(value) {
+      this.selectLog = "";
+      this.logList = [];
+      this.logHistoryList = [];
       this.getAddTempList();
-      this.selectOrg = value;
+
       this.$api
         .isChargeMan({
-          projectOrgId: value
+          projectOrgId: this.selectOrg
         })
         .then(res => {
           if (res.errorCode == "1") {
+            this.isRealChargeMan =
+              res.data[0].isChargeMan === "0" ? true : false;
             if (
               res.data[0].isChargeMan == "0" ||
               res.data[0].isChargeMan == "1"
@@ -350,13 +363,10 @@ export default {
 
     // 响应当前监理日志变动处理事件
     handleLogChange(value) {
-      this.currentProjectName = value.projectName;
-      this.currentProjectTime = value.setTime;
-      this.currentTempId = value.tempId;
-      this.currentLogId = value.id;
-
-      console.log("currentTempId : " + this.currentTempId);
-      console.log("currentLogId : " + this.currentLogId);
+      this.currentProjectName = this.logList[this.selectLog].projectName;
+      this.currentProjectTime = this.logList[this.selectLog].setTime;
+      this.currentTempId = this.logList[this.selectLog].tempId;
+      this.currentLogId = this.logList[this.selectLog].id;
       this.getSupervisionHistoryList();
       this.whetherCanEdit();
     },
@@ -364,20 +374,19 @@ export default {
     // 响应设置页面点击预览处理事件
     handlePreView(item) {
       this.srcUrl =
-        "http://120.25.121.72//jianzhumobile/mobile/supervision/previewPage.do?tempId=" +
+        this.baseURL() +
+        "/jianzhumobile/mobile/supervision/previewPage.do?tempId=" +
         item.tempId;
       this.dialogPreviewFormVisible = true;
     },
     // 日历处理事件
     dayChange(day) {
-      console.log(day);
-
       if (this.selectOrg === "") {
         this.$message("请选择一个组织");
         return false;
       }
 
-      if (this.selectLog == "") {
+      if (this.selectLog === "") {
         this.$message("请选择一个监理日志");
         return false;
       }
@@ -453,13 +462,27 @@ export default {
 
     // 获取日志列表
     getAddTempList() {
+      this.logList = [];
       let params = {
         orgId: this.selectOrg,
         projectId: this.selectProject
       };
       this.$api.getAddTempList(params, {}).then(res => {
         if (res.resultMsg !== "查询成功") return false;
-        this.logList = res.data;
+        for (var i = 0; i < res.data.length; i++) {
+          var listData = {
+            id: res.data[i].id,
+            orgId: res.data[i].orgId,
+            tempId: res.data[i].tempId,
+            tempName: res.data[i].tempName,
+            extendName: res.data[i].extendName,
+            isDeleted: res.data[i].isDeleted,
+            projectName: res.data[i].projectName,
+            setTime: res.data[i].setTime,
+            index: i
+          };
+          this.logList.push(listData);
+        }
       });
     },
 
@@ -526,8 +549,6 @@ export default {
           this.BeReferOrgs = res.data;
 
           for (var i = 0; i < res.data[0].beReferOrgs.length; i++) {
-
-
             var orgData = {
               projectOrgId: res.data[0].beReferOrgs[i].projectOrgId,
               orgName: res.data[0].beReferOrgs[i].orgName,
@@ -536,11 +557,6 @@ export default {
               index: i
             };
             this.SettingOrgList.push(orgData);
-
-            console.log(
-              "this.BeReferOrgs " + res.data[0].beReferOrgs[i].orgName
-              +　 "　　this.BeReferOrgs " + res.data[0].beReferOrgs[i].isAuthor
-            );
           }
         }
       });
@@ -606,6 +622,7 @@ export default {
     },
 
     getSupervisionHistoryList() {
+      this.logHistoryList = [];
       let params = {
         orgId: this.selectOrg,
         logDate: "2018-09",
@@ -643,15 +660,6 @@ export default {
 
     //根据当前用户的身份，做不同操作
     whetherCanEdit() {
-      console.log(
-        "orgId:" +
-          this.selectOrg +
-          "\ntempId:" +
-          this.currentTempId +
-          "\nlogId:" +
-          this.currentLogId
-      );
-
       let params = {
         orgId: this.selectOrg,
         tempId: this.currentTempId,
@@ -659,21 +667,18 @@ export default {
       };
       this.$api.whetherCanEdit(params, {}).then(res => {
         if (res.errorCode === "1") {
-          console.log("res.data[0].status：" + res.data[0].status);
           if (this.checkWrite === true) {
             if (res.data[0].status === "1") {
               this.isCanEdit = false;
-              console.log("ABC");
             } else {
               this.isCanEdit = true;
-              console.log("DEF");
             }
 
             this.$router.push({
               name: "writeSupervisoRecord",
               query: {
-                tempId: this.selectLog.tempId,
-                logId: this.selectLog.id,
+                tempId: this.currentTempId,
+                logId: this.currentLogId,
                 orgId: this.selectOrg,
                 isCanEdit: this.isCanEdit
               }
@@ -694,6 +699,10 @@ export default {
 
     // 导出日志
     exportFile() {
+      this.form.beginTime = "";
+      this.form.endTime = "";
+      this.form.selectLog = 0;
+
       this.dialogExportFormVisible = true;
     },
 
@@ -718,6 +727,16 @@ export default {
         return false;
       }
 
+      if (this.form.beginTime == "") {
+        this.$message("请选择开始时间");
+        return false;
+      }
+
+      if (this.form.endTime == "") {
+        this.$message("请选择结束时间");
+        return false;
+      }
+
       var strUrl =
         this.baseURL() +
         "/jianzhumobile/mobile/supervision/exportFile.do?" +
@@ -732,9 +751,9 @@ export default {
         "&orgId=" +
         this.selectOrg +
         "&logId=" +
-        this.form.selectLog.id +
+        this.logList[this.form.selectLog].id +
         "&tempId=" +
-        this.form.selectLog.tempId;
+        this.logList[this.form.selectLog].tempId;
       window.open(strUrl);
     }
   },

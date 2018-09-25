@@ -241,7 +241,7 @@ export default {
     // 新增提交
     create() {
       let _this = this
-      let imgurl = _this.$refs.img.dataUrl.replace("data:image/png;base64,", "")       
+      let imgurl = _this.$refs.img.dataUrl.replace(/^data:image\/(jpeg|png|gif);base64,/, "")     
       _this.logsForm.path = imgurl
       delete this.logsForm.tempId  
       _this.$refs.logsForm.validate(valid => {

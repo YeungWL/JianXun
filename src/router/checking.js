@@ -8,6 +8,11 @@ const checkupQuestionList = resolve => require(['@/views/checking/checkupQuestio
 const rectifyCheckupQuestion = resolve => require(['@/views/checking/checkupQuestionList/rectifyCheckupQuestion'], resolve)
 /**现场检查 => 历史记录 */
 const history = resolve => require(['@/views/checking/checkupQuestionList/history'], resolve)
+/**现场检查 => 组织授权 */
+const checkupOrgPermission = resolve => require(['@/views/checking/checkupQuestionList/checkupOrgPermission'], resolve)
+/**现场检查 => 添加现场检查问题 */
+const addCheckupQuestion = resolve => require(['@/views/checking/checkupQuestionList/addCheckupQuestion'], resolve)
+
 
 export default {
   path: '/checking',
@@ -33,6 +38,18 @@ export default {
       component: history,
       name: 'history',
       meta: { requireAuth: true }
-    }    
+    },
+    {
+      path: '/checking/checkupOrgPermission',
+      component: checkupOrgPermission,
+      name: 'checkupOrgPermission',
+      meta: { requireAuth: true }
+    },
+    {
+      path: '/checking/addCheckupQuestion',
+      component: addCheckupQuestion,
+      name: 'addCheckupQuestion',
+      meta: { requireAuth: true }
+    }       
   ]
 }
