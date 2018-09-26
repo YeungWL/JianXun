@@ -35,7 +35,8 @@ export default {
         }).then(res => {
           if(res.errorCode == '1') {
             this.$message.success('申请成功')
-            this.getManageProjectList()
+            // this.getManageProjectList()
+            this.getMyOrgBindList()
           }
           console.log(res)
         })
@@ -43,17 +44,28 @@ export default {
         this.$message.warning('已经取消操作')
       })
     },
-    getManageProjectList() {
-      this.$api.getManageProjectList().then(res => {
+    // getManageProjectList() {
+    //   this.$api.getManageProjectList().then(res => {
+    //     console.log(res)
+    //     if(res.errorCode == '1') {
+    //       this.orgData = res.data
+    //     }
+    //   })
+    // },
+    getMyOrgBindList() {
+      this.$api.getMyOrgBindList({
+        isMyCreate: '2'
+      }).then(res => {
         console.log(res)
         if(res.errorCode == '1') {
           this.orgData = res.data
         }
       })
-    },
+    }
   },
   created() {
-    this.getManageProjectList()
+    // this.getManageProjectList() 
+    this.getMyOrgBindList()
   }
 }
 </script>

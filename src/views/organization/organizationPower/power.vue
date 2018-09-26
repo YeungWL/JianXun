@@ -117,15 +117,18 @@ export default {
   min-height: 95%;
   background: #ffffff;
   .scroll-box{
-    padding: 0 20px;
+    padding-left: 20px;
     width: 100%;
-    overflow: hidden;
     // box-shadow: darkgrey -2px -5px 20px 2px;
+  }
+  .el-checkbox{
+    display: block;
+    margin: 0;
   }
   .content{
     // width: 105%;
-    height: 65vh;
-    // overflow-y: scroll;
+    height: 55vh;
+    overflow-y: scroll;
     .scroll-item{
       padding-bottom:20px;
     }

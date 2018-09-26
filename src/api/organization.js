@@ -204,6 +204,12 @@ export function getManageProjectList(data) {
   return service.post(ORGS_API + '/pj/getManageProjectList.do', qs.stringify(data))
 }
 /* 
+  管理项目 - 查询管理项目的组织列表
+*/
+export function getMyOrgBindList(data) {
+  return service.post(ORGS_API + '/pj/getMyOrgBindList.do', qs.stringify(data))
+}
+/* 
   关联项目 - 对申请组织的操作
 */
 export function doApplyOrg(data) {
