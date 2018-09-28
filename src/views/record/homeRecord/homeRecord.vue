@@ -96,7 +96,7 @@
         </li>
       </ul>
       <div slot="footer" class="dialog-footer" style="text-align: center;">
-        <el-button type="primary">提 交</el-button>
+        <el-button type="primary" @click="dialogFormVisible1 = false">关 闭</el-button>
       </div>
     </el-dialog>
 
@@ -408,7 +408,8 @@ export default {
                   query: {
                     orgId: this.orgId,
                     date: day.date,
-                    orgTemplateId: this.orgTemplate.id
+                    orgTemplateId: this.orgTemplate.id,
+                    templateId: this.orgTemplate.templateId
                   }
                 })
               }
@@ -418,7 +419,8 @@ export default {
                   query: {
                     orgId: this.orgId,
                     date: day.date,
-                    orgTemplateId: this.orgTemplate.id
+                    orgTemplateId: this.orgTemplate.id,
+                    templateId: this.orgTemplate.templateId
                   }
                 })
               }
@@ -871,7 +873,7 @@ export default {
     height: 100%;
     padding: 20px;
     .calinder {
-      height: 87%;
+      height: 85%;
       .btn {
         display: flex;
         margin: 0 30px;

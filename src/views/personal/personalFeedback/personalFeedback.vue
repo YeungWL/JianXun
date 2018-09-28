@@ -6,11 +6,19 @@
         </el-form-item> 
         <el-form-item label="内容图" class="flex-100">
            <div class="uploadImg">
-             <input type="file" @change="getFile" ref="file" id="file">
+             <input type="file" @change="fileChange($event)"  ref="file" id="file" multiple="multiple">
              <i class="el-icon-plus avatar-uploader-icon"></i>
           </div>
-          <div class="img-box">
-            <img  :src="src" class="img-preview-img" id="previewImg">
+          <div class="img-box" v-show="imgList.length!=0">
+            <div class="upload_warp_img_div" v-for="(item,index) of imgList" >
+                <div class="upload_warp_img_div_top" >
+                    <div class="upload_warp_img_div_text" >
+                        {{item.file.name}}
+                    </div>
+                    <!--<img src="./del.png" class="upload_warp_img_div_del" @click="fileDel(index)">-->
+                </div>
+                <img :src="item.file.src" style="width:60px;">
+            </div>            
           </div>
           <span class="upload_span">图片支持大小不超过2M的JPG,GIF,PNG图片上传</span>
         </el-form-item>
@@ -24,7 +32,9 @@
 export default {
   data() {
      return {
-       src: '', 
+        src:'',
+        imgList: [],
+        size: 0,
        feedbackForm:{
          remarks:'测试反馈', 
        }
@@ -34,16 +44,37 @@ export default {
   },
   methods: {
     //本地预览
+    fileChange(el){
+        if (!el.target.files[0].size) return;
+        this.fileList(el.target.files);
+        el.target.value = ''
+    },
+    fileList(files){
+        for (let i = 0; i < files.length; i++) {
+            this.fileAdd(files[i]);
+        }
+    },
+    fileAdd(file){
+        this.size = this.size + file.size;//总大小
+        let reader = new FileReader();
+        reader.vue = this;
+        reader.readAsDataURL(file);
+        reader.onload = function () {
+            file.src = this.result;
+            this.vue.imgList.push({
+                file
+            });
+        }
+    },
     getFile (e) {
-        let _this = this
         var files = e.target.files[0]
         if (!e || !window.FileReader) return  // 看支持不支持FileReader
         let reader = new FileReader()
         reader.readAsDataURL(files) // 这里是最关键的一步，转换就在这里
         reader.onloadend = function () {
-          _this.src = this.result
+          this.src = this.result;
         }
-      },
+    },
     //提交反馈内容
     feedbackContent(){
       let _this = this

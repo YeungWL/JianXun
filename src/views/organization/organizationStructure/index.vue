@@ -49,13 +49,15 @@
   .root{ 
     .branch {
       .card .line-row, .card  .line-column{
-         background-color: #6c8fb2;
-      }
-    
+        //  background-color: #6c8fb2;
+         background-color: #b1b1b1;
+      }   
       .card-solt{
         min-height: 85px;
-        border-color: #6c8fb2;
-        background: #d7e2ee;
+        // border-color: #6c8fb2;
+        // background: #d7e2ee;
+        border-color: #b1b1b1;
+        background: #f5f5f5;        
       }
     }
    }
@@ -76,7 +78,8 @@
       line-height: 30px;
       font-size: 15px;
       font-weight: 900;
-      background: #6c8fb2;
+      // background: #6c8fb2;
+      background: #7a7a7a;
       color: #fff;
     }
     .member {

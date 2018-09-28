@@ -47,6 +47,7 @@ export default {
       orgId: this.$route.query.orgId,
       date: this.$route.query.date,
       orgTemplateId: this.$route.query.orgTemplateId,
+      templateId: this.$route.query.templateId,
       attrData: [],
       projectList: [],
       progress: [],
@@ -60,7 +61,8 @@ export default {
     // 获取组织主要记事列表
     getBuildAttrList() {
       let params = {
-        orgId: this.orgId
+        orgId: this.orgId,
+        templateId: this.templateId
       }
       this.$api.organizationList(params).then(res => {
         console.log(res)

@@ -2,11 +2,11 @@
  *  现场检查
  * */
 const checking = resolve => require(['@/views/checking/index'], resolve)
-/**现场检查 => 问题列表 */
+/* 现场检查 => 问题列表 */
 const checkupQuestionList = resolve => require(['@/views/checking/checkupQuestionList/checkupQuestionList'], resolve)
-/**现场检查 => 整改 */
+/* 现场检查 => 整改/复查 */
 const rectifyCheckupQuestion = resolve => require(['@/views/checking/checkupQuestionList/rectifyCheckupQuestion'], resolve)
-/**现场检查 => 历史记录 */
+/* 现场检查 => 历史记录 */
 const history = resolve => require(['@/views/checking/checkupQuestionList/history'], resolve)
 /**现场检查 => 组织授权 */
 const checkupOrgPermission = resolve => require(['@/views/checking/checkupQuestionList/checkupOrgPermission'], resolve)
@@ -32,7 +32,7 @@ export default {
       component: rectifyCheckupQuestion,
       name: 'rectifyCheckupQuestion',
       meta: { requireAuth: true }
-    },
+    },   
     {
       path: '/checking/history',
       component: history,

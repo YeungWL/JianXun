@@ -1,7 +1,10 @@
 <template>
   <div class="page-content-body">
     <div class="page-header page-navbar clearfix">
-      <div class="ui-title float_l"><span class="iconfont icon-home"></span>整改</div>
+      <div class="ui-title float_l"><span class="iconfont icon-home"></span>
+        <span v-if="this.$route.query.status ==='0'">整改</span>
+        <span v-else>复查</span>
+      </div>
       <el-button type="primary"  icon="el-icon-d-arrow-left" class="float_r" @click="goBack">返回</el-button> 
     </div>
     <div class="page-main" style="width:70%">
@@ -44,10 +47,10 @@
               <el-form-item label="整改描述："  class="flex-100">
                 <el-input type="textarea" v-model="item.replyDesc" :readonly="readonly"></el-input>
               </el-form-item>            
-              <el-form-item label="整改人：" >
+              <el-form-item label="整改人："   class="flex-50">
                 <el-input v-model="item.replyName" :readonly="readonly"></el-input>
               </el-form-item>
-              <el-form-item label="整改时间：" >
+              <el-form-item label="整改时间："   class="flex-50">
                 <el-input v-model="item.replyTime" :readonly="readonly"></el-input>
               </el-form-item>
               <el-form-item label="图片："  class="flex-100" v-if="item.replyPictures.length != 0">
@@ -62,10 +65,10 @@
               <el-form-item label="复查描述："  class="flex-100">
                 <el-input type="textarea" v-model="item.replyDesc" :readonly="readonly"></el-input>
               </el-form-item>            
-              <el-form-item label="复查人：" >
+              <el-form-item label="复查人："   class="flex-50">
                 <el-input v-model="item.replyName" :readonly="readonly"></el-input>
               </el-form-item>
-              <el-form-item label="复查时间：" >
+              <el-form-item label="复查时间："   class="flex-50">
                 <el-input v-model="item.replyTime" :readonly="readonly"></el-input>
               </el-form-item>
               <el-form-item label="图片："  class="flex-100" v-if="item.replyPictures.length != 0">
@@ -80,9 +83,15 @@
       <section>
         <div class="ui-form">
           <el-form label-width="100px" class='flex-form'  ref="rectifyForm" :model="rectifyForm" :rules="rules">
-            <el-form-item label="整改描述："  class="flex-100"  prop="replyDesc">
+            <el-form-item label="整改描述："  class="flex-100"  prop="replyDesc"  v-if="this.$route.query.status ==='0'">
               <el-input type="textarea" v-model="rectifyForm.replyDesc"></el-input>
-            </el-form-item>    
+            </el-form-item> 
+            <el-form-item label="复查描述："  class="flex-100"  prop="replyDesc"  v-else>
+              <el-input type="textarea" v-model="rectifyForm.replyDesc"></el-input>
+            </el-form-item>
+            <el-form-item label="要求时间："  class="flex-100" placeholder="天"  prop="requireTime" v-if="this.$route.query.status ==='1'">
+              <el-input v-model="rectifyForm.requireTime"></el-input>
+            </el-form-item>                           
             <el-form-item label="图片："  class="flex-100" >
               <div class="upload_warp_img" v-show="imgList.length!=0">
                 <div class="upload_warp_img_div" v-for="(item,index) of imgList" >
@@ -97,8 +106,9 @@
               <!--<span class="upload_span">图片支持大小不超过2M的JPG,GIF,PNG图片上传</span>-->
             </el-form-item>
             <el-form-item>
-              <el-button type="primary" @click="handleSubmit">提交</el-button>
-              <!--<el-button @click="resetForm('rectifyForm')">重置</el-button>-->
+              <el-button type="primary" v-if="this.$route.query.status ==='0'" @click="handleRectify">提交</el-button>
+              <el-button type="primary" v-if="this.$route.query.status ==='1'" @click="handleReview('1')">同意</el-button>
+              <el-button  v-if="this.$route.query.status ==='1'" @click="handleReview('2')">重整</el-button>
             </el-form-item>                                              
           </el-form>
         </div>
@@ -126,7 +136,9 @@ export default {
       rectifyForm: {
         questionId: this.$route.query.questionId,
         replyDesc: '',
-        pictureJson: ''
+        pictureJson: '',
+        requireTime: '',
+        status:''
       },      
       readonly: true,
       imgList: [],
@@ -195,10 +207,12 @@ export default {
         this.size = this.size - this.imgList[index].file.size;//总大小
         this.imgList.splice(index, 1);
     },
-    // 提交
-    handleSubmit() {
+    // 整改回复提交
+    handleRectify() {
         // console.log("this.rectifyForm.pictureJson"+ this.rectifyForm.pictureJson) 
-        // console.log(this.rectifyForm) 
+        // console.log(this.rectifyForm)
+      delete this.rectifyForm.requireTime
+      delete this.rectifyForm.status    
       this.$refs.rectifyForm.validate(valid => {
         if(valid){
           this.$api.rectifyCheckupQuestion(this.rectifyForm).then(response => {
@@ -210,7 +224,24 @@ export default {
           })
         }
       })
-    },            
+    },
+    // 复查回复提交
+    handleReview(status) {
+        // console.log("this.rectifyForm.pictureJson"+ this.rectifyForm.pictureJson) 
+        // console.log(this.rectifyForm) 
+      this.rectifyForm.status = status // 复查是否通过[必填项，1通过，2是重整]
+      this.$refs.rectifyForm.validate(valid => {
+        if(valid){
+          this.$api.reviewCheckupQuestion(this.rectifyForm).then(response => {
+            if (response.errorCode === '1') {
+              this.$message.success(response.resultMsg)
+            } else {
+              this.$message.warning(response.resultMsg)
+            }
+          })
+        }
+      })
+    },                   
     // 返回
     goBack() {
       this.$router.go(-1);

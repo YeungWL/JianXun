@@ -30,6 +30,10 @@ export function rectifyCheckupQuestion(data) {
 export function checkupOrgPermission(data) {
   return service.post(OAUTH_API + '/ck/checkupOrgPermission.do', qs.stringify(data))
 }
+// 现场检查 - 8、复查回复提交
+export function reviewCheckupQuestion(data) {
+  return service.post(OAUTH_API + '/ck/reviewCheckupQuestion.do', qs.stringify(data))
+}
 // 现场检查 - 9、查看历史记录
 export function historyRecord(data) {
   return service.post(OAUTH_API + '/ck/historyRecord.do', qs.stringify(data))

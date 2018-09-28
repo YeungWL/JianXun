@@ -46,8 +46,8 @@
           <el-table-column prop="checkType" label="检查类别" min-width="80" show-overflow-tooltip></el-table-column>
           <el-table-column prop="status" label="状态" min-width="100" show-overflow-tooltip>
             <template slot-scope="scope">
-              <span v-if='scope.row.status == "0"' class="red">未整改</span>
-              <span v-else-if='scope.row.status == "1"' class="blue">已整改</span>  
+              <span v-if='scope.row.status === "0"' class="red">未整改</span>
+              <span v-else-if='scope.row.status === "1"' class="blue">已整改</span>  
               <span v-else class="green">已复查</span> 
             </template>               
           </el-table-column> 
@@ -55,8 +55,18 @@
           <el-table-column prop="queDesc" label="问题描述" min-width="150"  show-overflow-tooltip></el-table-column>
           <el-table-column label="操作" min-width="120">
             <template slot-scope="scope"> 
-              <span class="btn" title="编辑" @click="handleUpdate(scope.row.id)"><i class="iconfont icon-edit editicon"></i></span>         
-              <span class="btn" title="查看" @click="handleView(scope.row.id)"><i class="iconfont icon-view viewicon"></i></span> 
+              <span class="btn" title="整改" v-if='scope.row.status === "0"' @click="handleUpdate(scope.row.id,scope.row.status)">
+                <!--<i class="iconfont icon-edit editicon"></i>-->
+                整改
+                </span>         
+              <span class="btn" title="复查" v-else-if='scope.row.status === "1"' @click="handleUpdate(scope.row.id,scope.row.status)">
+                <!--<i class="iconfont icon-view viewicon"></i>-->
+                复查
+                </span> 
+              <span class="btn" title="查看历史记录" v-else  @click="handleView(scope.row.id)">
+                <!--<i class="iconfont icon-edit editicon"></i>-->
+                查看
+                </span>  
               <span class="btn"  @click="handelDelete(scope.row)" title="删除" style="display:none;">
                 <i class="iconfont icon-del delicon"></i>
               </span>
@@ -78,44 +88,44 @@
     <el-dialog title="高级查询"
                :visible.sync="searchDialogVisible"
                :close-on-click-modal='false'
-               width="50%" class="my-dialog">
+               width="605px" class="my-dialog">
       <div class="dialog-content">
         <div class="ui-form">
-          <el-form ref="form" label-width="100px" :model="listQuery" class='my-form'>
+          <el-form ref="form" label-width="100px" :model="listQuery" class='my-form search-form'>
             <el-form-item label="姓名：" prop="memberName">
               <el-input v-model="listQuery.memberName" placeholder="请输入名字" style="width:180px;"></el-input>
             </el-form-item>            
             <el-form-item label="按人：">
-              <el-checkbox :indeterminate="isIndeterminate" v-model="checkMemberTypeAll" @change="handleCheckAllChange">全部</el-checkbox>
-              <el-checkbox-group v-model="checkedMemberType" @change="handleCheckedItemChange" class="check_item">
-                <el-checkbox v-for="item in memberType" :label="item.name" :key="item.id">{{item.name}}</el-checkbox>
-              </el-checkbox-group>
+              <el-checkbox :indeterminate="isIndeterminateMemberType" v-model="checkAllMemberType" @change="handleCheckAllChangeMemberType">全部</el-checkbox>
+              <el-checkbox-group v-model="checkedMemberType" @change="handleCheckedItemChangeMemberType" class="check_item">
+                <el-checkbox v-for="item in memberType" :label="item.id" :key="item.id" >{{item.name}}</el-checkbox>
+              </el-checkbox-group>              
             </el-form-item>
             <el-form-item label="属性：" prop="questionAttrs">
-              <el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" >全部</el-checkbox>
-              <el-checkbox-group v-model="listQuery.questionAttrs"  class="check_item">
-                <el-checkbox v-for="item in questionAttrs" :label="item.name" :key="item.bianma">{{item.name}}</el-checkbox>
+              <el-checkbox :indeterminate="isIndeterminateQuestionAttrs" v-model="checkAllQuestionAttrs" @change="handleCheckAllChangeQuestionAttrs">全部</el-checkbox>
+              <el-checkbox-group v-model="checkQuestionAttrs"  class="check_item"  @change="handleCheckedItemChangeQuestionAttrs">
+                <el-checkbox v-for="item in questionAttrs" :label="item.bianma" :key="item.bianma">{{item.name}}</el-checkbox>
               </el-checkbox-group>
             </el-form-item>
             <el-form-item label="类别：" prop="checkupTypes">
-              <el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" >全部</el-checkbox>
-              <el-checkbox-group v-model="listQuery.checkupTypes"  class="check_item">
-                <el-checkbox v-for="item in checkupTypes" :label="item.name" :key="item.bianma">{{item.name}}</el-checkbox>
+              <el-checkbox :indeterminate="isIndeterminateTypes" v-model="checkAllTypes" @change="handleCheckAllChangeCheckupTypes">全部</el-checkbox>
+              <el-checkbox-group v-model="checkTypes"  class="check_item item-br" @change="handleCheckedItemChangeCheckupTypes">
+                <el-checkbox v-for="item in checkupTypes" :label="item.bianma" :key="item.bianma">{{item.name}}</el-checkbox>
               </el-checkbox-group>
             </el-form-item>
             <el-form-item label="日期：">
                 <el-col :span="11">
-                  <el-date-picker type="date" placeholder="选择开始日期" v-model="listQuery.startTime" style="width: 100%;"></el-date-picker>
+                  <el-date-picker type="date" placeholder="选择开始日期" value-format="yyyy-MM-dd" v-model="listQuery.startTime" style="width: 100%;"></el-date-picker>
                 </el-col>
                 <el-col class="line" :span="2">-</el-col>
                 <el-col :span="11">
-                  <el-date-picker type="date" placeholder="选择结束日期" v-model="listQuery.endTime" style="width: 100%;"></el-date-picker>
+                  <el-date-picker type="date" placeholder="选择结束日期" value-format="yyyy-MM-dd" v-model="listQuery.endTime" style="width: 100%;"></el-date-picker>
                 </el-col>
               </el-form-item>            
             <el-form-item label="状态：" prop="status">
-              <el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="">全部</el-checkbox>
-              <el-checkbox-group v-model="listQuery.status" @change="" class="check_item">
-                <el-checkbox v-for="item in status" :label="item.name" :key="item.id">{{item.name}}</el-checkbox>
+              <el-checkbox :indeterminate="isIndeterminateStatus" v-model="checkAllStatus"  @change="handleCheckAllChangeStatus">全部</el-checkbox>
+              <el-checkbox-group v-model="checkStatus" class="check_item" @change="handleCheckedItemChangeStatus">
+                <el-checkbox v-for="item in status" :label="item.id" :key="item.id">{{item.name}}</el-checkbox>
               </el-checkbox-group>
             </el-form-item>
             <el-form-item label="照片：" prop="havePicture">
@@ -138,13 +148,9 @@
   </div>
 </template>
 <script>
-import userUpload from 'components/upload/userUpload.vue'
-const cityOptions = ['上海', '北京', '广州', '深圳'];
-const memberTypeOptions = [{'id':'1','name':'检查人'},{ 'id':'2','name':'复查人'},{'id':'3','name':'整改人'}]; 
-export default {
-  components: {
-    userUpload
-  },   
+const memberTypeOptions = [{'id':'1','name':'检查人'},{ 'id':'2','name':'复查人'},{'id':'3','name':'整改人'}];
+const statusOptions = [{'id':'0','name':'未整改'},{ 'id':'1','name':'已整改'},{'id':'2','name':'已复查'}];  
+export default { 
   name: 'buildingDiary',
   data() {
     return {
@@ -152,16 +158,15 @@ export default {
       project: [],
       orgList: [],
       org: {},            
-      tableData: [],
-      isIndeterminate: false,        
+      tableData: [],      
       listQuery: { 
         projectId: '',
         orgId: '',
         questionTitle: '',  
-        memberType: [],
+        memberType: '', // 选中的数据，提交的时候做格式处理
         memberName: '',
-        questionAttrs: [],
-        checkupTypes: [],
+        questionAttrs: '',
+        checkupTypes: '',
         status: '',
         startTime: '',
         endTime: '',
@@ -171,20 +176,26 @@ export default {
       }, 
       loading: false,      
       total: 0,
-      multipleSelection:[],
+      // multipleSelection:[],
       usedCapacity: 0,// 容量-已用
       totalCapacity: 100, // 容量-总
       searchDialogVisible: false,
-      checkAll: false,
-      checkMemberTypeAll: false,
-      checkedMemberType: [],
-      checkedCities: ['上海', '北京'],
-      cities: cityOptions, 
+      checkAllMemberType: false,// 全选
+      checkAllQuestionAttrs: false,
+      checkAllTypes: false,
+      checkAllStatus: false,
+      isIndeterminateMemberType: false, // 全选效果控制
+      isIndeterminateQuestionAttrs: false,
+      isIndeterminateTypes: false,
+      isIndeterminateStatus: false,
+      checkedMemberType: [],// 选中的人的类型
+      checkQuestionAttrs: [],// 选中的属性
+      checkTypes: [],// 选中的类别
+      checkStatus: [],// 选中的状态
       memberType: memberTypeOptions, 
-      questionAttrs: [],   
-      checkupTypes: [],
-      status: [{'id':'0','name':'未整改'},{ 'id':'1','name':'已整改'}, {'id':'2','name':'已复查'}],      
-            
+      questionAttrs: [],   // 属性数组
+      checkupTypes: [], // 类别数组
+      status: statusOptions // 状态数组
     }   
   },
   mounted() {
@@ -257,6 +268,9 @@ export default {
           this.project.push({
             proName:"未关联",projectId:"001"
           })
+          // 默认选中第一条数据
+          this.listQuery.projectId = response.data[0].projectId
+          this.getOrgList()
         }      
       }) 
     },
@@ -265,6 +279,9 @@ export default {
       this.$api.getOrgList({projectId: this.listQuery.projectId}).then(response => {     
         if (response.errorCode === '1') {          
           this.orgList = response.data
+          // 默认选中第一条数据
+          this.listQuery.orgId = response.data[0].projectOrgId
+          this.getList()
         }      
       }) 
     },
@@ -285,6 +302,9 @@ export default {
           this.loading = false            
           this.tableData = response.data
           this.total = response.totalRecords
+          this.searchDialogVisible = false
+        } else {
+          this.$message.warning(response.resultMsg)
         }      
       })    
     },
@@ -310,13 +330,34 @@ export default {
       // this.getCheckupType()
     },
     search() {
-      console.log(this.listQuery)
-      //  this.getList() 
+      // 将获取到的数据拼接后台需要的格式 
+      let memberTypeArr = ''
+      let questionAttrsArr = ''
+      let checkupTypesArr = ''
+      let statusArr = ''
+      for(let i = 0; i < this.checkedMemberType.length; i++) {
+        memberTypeArr += this.checkedMemberType[i]+'-'
+      }
+      for(let i = 0; i < this.checkQuestionAttrs.length; i++) {
+        questionAttrsArr += this.checkQuestionAttrs[i]+'-'
+      }
+      for(let i = 0; i < this.checkTypes.length; i++) {
+        checkupTypesArr += this.checkTypes[i]+'-'
+      }
+      for(let i = 0; i < this.checkStatus.length; i++) {
+        statusArr += this.checkStatus[i]+'-'
+      }             
+      this.listQuery.memberType = memberTypeArr
+      this.listQuery.questionAttrs = questionAttrsArr
+      this.listQuery.checkupTypes = checkupTypesArr
+      this.listQuery.status = statusArr
+
+      // console.log(this.listQuery)
+       this.getList() 
     },
     // 关闭弹窗
     handleClose() {
       this.searchDialogVisible = false
-      // this.$refs.logsForm.resetFields()
     },
     // 获取问题属性列表
     getQuestionAttr() {
@@ -334,30 +375,90 @@ export default {
         }      
       })    
     },    
-    handleCheckAllChange(val) {
+    // 全选人员类型
+    handleCheckAllChangeMemberType(val) {
       let allTypeId = [];
-      // let allTypeName = [];
-
       if (val) {
         this.memberType.forEach(item => {
           allTypeId.push(item.id); //得到全部类型ID，用于搜索
-          // allTypeName.push(item.name); //得到全部类型名称，用于返显选中状态
         });
-
         this.listQuery.memberType = allTypeId;
       } else {
         this.listQuery.memberType = [];
       }
-      this.checkedMemberType = val ? this.listQuery.memberType : [];      
-      this.isIndeterminate = false;
-      // console.log(this.checkedMemberType)
-    },
-    handleCheckedItemChange(value) {
+      this.checkedMemberType = val ? this.listQuery.memberType : []; //全选或反选 
+      this.isIndeterminateMemberType = false;
+      // console.log(this.listQuery.memberType)
+    },     
+    handleCheckedItemChangeMemberType(value) {
       let checkedCount = value.length;
-      this.checkMemberTypeAll = checkedCount === this.memberType.length;
-      this.isIndeterminate = checkedCount > 0 && checkedCount < this.memberType.length;
+      this.checkAllMemberType = checkedCount === this.memberType.length;
+      this.isIndeterminateMemberType = checkedCount > 0 && checkedCount < this.memberType.length;
       // console.log(value)
-    },    
+    },
+    // 全选属性
+    handleCheckAllChangeQuestionAttrs(val) {
+      let allTypeId = [];
+      if (val) {
+        this.questionAttrs.forEach(item => {
+          allTypeId.push(item.bianma); //得到全部类型ID，用于搜索
+        });
+        this.listQuery.questionAttrs = allTypeId;
+      } else {
+        this.listQuery.questionAttrs = [];
+      }      
+      this.checkQuestionAttrs = val ? this.listQuery.questionAttrs : [];      
+      this.isIndeterminateQuestionAttrs = false;
+      // console.log(this.listQuery.questionAttrs)
+    },     
+    handleCheckedItemChangeQuestionAttrs(value) {
+      let checkedCount = value.length;
+      this.checkAllQuestionAttr = checkedCount === this.questionAttrs.length;
+      this.isIndeterminateQuestionAttrs = checkedCount > 0 && checkedCount < this.questionAttrs.length;
+      // console.log(value)
+    },
+    // 全选类型
+    handleCheckAllChangeCheckupTypes(val) {
+      let allTypeId = [];
+      if (val) {
+        this.checkupTypes.forEach(item => {
+          allTypeId.push(item.bianma); //得到全部类型ID，用于搜索
+        });
+        this.listQuery.checkupTypes = allTypeId;
+      } else {
+        this.listQuery.checkupTypes = [];
+      }      
+      this.checkTypes = val ? this.listQuery.checkupTypes : [];            
+      this.isIndeterminateTypes = false;
+      // console.log(this.listQuery.checkupTypes)
+    },     
+    handleCheckedItemChangeCheckupTypes(value) {
+      let checkedCount = value.length;
+      this.checkAllCheckupType = checkedCount === this.checkupTypes.length;
+      this.isIndeterminateTypes = checkedCount > 0 && checkedCount < this.checkupTypes.length;
+      // console.log(value)
+    },
+    // 全选状态
+    handleCheckAllChangeStatus(val) {
+      let allTypeId = [];
+      if (val) {
+        this.status.forEach(item => {
+          allTypeId.push(item.id); //得到全部类型ID，用于搜索
+        });
+        this.listQuery.status = allTypeId;
+      } else {
+        this.listQuery.status = [];
+      }      
+      this.checkStatus = val ? this.listQuery.status : [];      
+      this.isIndeterminateStatus = false;
+      // console.log(this.listQuery.status)
+    },     
+    handleCheckedItemChangeStatus(value) {
+      let checkedCount = value.length;
+      this.checkAllStatus = checkedCount === this.status.length;
+      this.isIndeterminateStatus = checkedCount > 0 && checkedCount < this.status.length;
+      // console.log(value)
+    },                      
     // 新增问题
     handleCreate() {
       if(this.listQuery.orgId === ''){
@@ -387,11 +488,11 @@ export default {
           return false
         })      
     },
-    // 整改
-    handleUpdate(questionId) {   
+    // 整改或复查
+    handleUpdate(questionId,status) {   
       this.$router.push({
         path: "/checking/rectifyCheckupQuestion",
-        query: { questionId: questionId }
+        query: { questionId: questionId, status: status }
       })
     }, 
     // 查看历史记录   
@@ -413,9 +514,18 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.search-form>div{
+  margin-bottom: 0;
+}
 .check_item {
   display: inline-block;
   margin-left: 30px;
+}
+.check_item.item-br{
+  margin-left: 0px;
+}
+.check_item.item-br label:first-child{
+  margin-left: 0px;
 }
 .pb60{ padding-bottom: 60px;}
 .tag{

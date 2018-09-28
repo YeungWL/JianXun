@@ -57,6 +57,7 @@ export default {
       orgId: this.$route.query.orgId,
       date: this.$route.query.date,
       orgTemplateId: this.$route.query.orgTemplateId,
+      templateId: this.$route.query.templateId,
       attrData: [],
       projectList: [],
       group: [],
@@ -83,7 +84,8 @@ export default {
     // 获取组织主要记事列表
     getBuildAttrList() {
       let params = {
-        orgId: this.orgId
+        orgId: this.orgId,
+        templateId: this.templateId
       }
       this.$api.organizationList(params).then(res => {
         console.log(res)
@@ -98,19 +100,20 @@ export default {
     //获取用户关联的工程
     getProjectList() {
       this.$api.getBuildLogItemList({
-          projectOrgId: this.orgId
-        })
-        .then(res => {
-          // console.log(res)
-          if(res.errorCode == '1'){
-            this.projectList = res.data
-          }
-        })
+        projectOrgId: this.orgId,
+        orgTemplateId: this.orgTemplateId
+      }).then(res => {
+        // console.log(res)
+        if(res.errorCode == '1'){
+          this.projectList = res.data
+        }
+      })
     },
     //获取组织分组
     getGroupList() {
       let params = {
-        projectOrgId: this.orgId
+        projectOrgId: this.orgId,
+        orgTemplateId: this.orgTemplateId
       }
       this.$api.getBuildLogGroupList(params).then(res => {
         if(res.errorCode == '1') {

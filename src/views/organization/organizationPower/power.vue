@@ -117,7 +117,6 @@ export default {
   min-height: 95%;
   background: #ffffff;
   .scroll-box{
-    padding-left: 20px;
     width: 100%;
     // box-shadow: darkgrey -2px -5px 20px 2px;
   }
@@ -127,6 +126,7 @@ export default {
   }
   .content{
     // width: 105%;
+    padding: 0 20px;
     height: 55vh;
     overflow-y: scroll;
     .scroll-item{
