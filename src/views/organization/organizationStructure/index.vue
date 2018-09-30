@@ -63,7 +63,7 @@
    }
   .department {
     width: 147px;
-    padding-bottom: 10px;
+    // padding-bottom: 10px;
     &.departmentManager{
       width: auto;
       .member {
@@ -83,7 +83,7 @@
       color: #fff;
     }
     .member {
-      padding: 0px 10px;
+      padding: 10px 10px;
       line-height: 30px;
       margin: 5px 0px;
       cursor: pointer;

@@ -27,10 +27,10 @@
         <vue-event-calendar :events="demoEvents" @day-changed="dayChange"></vue-event-calendar>
         <div class="btn">
           <el-button type="primary" @click="downloadDialog" class="rzbtn">导出日志</el-button>
-          <div class="content">
+          <!-- <div class="content">
             <span>当前有效期至 : 2018年6月30号 </span>
             <a href="javascript:;" @click="show.isShow = !show.isShow">续期</a>
-          </div>
+          </div> -->
           <el-button type="primary" @click="getAddTempList(0)" v-if="buttonShow" class="setion">设置</el-button>
         </div>
       </div>
@@ -89,7 +89,7 @@
         <li class="project" v-for="item in logList" :key="item.id">
           <span class="left">{{item.extendName ? item.extendName : item.tempName}}</span>
           <span>
-            <el-button style="height: 32px;" type="primary" @click="showUpdate(item.id)">修改名称</el-button>
+            <el-button style="height: 32px;" type="primary" @click="showUpdate(item)">修改名称</el-button>
             <el-button style="height: 32px;" type="success" @click="showInspect(item.path)">预览</el-button>
             <el-button style="height: 32px;" type="info" @click="queryBuildLog(item.id, item.typeCode)">设置参数</el-button>
           </span>
@@ -103,18 +103,21 @@
     <!-- 添加日志模板dialog -->
     <el-dialog title="添加日志" :visible.sync="addDialog" class="my-dialog" width="600px">
       <div>
-        <el-form :inline="true" :model="formInline">
+        <el-form :inline="true" :model="formInline" style="padding-left: 10px;">
           <el-form-item label="日志名称">
             <el-input v-model="formInline.templateName" placeholder="日志名称"></el-input>
           </el-form-item>
           <el-form-item label="工程模板">
-            <el-select v-model="formInline.templateId" placeholder="工程模板">
-              <el-option v-for="(item, index) in templateOption" :key="index" :label="item.name" :value="item.templateId"></el-option>
+            <el-select v-model="formInline.template" placeholder="工程模板" @change="previewEvent" value-key="templateId">
+              <el-option v-for="(item, index) in templateOption" :key="index" :label="item.name" :value="item"></el-option>
             </el-select>
           </el-form-item>
         </el-form>
         <div>
           <div style="text-align: center;">预览</div>
+          <div>
+            <img :src="previewUrl" alt="预览图片" style="display: block;width: 90%;margin: 0 auto;">
+          </div>
         </div>
       </div>
       <div slot="footer" class="dialog-footer" style="text-align: center;">
@@ -166,7 +169,7 @@
             </div>
             <div v-else>
               <el-button class="my_button" icon="el-icon-check" style="color:#67C23A;" @click="updateBuildItem(item)"></el-button>
-              <el-button class="my_button" icon="el-icon-close" style="color:#F56C6C;" @click="item.edit = !item.edit"></el-button>
+              <el-button class="my_button" icon="el-icon-close" style="color:#F56C6C;" @click="closeBuild(item, index)"></el-button>
             </div>
           </li>
         </ul>
@@ -175,7 +178,7 @@
           <el-button icon="el-icon-plus" style="padding: 0;width: 30px;height: 32px;" @click="addGroup"></el-button>
         </div>
         <ul class="projectList">
-          <li v-for="(group, index) in groupJson" :key="group.groupId">
+          <li v-for="(group, index) in groupJson" :key="index">
             <el-input v-model="group.groupName" v-show="group.edit"></el-input>
             <div style="width:380px;margin: 0 0 10px 10px;height:32px;line-height:32px;" v-show="!group.edit">{{group.groupName}}</div>
             <div v-if="!group.edit">
@@ -184,7 +187,7 @@
             </div>
             <div v-else>
               <el-button class="my_button" icon="el-icon-check" style="color:#67C23A;" @click="updateBuildGroup(group)"></el-button>
-              <el-button class="my_button" icon="el-icon-close" style="color:#F56C6C;" @click="group.edit = !group.edit"></el-button>
+              <el-button class="my_button" icon="el-icon-close" style="color:#F56C6C;" @click="closeBuild(group, index)"></el-button>
             </div>
           </li>
         </ul>
@@ -308,7 +311,7 @@ export default {
       templateOption: [],
       formInline: {
         templateName: '',
-        templateId: '',
+        template: {},
         user: ""
       },
       resultData: {},
@@ -333,7 +336,8 @@ export default {
         disabledDate(time) {
           return time > new Date()
         }
-      }
+      },
+      previewUrl: ''
     }
   },
   // watch: {
@@ -558,10 +562,10 @@ export default {
     // 获取模板分页列表
     getTemplateList() {
       this.$api.getTemplateList().then(res => {
-        console.log(res)
         if(res.errorCode === "1") {
           this.addDialog = true
           this.templateOption = res.data
+          this.previewUrl = ''
         }
       })
     },
@@ -570,7 +574,7 @@ export default {
       this.$api.orgBindTemplate({
         orgId: this.orgId,
         templateName: this.formInline.templateName,
-        templateId: this.formInline.templateId
+        templateId: this.formInline.template.templateId
       }).then(res => {
         if(res.errorCode === '1') {
           this.addDialog = false
@@ -587,16 +591,23 @@ export default {
           this.logList = res.data
           if(valueItem == 0) {
             this.dialogFormVisible1 = true
-          } else {
-            this.$message.warning(res.resultMsg)
-          }
+          } 
+          // else {
+          //   this.$message.warning(res.resultMsg)
+          // }
         }
       })
     },
     // 展示弹窗
-    showUpdate(tId) {
+    showUpdate(value) {
       this.updateName = true
-      this.updateFormInline.orgTemplateId = tId
+      this.updateFormInline.orgTemplateId = value.id
+      this.updateFormInline.extendName = value.extendName ? value.extendName : value.tempName
+    },
+    // 添加日志预览图片
+    previewEvent(data) {
+      console.log(data)
+      this.previewUrl = data.path
     },
     // 修改模板扩展名称
     updateExtendName() {
@@ -614,24 +625,24 @@ export default {
     },
     // 修改分项工程项
     updateBuildItem(data) {
-      if (data.itemName == "") {
+      if (!data.itemName) {
         this.$message.warning("分项工程名称不能为空");
         return;
-      } else if (data.itemId == "") {
-        data.edit = !data.edit;
-        return;
       }
-      this.$api
-        .updateBuildItem({
-          itemId: data.itemId,
-          itemName: data.itemName
-        })
-        .then(res => {
-          if (res.errorCode == "1") {
-            this.$message.success("修改成功");
-            data.edit = !data.edit;
-          }
-        });
+      if (!data.itemId) {
+        data.edit = !data.edit
+        data.itemIdent = false
+        return
+      }
+      this.$api.updateBuildItem({
+        itemId: data.itemId,
+        itemName: data.itemName
+      }).then(res => {
+        if (res.errorCode == "1") {
+          this.$message.success("修改成功");
+          data.edit = !data.edit;
+        }
+      })
     },
     // 删除分项工程项
     delBuildItem(data, index) {
@@ -639,56 +650,68 @@ export default {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning"
+      }).then(() => {
+        if (data.itemId) {
+          this.$api.delBuildItem({
+            itemId: data.itemId,
+            isDeleted: "Y"
+          }).then(res => {
+            if (res.errorCode == "1") {
+              this.$message.success("删除成功");
+              this.queryBuildLog();
+            }
+          })
+        } else {
+          this.itemJson.splice(index, 1);
+        }
+      }).catch(() => {
+        this.$message.warning("已取消删除");
       })
-        .then(() => {
-          if (data.itemId !== "") {
-            this.$api
-              .delBuildItem({
-                itemId: data.itemId,
-                isDeleted: "Y"
-              })
-              .then(res => {
-                if (res.errorCode == "1") {
-                  this.$message.success("删除成功");
-                  this.queryBuildLog();
-                }
-              });
-          } else {
-            this.itemJson.splice(index, 1);
-          }
-        })
-        .catch(() => {
-          this.$message.warning("已取消删除");
-        });
+    },
+    // 关闭编辑转态
+    closeBuild(data, index) {
+      if(data.itemIdent) {
+        this.itemJson.splice(index, 1)
+        return
+      }
+      if(data.groupIdent) {
+        this.groupJson.splice(index, 1)
+        return
+      }
+      data.edit = !data.edit
     },
     // 添加分项工程项
     addItem() {
       let itemData = {
         edit: true,
-        itemId: "",
-        itemName: "",
-        orderNo: ""
-      };
-      this.itemJson.push(itemData);
+        // itemId: "",
+        // itemName: "",
+        // orderNo: "",
+        itemIdent: true
+      }
+      this.itemJson.push(itemData)
     },
     // 添加工作组项
     addGroup() {
       let groupData = {
         edit: true,
-        groupId: "",
-        groupName: "",
-        orderNo: ""
-      };
-      this.groupJson.push(groupData);
+        // groupId: "",
+        // groupName: "",
+        // orderNo: "",
+        groupIdent: true
+      }
+      this.groupJson.push(groupData)
     },
     // 修改工作组项
     updateBuildGroup(data) {
-      if (data.groupName == "") {
+      if (!data.groupName) {
         this.$message.warning("班组名称不能为空");
         return;
-      } else if (data.groupId == "") {
-        data.edit = !data.edit;
-        return;
+      }
+      if (!data.groupId) {
+        data.edit = !data.edit
+        data.groupIdent = false
+        return
       }
       this.$api.updateBuildGroup({
           groupId: data.groupId,
@@ -706,25 +729,23 @@ export default {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning"
-      })
-        .then(() => {
-          if (data.groupId !== "") {
-            this.$api.delBuildGroup({
-                groupId: data.groupId,
-                isDeleted: "Y"
-              }).then(res => {
-                if (res.errorCode == "1") {
-                  this.$message.success("删除成功");
-                  this.queryBuildLog();
-                }
-              });
-          } else {
-            this.groupJson.splice(index, 1);
-          }
-        })
-        .catch(() => {
-          this.$message.warning("已取消删除");
-        });
+      }).then(() => {
+        if (data.groupId) {
+          this.$api.delBuildGroup({
+              groupId: data.groupId,
+              isDeleted: "Y"
+            }).then(res => {
+              if (res.errorCode == "1") {
+                this.$message.success("删除成功");
+                this.queryBuildLog();
+              }
+            });
+        } else {
+          this.groupJson.splice(index, 1);
+        }
+      }).catch(() => {
+        this.$message.warning("已取消删除");
+      });
     },
     setBuild() {
       let cityPolicy = {
@@ -876,6 +897,7 @@ export default {
       height: 85%;
       .btn {
         display: flex;
+        justify-content: space-between;
         margin: 0 30px;
         line-height: 32px;
         a {

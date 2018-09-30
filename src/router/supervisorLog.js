@@ -3,9 +3,8 @@
  * */
 const supervisorLog = resolve => require(['@/views/supervisorLog/index'], resolve)
 
-
 /** 日志主页 */
-const homeRecord = resolve =>
+const supervisorHomeRecord = resolve =>
   require(['@/views/supervisorLog/homeRecord/homeRecord'], resolve)
 // 日志编写
 const writeSupervisoRecord = resolve =>
@@ -22,8 +21,8 @@ export default {
   children: [
     {
       path: '/supervisorLog/homeRecord',
-      component: homeRecord,
-      name: 'homeRecord',
+      component: supervisorHomeRecord,
+      name: 'supervisorHomeRecord',
       meta: { requireAuth: true }
     },
     {

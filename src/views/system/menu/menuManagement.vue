@@ -1,8 +1,8 @@
 <template>
-  <div class="clealfix">
+  <div class="page-content-body clealfix">
    <!-- 树组件 -->
     <menu-tree @change="getChannelId"  :copy="true" ></menu-tree>
-    <div class="content-right page-content-body">
+    <div class="content-right">
       <div class="page-header clearfix">
         <el-form class="search-form" :inline="true" :model="listQuery" ref="form" >
             <el-form-item label="菜单名称：">

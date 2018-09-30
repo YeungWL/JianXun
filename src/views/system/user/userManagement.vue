@@ -45,13 +45,13 @@
           <el-table-column prop="createTime" label="创建时间" min-width="150" sortable></el-table-column>
           <el-table-column label="操作" min-width="120">
             <template slot-scope="scope">              
-              <span class="btn" title="编辑" @click="handleUpdate(scope.row)" v-show="updateUserStatus"><i class="iconfont icon-edit editicon"></i></span>
+              <span class="btn" title="编辑" @click="handleUpdate(scope.row)" v-show="updateUserStatus"><i class="iconfont icon-edit icongreen"></i></span>
               <span  v-if='scope.row.status == 0'>
-                <span class="btn" @click="getUserDelete(scope.row,1)" v-show="outageUserStatus">停用</span>
-                <span class="btn" @click="getUserDelete(scope.row,2)" v-show="freezeUserStatus">冻结</span> 
+                <span class="btn" @click="getUserDelete(scope.row,1)" v-show="outageUserStatus" title="停用"><i class="iconfont icon-tingyong iconred"></i></span>
+                <span class="btn" @click="getUserDelete(scope.row,2)" v-show="freezeUserStatus"  title="冻结"><i class="iconfont icon-dongjie iconblue"></i></span> 
               </span>
-              <span class="btn" v-else-if='scope.row.status == 1' @click="getUserDelete(scope.row,0)" v-show="activateUserStatus">激活</span>
-              <span class="btn" v-else @click="getUserDelete(scope.row,0)" v-show="activateUserStatus">激活</span>
+              <span class="btn" v-else-if='scope.row.status == 1' @click="getUserDelete(scope.row,0)" v-show="activateUserStatus" title="激活"><i class="iconfont icon-jihuo icongreen"></i></span>
+              <span class="btn" v-else @click="getUserDelete(scope.row,0)" v-show="activateUserStatus" title="激活"><i class="iconfont icon-jihuo icongreen"></i></span>
             </template>
           </el-table-column>
         </el-table>

@@ -603,7 +603,7 @@ export default {
           formData.append("accessToken", localStorage.getItem("accessToken"));
           axios({
             url:
-              "http://120.25.121.72//jianzhumobile/mobile/privateLaw/uploading.do",
+              this.baseURL() + "/jianzhumobile/mobile/privateLaw/uploading.do",
             method: "post",
             data: formData,
             headers: {

@@ -64,15 +64,14 @@
           <template slot-scope="scope">
             <span class="btn" title="编辑"
                   @click="handleUpdate(scope.row)">
-              <i class="iconfont icon-edit editicon"></i>
+              <i class="iconfont icon-edit icongreen"></i>
             </span>
             <span class="btn" title="停用"  v-if='scope.row.status == 0'
-                  @click="getRoleDelete(scope.row,1)">停用
-              <!--<i class="iconfont icon-shanchu delicon"></i>-->
+                  @click="getRoleDelete(scope.row,1)"><i class="iconfont icon-tingyong iconred"></i>
             </span>
             <span class="btn" title="启用"  v-else
-                  @click="getRoleDelete(scope.row,0)">启用
-              <!--<i class="iconfont icon-shanchu delicon"></i>-->
+                  @click="getRoleDelete(scope.row,0)">
+              <i class="iconfont icon-qiyong iconblue"></i>
             </span>            
           </template>
         </el-table-column>

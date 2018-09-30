@@ -57,7 +57,7 @@
                :close-on-click-modal='false'
                width="50%" class="my-dialog">
       <div class="dialog-content">
-        <iframe src="http://www.jianxunhulian.com/portalhtml/terms/readtemplate.html" frameborder="0"  width="100%" height="320px"></iframe>
+        <iframe :src="url" frameborder="0"  width="100%" height="320px"></iframe>
       </div>
       <span slot="footer" class="dialog-footer">
         <el-button   @click="userProtocolDialogVisible = false">关闭</el-button> 
@@ -105,7 +105,8 @@ export default {
         }
       }; 
 
-    return {
+    return { 
+      url: this.baseURL() + '/portalhtml/terms/readtemplate.html',
       registerForm: {
         userName: '',
         name:'',

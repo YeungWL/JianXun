@@ -67,12 +67,15 @@ export default {
       },
       codeUrl: '',
       loading: false,
-      codeCheck: false 
+      codeCheck: '1' 
     }
   },
   created() {
-    this.getCodeUrl();
+    this.getCodeUrl()
   },  
+  mounted() {
+    this.getCodeUrl()
+  },   
   methods: {
     uuid(len, radix) {
       var chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'.split('');
@@ -134,27 +137,34 @@ export default {
       }
       // console.log(this.getImageUid())
       this.$api.checkImgCode(data).then(res=>{
-        if (res.errorCode == '1') {
+        // if (res.errorCode === '1') {
+        //   // this.$message.success(res.resultMsg)
+        //   return true
+        // } else {
+        //   return false
+        // }    
+        if (res.errorCode === '1') {
           // this.$message.success(res.resultMsg)
-          this.codeCheck = true
+          this.codeCheck = '1'
         } else {
           // this.$message.warning(res.resultMsg)
-          this.codeCheck = false
+          this.codeCheck = '2'
         }
       })
     },    
     // 登录
     handleLogin() {
-      //保存的账号
-      let name = this.loginForm.userName;
-      //保存的密码
-      let pass = this.loginForm.password;
+      // 保存的账号
+      let name = this.loginForm.userName
+      // 保存的密码
+      let pass = this.loginForm.password
+      // console.log(this.codeCheck)
       // 校验验证码是否正确
-      if (!this.codeCheck) {
-        // console.log(this.codeCheck)
+      if (this.codeCheck != '1') {       
         this.$message.warning('验证码错误！')
         return false
       }
+
       this.$refs.loginForm.validate(valid => {
         if (valid) {
           // 检测IE浏览器
@@ -179,7 +189,7 @@ export default {
               this.loading = false;
               // //用户名,在系统唯一
               // this.$cookie.set('userName',res.data[0].userName)        
-              if (res.errorCode == "1") {
+              if (res.errorCode === "1") {
                 let vm = this;
                 this.$message({
                   showClose: true,
@@ -224,8 +234,8 @@ export default {
           isLeaf: '2' 
         })
         .then(_ => {
-          console.log(_.data.data[0].url)
-          console.log(this.$store, 999999)
+          // console.log(_.data.data[0].url)
+          // console.log(this.$store, 999999)
           this.$router.push(_.data.data[0].url)
           //        this.$message.success('获取权限成功')
           setTimeout(_ => {}, 1000)
@@ -243,7 +253,7 @@ export default {
       window.document.cookie="userName"+ "=" +c_name+";path=/;expires="+exdate.toGMTString();
       window.document.cookie="userPwd"+"="+c_pwd+";path=/;expires="+exdate.toGMTString();
     },
-    // //读取cookie
+    //读取cookie
     getCookie:function () {
       if (document.cookie.length>0) {
         var arr=document.cookie.split('; ');//这里显示的格式需要切割一下自己可输出看下
@@ -269,14 +279,14 @@ export default {
   },
   // 页面加载调用获取cookie值
   mounted(){
-    this.getCookie()
+    // this.getCookie()
     let userName = localStorage.getItem('userName');
     this.loginForm.userName = userName;
-    if(this.$cookie.get(this.$api.TokenKey)){
-      this.$api.getUserInfo(this.$cookie.get(this.$api.TokenKey)).then(res=>{
-        this.$router.push('/project/projectList');
-      })
-    }
+    // if(this.$cookie.get(this.$api.TokenKey)){
+    //   this.$api.getUserInfo(this.$cookie.get(this.$api.TokenKey)).then(res=>{
+    //     this.$router.push('/project/projectList');
+    //   })
+    // }
 
   } 
 }

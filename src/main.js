@@ -51,12 +51,14 @@ Vue.prototype.$api = api
 // // 把cookie添加到原型中  组件内使用方法 存：this.$cookie.set(key,value) 取 this.$cookie.get(key) 删 this.$cookie.remove(key)
 Vue.prototype.$cookie = cookie
 
-Vue.prototype.getToken = function (){//changeData是函数名
+Vue.prototype.getToken = function (){
   return "PC_JIANXUN_APP2018";
+  // return "PC_JIANXUN_APP201966";
 }
 
-Vue.prototype.baseURL = function (){//changeData是函数名
+Vue.prototype.baseURL = function (){
   return "http://120.25.121.72";
+  // return "http://www.jianxunhulian.com";
 }
 // 改变数据格式
 // let f = (objItem = [], rootsArr = []) => {

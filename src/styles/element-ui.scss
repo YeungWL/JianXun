@@ -20,6 +20,7 @@ $SimpBlue:#bee2b1;
 $iconblue:#68c5f1;
 $icongreen:#3cc871;
 $iconyellow:#f4ca12;
+$iconred:#e85657;
 $red:#e85657;
 
 .red{color:$red;}
@@ -32,6 +33,21 @@ $red:#e85657;
     padding-top: 6px;
     color: #acb5bb;
 }
+
+/*el-table icon*/
+.iconyellow{
+  color:$iconyellow;
+}
+.iconblue {
+  color:$iconblue;
+}
+.icongreen {
+  color:$icongreen;
+}
+.iconred {
+  color:$red;
+}
+
 .flex-50 {
     width: 50%;
 }
@@ -126,7 +142,7 @@ $red:#e85657;
   }
   /* 内容区域 */
   .el-main {
-    padding: 0;
+    padding: 20px;
     overflow: hidden;
     margin-left: 200px;
   }
@@ -320,18 +336,6 @@ $red:#e85657;
   }
 }
 
-/*el-table icon*/
-.customTable{
-  .searchicon{
-    color:$iconblue;
-  }
-  .editicon {
-    color:$icongreen;
-  }
-  .delicon {
-    color:$red;
-  }
-}
 
 /*公共分页 */
 .pagination {

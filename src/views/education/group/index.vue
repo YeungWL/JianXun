@@ -1,0 +1,22 @@
+<template>
+  <div class="page-content-body">
+   班组管理
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'system',
+  data() {
+    return {
+    }
+  },
+  created() {
+
+  },
+  methods: {  
+  }
+}
+</script>
+<style lang="scss" scoped>
+</style>

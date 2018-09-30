@@ -17,6 +17,8 @@ import personalManage from './personalManage'
 import supervisorLog from './supervisorLog'
 // 现场检查 - 路由表
 import checking from './checking'
+// 三级教育 - 路由表
+import education from './education'
 
 /** 登录 */
 const login = resolve => require(['@/views/login/login'], resolve)
@@ -59,7 +61,7 @@ export const routers = [{
   name: 'layout',
   redirect: '/project',
   component: layout,
-  children: [projectManage, libraryManage, organizations, systemManage, personalManage, record, supervisorLog, checking]
+  children: [projectManage, libraryManage, organizations, systemManage, personalManage, record, supervisorLog, checking, education]
 },
 // 当页面地址和上面任一地址不匹配，则跳转到404
 {

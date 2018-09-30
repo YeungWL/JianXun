@@ -101,9 +101,10 @@ export default {
 <style lang='scss' scoped>
 .tree-layout {
     position: absolute;
+    left: 20px;
+    top: 0;
     min-height: 100%;
     width: 200px;
-    float: left;
     background: #fff;
 }
 .file-tree-items, .tree {

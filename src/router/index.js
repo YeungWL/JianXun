@@ -7,7 +7,7 @@ Vue.use(Router)// Vue全局使用Router
 
 // 路由器配置
 const RouterConfig = {
-  mode:'history',//去掉#号
+  // mode:'history',//去掉#号
   routes: routers
 }
 
@@ -17,11 +17,12 @@ const whiteList = ['/login', '/register', '/findPwd']
 // 路由守卫
 router.beforeEach((to, from, next) => {
   // 判断是否有token
-  console.log(getAccessToken())
+  // console.log(getAccessToken())
   if (getAccessToken()) {
     if (to.path === '/' || to.path === '/login' || to.path === '/register' || to.path === '/findPwd') {
-      next('/layout')
+      next('/')
     } else {
+      // console.log(22222)
       next()
     }
   } else {
@@ -29,6 +30,7 @@ router.beforeEach((to, from, next) => {
       next()
     } else {
       next('/login')
+
     }
   }
 })

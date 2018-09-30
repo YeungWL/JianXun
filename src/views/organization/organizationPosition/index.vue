@@ -1,8 +1,8 @@
 <template>
   <div class="position page-content-body">
     <div class="page-header">
-      <el-select v-model="selectOrgData" clearable placeholder="请选择" style="width:350px;" class="org-positon-select" @change="changByGetList">
-        <el-option v-for="item in options" :key="item.projectOrgId" :label="item.orgName" :value="item.projectOrgId">
+      <el-select v-model="selectOrgData" clearable placeholder="请选择" style="width:350px;" class="org-positon-select" @change="changByGetList" value-key="projectOrgId">
+        <el-option v-for="item in options" :key="item.projectOrgId" :label="item.orgName" :value="item">
         </el-option>
       </el-select>
       <span class="director">
@@ -53,19 +53,14 @@
     </div>
 
     <!-- 添加人员的dialog -->
-    <el-dialog title="添加人员" width="30%" :visible.sync="dialogFormVisible">
+    <el-dialog title="添加人员" width="450px" :visible.sync="dialogFormVisible">
       <el-form ref="createForm" :model="createForm" label-width="80px">
         <div class="select">
-          <!-- <div class="selec-area"> -->
           <el-form-item label="角色" prop="vocation" style="margin:0">
-            <!-- <span>角色：</span> -->
             <el-select v-model="createForm.vocation" placeholder="请选择" style="width:300px" @change="selected">
               <el-option label="组织负责人" value="0"></el-option>
-              <el-option label="部门负责人" value="1"></el-option>
-              <el-option label="普通员工" value="2"></el-option>
-            </el-select> <br>
+            </el-select>
           </el-form-item>
-          <!-- <div class="radio"> -->
           <el-form-item label="" prop="radio2" style="margin:0">
             <el-radio-group v-model="createForm.radio2" @change="radiosChange" :disabled="radioDisabled">
               <el-radio label="正职" v-if="show"></el-radio>
@@ -76,15 +71,14 @@
           <!-- </div> -->
           <!-- </div> -->
           <!-- <div class="selec-person"> -->
-          <el-form-item label="人才库" prop="checkList" style="margin:0">
+          <el-form-item label="人才库" prop="checkList" style="margin-top:20px;">
             <!-- <span>人才库：</span> -->
-            <div class="radios-person">
-
+            <div class="radios-person" style="overflow-y: scroll;height: 150px;">
               <el-checkbox-group v-model="createForm.checkList" :disabled="selectDisabled" v-if=" this.headRole !== 0 " @change="personSelect">
-                <el-checkbox v-for="(item,index) in memberList" :key="index" :label="item.nickName" :value="item.orgStorageId"></el-checkbox>
+                <el-checkbox v-for="(item,index) in memberList" :key="index" :label="item.nickName" :value="item.orgStorageId" style="display:block;margin-left:0;"></el-checkbox>
               </el-checkbox-group>
               <el-radio-group v-model="createForm.checkList" :disabled="selectDisabled" v-else @change="personSelect" style="margin-top:12px">
-                <el-radio v-for="(item,index) in memberList" :key="index" :label="item.nickName" :value="item.orgStorageId" style="margin-bottom:10px"></el-radio>
+                <el-radio v-for="(item,index) in memberList" :key="index" :label="item.nickName" :value="item.orgStorageId" style="margin-bottom:10px; display:block;margin-left:0;"></el-radio>
               </el-radio-group>
             </div>
           </el-form-item>
@@ -166,12 +160,16 @@ export default {
       gridData: [],
       options: [],
       tableData: [],
-      selectOrgData: '',
+      selectOrgData: {},
       managePerson: [],
       departmentName: '',
       orgId: '',
+      projectId: '',
       headRole: '',
-      departmentData: ''
+      departmentData: '',
+      vocation: [
+        { label: '组织负责人', value: '' }
+      ]
     }
   },
   methods: {
@@ -180,28 +178,26 @@ export default {
       this.$prompt('请输入部门名称', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消'
+      }).then(({ value }) => {
+        let params = {
+          departmentId: val.departmentId,
+          orgId: this.orgId,
+          departmentName: value
+        }
+        this.$api.modifyDepartment(params).then(res => {
+          if (!res.errorCode === '1') return false
+          this.changByGetList()
+        })
+        this.$message({
+          type: 'success',
+          message: '修改成功'
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '取消输入'
+        })
       })
-        .then(({ value }) => {
-          let params = {
-            departmentId: val.departmentId,
-            orgId: this.orgId,
-            departmentName: value
-          }
-          this.$api.modifyDepartment(params).then(res => {
-            if (!res.errorCode === '1') return false
-            this.changByGetList()
-          })
-          this.$message({
-            type: 'success',
-            message: '修改成功'
-          })
-        })
-        .catch(() => {
-          this.$message({
-            type: 'info',
-            message: '取消输入'
-          })
-        })
     },
     // 添加部门
     addDepartment() {
@@ -236,8 +232,7 @@ export default {
     },
     // 获取可以管理的组织列表
     getManageOrgList() {
-      this.$api
-        .getManageOrgList({
+      this.$api.getManageOrgList({
           isMyCreate: 2
         })
         .then(response => {
@@ -246,10 +241,12 @@ export default {
     },
     // 通过改变组织列表来获取部门信息
     changByGetList() {
-      this.orgId = this.selectOrgData
+      this.orgId = this.selectOrgData.projectOrgId
+      this.projectId = this.selectOrgData.projectId
 
       this.$api.getOrgInfo({
-        projectOrgId: this.selectOrgData
+        projectOrgId: this.selectOrgData.projectOrgId,
+        projectId: this.selectOrgData.projectId
       }).then(res => {
         console.log(res)
         if(res.errorCode == '1') {
@@ -323,25 +320,20 @@ export default {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
+      }).then(_ => {
+        this.$api.deleteMember(params).then(response => {
+            if (response.errorCode == '1') {
+              this.$message.success(response.resultMsg)
+              this.changByGetList()
+            } else {
+              this.$message.warning(response.resultMsg)
+            }
+          }).catch(error => {
+            this.$message.error(error)
+          })
+      }).catch(_ => {
+        this.$message('已取消删除')
       })
-        .then(_ => {
-          this.$api
-            .deleteMember(params)
-            .then(response => {
-              if (response.errorCode == '1') {
-                this.$message.success(response.resultMsg)
-                this.changByGetList()
-              } else {
-                this.$message.warning(response.resultMsg)
-              }
-            })
-            .catch(error => {
-              this.$message.error(error)
-            })
-        })
-        .catch(_ => {
-          this.$message('已取消删除')
-        })
     },
     // 删除部门
     del(val) {
@@ -375,7 +367,12 @@ export default {
     },
     //添加成员
     addMember(data) {
-      console.log(data, 12)
+      // console.log(data, 12)
+      // console.log(this.orgId, this.projectId)
+      console.log(this.tableData)
+      // ---?? 点击把角色的遍历好
+      this.vocationList.push()
+
       this.departmentData = data
       this.dialogFormVisible = true
       // 获取组织预存成员
@@ -385,14 +382,13 @@ export default {
       this.$api.getOrgStorageList(params).then(res => {
         if (res.errorCode !== '1') return false
         this.memberList = res.data
-        console.log(this.memberList)
+        // console.log(this.memberList)
         for (let i = 0; i < this.memberList.length; i++) {
           if (this.memberList[i].isDist === '1') {
-            console.log(567)
             this.memberList.splice(i, 1)
           }
         }
-        console.log(this.memberList)
+        // console.log(this.memberList)
       })
     },
     // 选择角色

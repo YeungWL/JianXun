@@ -4,56 +4,19 @@
       <!--<div class="logo"></div>-->
       <div class="nav">
         <el-menu :default-active="$route.menuUrl"  class="el-menu-demo" router mode="horizontal">
-          <el-menu-item :index="item.menuUrl" class="index" v-for="(item,index) in primaryRouteMenuList" :key="index" v-if="item.status">
+          <el-menu-item :index="item.menuUrl" class="index" :class="{'is-active': activeted(item.menuUrl)}" v-for="(item,index) in primaryRouteMenuList" :key="index" v-if="item.status">
             <i class="iconfont" :class="{
             'icon-xiangmuguanli':item.menuCode=='project',
             'icon-zuzhijigouguanli':item.menuCode=='organization',
-            'icon-sanjijiaoyu':item.menuCode=='edu',
-            'icon-rili':item.menuCode=='supervisorLog',
-            'icon-shigongrizhi':item.menuCode=='record',
+            'icon-sanjijiaoyu':item.menuCode=='education',
+            'icon-jianli':item.menuCode=='supervisorLog',
+            'icon-rili':item.menuCode=='record',
             'icon-sousuo':item.menuCode=='checking',
             'icon-wenjianguanli':item.menuCode=='library',
             'icon-xitongshezhi':item.menuCode=='system',
             }"></i> <span class="menu">{{item.menuName}}</span>
           </el-menu-item>
         </el-menu>       
-        <!--<el-menu :default-active="activeIndex"
-                 class="el-menu-demo"
-                 mode="horizontal"
-                 @select="handleSelect">
-          <el-menu-item index="index1">
-            <i class="iconfont icon-xiangmuguanli"></i><br>
-            <span>项目管理</span>
-          </el-menu-item>
-          <el-menu-item index="index2">
-            <i class="iconfont icon-zuzhijigouguanli"></i><br>
-            <span>组织管理</span>
-          </el-menu-item>
-          <el-menu-item index="index3">
-            <i class="iconfont icon-shigongrizhi"></i><br>
-            <span>施工日志</span>
-          </el-menu-item>
-          <el-menu-item index="index4">
-            <i class="iconfont icon-shigongrizhi"></i><br>
-          <span>监理日志</span>
-          </el-menu-item>
-          <el-menu-item index="index5">
-            <i class="iconfont icon-wenjianguanli"></i><br>
-            <span>现场检查</span>
-          </el-menu-item>          
-          <el-menu-item index="index6">
-            <i class="iconfont icon-sanjijiaoyu"></i><br>
-            <span>三级教育</span>
-          </el-menu-item>
-          <el-menu-item index="index7">
-            <i class="iconfont icon-wenjianguanli"></i><br>
-            <span>文库管理</span>
-          </el-menu-item>
-          <el-menu-item index="index8">
-            <i class="iconfont icon-xitongshezhi"></i><br>
-            <span>系统设置</span>
-          </el-menu-item>
-        </el-menu>-->
       </div>
       <div class="user">
         <div class="item">
@@ -196,24 +159,6 @@ export default {
   // },  
   created() {
     this.getUserRoots()
-    // this.getMyMenuList()
-    //计算重载activeIndex
-    var path = this.$route.matched[1].path;
-    switch (path) {
-      case "/organization":
-        this.activeIndex = "index2";
-        break;
-      case "/record":
-        this.activeIndex = "index3";
-        break;
-      case "/supervisorLog":
-        this.activeIndex = "index4";
-        break;
-      default:
-        this.activeIndex = "index1";
-        break;
-    }
-    // console.log(this.$route.matched[1]);
     this.account = localStorage.getItem('name')
     this.logoUrl = localStorage.getItem('logoUrl')
     //换肤
@@ -232,37 +177,12 @@ export default {
       navArr.forEach(item => {
         this.primaryRouteMenuList.push(item)
       })
-      // console.log(this.primaryRouteMenuList)
-    },           
-    handleSelect(key, keyPath) {
-      this.activeIndex = key;
-      switch (key) {
-        case "index1":
-          this.$router.push("/project");
-          break;
-        case "index2":
-          this.$router.push("/organization");
-          break;
-        case "index3":
-          this.$router.push("/record");
-          break;
-        case "index4":
-          this.$router.push("/supervisorLog");
-          break;
-        case "index5":
-          this.$router.push("/checking");
-          break;          
-        case "index6":
-          this.$router.push("/library");
-          break;
-        case "index7":
-          this.$router.push("/library");
-          break;
-        case "index8":
-          this.$router.push("/system");
-          break;          
-      }
-    },
+      console.log(this.primaryRouteMenuList)
+    }, 
+    // 查询当前选中菜单高亮显示**$route.fullPath** 完成解析后的 URL，包含查询参数和 hash 的完整路径。
+    activeted(path){
+        return this.$route.fullPath.includes(path)
+    },          
     //点击换肤
     changeColor(command) {
       document.getElementById("app").className = "theme" + command;
@@ -372,11 +292,12 @@ export default {
     color: #fff;
     .logo {
       height: 54px;
-      width: 285px;
+      width: 245px;
       float: left;
       margin-top: 18px;
+      margin-left: 10px;
       background: url("../../assets/images/logo.png") no-repeat;
-      background-position: center center;
+      background-position: left center;
     }
     .nav {
       float: left;
@@ -417,14 +338,16 @@ export default {
       // }
     }
     .item {
-      border-left: 1.5px solid rgba(255, 255, 255, 0.5);
-      float: right;
-      margin: 11px 0;
-      padding: 11px 0;
+      position: absolute;
+      top:0;
+      right:0;
+      border-left: 1px solid rgba(255, 255, 255, 0.5);
+      padding: 20px 0;
       padding-left: 24px;
       font-size: 16px;
       line-height: 32px;
       color: #fff;
+      background: #438fe5;
       img,
       .span {
         float: left;

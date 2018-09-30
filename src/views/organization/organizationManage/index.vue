@@ -35,11 +35,11 @@
         </el-table-column>
         <el-table-column prop="createTime" label="修改时间" min-width="150">
         </el-table-column>
-        <el-table-column label="操作" width="250">
+        <el-table-column label="操作" width="150">
           <template slot-scope="scope">
             <el-button size="mini" @click="updateShow(scope.row)" :disabled="scope.row.isFreeze == 1">修改</el-button>
             <el-button size="mini" type="danger" @click="deleteByOrg(scope.row.projectOrgId)" :disabled="scope.row.isFreeze == 1">删除</el-button>
-            <el-button size="mini" @click="freezeOrRecoverOrg(scope.row)">{{scope.row.isFreeze == 0? '冻结':'解冻'}}</el-button>
+            <!-- <el-button size="mini" @click="freezeOrRecoverOrg(scope.row)">{{scope.row.isFreeze == 0? '冻结':'解冻'}}</el-button> -->
           </template>
         </el-table-column>
       </el-table>

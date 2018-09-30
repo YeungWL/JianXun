@@ -56,19 +56,16 @@
           <el-table-column label="操作" min-width="120">
             <template slot-scope="scope"> 
               <span class="btn" title="整改" v-if='scope.row.status === "0"' @click="handleUpdate(scope.row.id,scope.row.status)">
-                <!--<i class="iconfont icon-edit editicon"></i>-->
-                整改
+                <i class="iconfont icon-edit iconred"></i>
                 </span>         
               <span class="btn" title="复查" v-else-if='scope.row.status === "1"' @click="handleUpdate(scope.row.id,scope.row.status)">
-                <!--<i class="iconfont icon-view viewicon"></i>-->
-                复查
+                <i class="iconfont icon-fucha iconblue"></i>
                 </span> 
               <span class="btn" title="查看历史记录" v-else  @click="handleView(scope.row.id)">
-                <!--<i class="iconfont icon-edit editicon"></i>-->
-                查看
+                <i class="iconfont icon-view icongreen"></i>
                 </span>  
               <span class="btn"  @click="handelDelete(scope.row)" title="删除" style="display:none;">
-                <i class="iconfont icon-del delicon"></i>
+                <i class="iconfont icon-del iconred"></i>
               </span>
             </template>
           </el-table-column>
@@ -268,9 +265,13 @@ export default {
           this.project.push({
             proName:"未关联",projectId:"001"
           })
-          // 默认选中第一条数据
-          this.listQuery.projectId = response.data[0].projectId
-          this.getOrgList()
+
+          if(this.project.length != 0){
+            // 默认选中第一条数据
+            this.listQuery.projectId = response.data[0].projectId           
+            this.getOrgList()
+          }
+         
         }      
       }) 
     },
@@ -279,9 +280,13 @@ export default {
       this.$api.getOrgList({projectId: this.listQuery.projectId}).then(response => {     
         if (response.errorCode === '1') {          
           this.orgList = response.data
-          // 默认选中第一条数据
-          this.listQuery.orgId = response.data[0].projectOrgId
-          this.getList()
+
+          if( this.project.length != 0  && this.orgList.length != 0){
+            // 默认选中第一条数据
+            this.listQuery.orgId = response.data[0].projectOrgId
+            this.getList()
+          }          
+          
         }      
       }) 
     },

@@ -104,7 +104,9 @@ export default {
     },
     // 获取项目列表
     getProjectList() {
-      this.$api.getMyProjectList().then(res => {
+      this.$api.getMyProjectList({
+        operateType: '0'
+      }).then(res => {
         if (res.errorCode === '1') {
           this.projectList = res.data
         }

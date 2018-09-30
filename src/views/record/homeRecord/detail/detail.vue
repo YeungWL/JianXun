@@ -147,7 +147,7 @@ export default {
     },
     // 获取日志的html页面
     getLogHtml(initData, date) {
-      this.srcUrl = 'http://120.25.121.72/jianzhumobile/mobile/buildLog/info.html?orgId='+this.orgId+'&createDate='+date+'&orgTemplateId ='+this.orgTemplateId +'&logId='+this.logId+'&initData='+initData+'&memberId='+this.memberId
+      this.srcUrl = this.baseURL() + '/jianzhumobile/mobile/buildLog/info.html?orgId='+this.orgId+'&createDate='+date+'&orgTemplateId='+this.orgTemplateId +'&logId='+this.logId+'&initData='+initData+'&memberId='+this.memberId
     },
     // 根据日期获取日志信息
     // historyListByTime() {
