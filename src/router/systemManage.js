@@ -20,7 +20,7 @@ const buildingDiary = resolve => require(['@/views/system/buildingDiary/building
 const supervisorDiary = resolve => require(['@/views/system/supervisorDiary/supervisorDiaryModelMg'], resolve)
 
 export default {
-  path: '/system', component: system, redirect: '/system/user', name: 'system', meta: { requireAuth: true },
+  path: '/system', component: system, redirect: '/system/menu', name: 'system', meta: { requireAuth: true },
    children: [
     { path: '/system/menu', component: menu, name: 'menu', meta: { requireAuth: true }},
     { path: '/system/role', component: role, name: 'role', meta: { requireAuth: true }},

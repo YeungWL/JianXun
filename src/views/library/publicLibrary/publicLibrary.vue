@@ -205,8 +205,8 @@
           <li>8、只能导入word文本文档。</li>
         </ul>
       </div>
-            <span slot="footer" class="dialog-footer">
-<el-button @click="fileFormatDialogVisible = false">关 闭</el-button>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="fileFormatDialogVisible = false">关 闭</el-button>
       </span>
     </el-dialog>
 
@@ -436,7 +436,7 @@
         </div>
       </div>
       <span slot="footer" class="dialog-footer">
-<el-button type="primary" @click="onEditSubmit">确 定</el-button>
+        <el-button type="primary" @click="onEditSubmit">确 定</el-button>
       </span>
 
 
@@ -1323,7 +1323,6 @@ export default {
 
 .left_3 {
   flex: 300px 0;
-
 }
 
 .left {

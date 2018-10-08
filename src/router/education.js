@@ -8,12 +8,20 @@ const group = resolve => require(['@/views/education/group/index'], resolve)
 const worker = resolve => require(['@/views/education/worker/index'], resolve)
 /** 三级教育 => 课件管理 */
 const courseware = resolve => require(['@/views/education/courseware/index'], resolve)
-/** 三级教育 => 考试管理 */
-const exam = resolve => require(['@/views/education/exam/index'], resolve)
+/** 三级教育 => 我的课件 */
+const myCourse = resolve => require(['@/views/education/courseware/myCourse'], resolve)
+/** 三级教育 => 我的课件 => 添加课件 */
+const addCourse = resolve => require(['@/views/education/courseware/addCourse'], resolve)
+/** 三级教育 => 考题管理 */
+const examQuestions = resolve => require(['@/views/education/exam/examQuestions'], resolve)
+/** 三级教育 => 考卷管理 */
+const examPaper = resolve => require(['@/views/education/exam/examPaper'], resolve)
 /** 三级教育 => 教育记录 */
 const eduRecord = resolve => require(['@/views/education/eduRecord/index'], resolve)
-/** 三级教育 => 资费管理 */
+/** 三级教育 => 资费管理 => 历史订单 */
 const expenses = resolve => require(['@/views/education/expenses/index'], resolve)
+/** 三级教育 => 资费管理 => 发票管理 */
+const invoice = resolve => require(['@/views/education/expenses/invoice'], resolve)
 
 export default {
   path: '/education',
@@ -49,9 +57,33 @@ export default {
       }
     },
     {
-      path: '/education/exam',
-      component: exam,
-      name: 'exam',
+      path: '/education/myCourse',
+      component: myCourse,
+      name: 'myCourse',
+      meta: {
+        requireAuth: true
+      }
+    },
+    {
+      path: '/education/addCourse',
+      component: addCourse,
+      name: 'addCourse',
+      meta: {
+        requireAuth: true
+      }
+    },    
+    {
+      path: '/education/exam/examPaper',
+      component: examPaper,
+      name: 'examPaper',
+      meta: {
+        requireAuth: true
+      }
+    },
+    {
+      path: '/education/exam/examQuestions',
+      component: examQuestions,
+      name: 'examQuestions',
       meta: {
         requireAuth: true
       }
@@ -71,6 +103,14 @@ export default {
       meta: {
         requireAuth: true
       }
-    }
+    },
+    {
+      path: '/education/invoice',
+      component: invoice,
+      name: 'invoice',
+      meta: {
+        requireAuth: true
+      }
+    }    
   ]
 }

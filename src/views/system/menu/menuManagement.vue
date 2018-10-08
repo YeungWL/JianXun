@@ -204,9 +204,9 @@ export default {
     this.menuForm.parentId = [this.listQuery.parentId];   
     // console.log("parentId："+this.menuForm.parentId)  
     this.menuAuthorityList=this.$getLastChildrenMenu('menuManagement'); 
-    console.log(this.menuAuthorityList); 
+    // console.log(this.menuAuthorityList); 
      for(let i=0;i<this.menuAuthorityList.length;i++){
-      console.log(this.menuAuthorityList[i].name);
+      // console.log(this.menuAuthorityList[i].name);
       switch(this.menuAuthorityList[i].name){
         case '添加':
           this.addmenuStatus=this.menuAuthorityList[i].status;
@@ -314,13 +314,13 @@ export default {
         this.menuForm['menuUrl'] = ''
         this.menuForm['menuType'] = menuType
         this.menuForm['menuOrder'] = '1'  
-        this.menuForm['parentId'] = '0'
+        // this.menuForm['parentId'] = this.menuForm.parentId
+        this.menuForm['parentId'] ==='0'?'0':this.menuForm.parentId
         if ( menuType === '3') {
           this.menuForm['isLeaf'] = '1' 
         } else {
           this.menuForm['isLeaf'] = '2'    
-        }
-        // console.log(this.menuForm)        
+        }      
       })
     },    
     // 编辑弹窗

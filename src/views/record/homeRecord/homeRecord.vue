@@ -885,7 +885,7 @@ export default {
 
 <style lang="scss" scoped>
 .homeRecord {
-  margin: 20px;
+  // margin: 20px;
   height: 95%;
   background: #ffffff;
   .container {

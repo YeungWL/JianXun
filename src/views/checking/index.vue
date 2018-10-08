@@ -21,7 +21,7 @@
 
 <script>
 export default {
-  name: 'library',
+  name: 'checking',
   data() {
     return {
       openeds: ['1'],
@@ -34,7 +34,7 @@ export default {
   created() {
     // console.log(this.$route.name)
     switch (this.$route.name) {
-      case 'menu': this.activeIndex = '1-1'; break  
+      case 'checking': this.activeIndex = '1-1'; break  
     }
   },
   methods: {
@@ -42,7 +42,7 @@ export default {
       // console.log(key, keyPath)
       this.activeIndex = key
       switch (key) {
-        case '1-1': this.$router.push({ path: '/system/menu' }); break
+        case '1-1': this.$router.push({ path: '/checking/checkupQuestionList' }); break
       }
     }
   }

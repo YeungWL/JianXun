@@ -100,8 +100,8 @@
                </el-table>
              </div>
              <div class="btn-group mt20">          
-                <el-button type="primary" icon="el-icon-plus" @click="handleAddCourse">添加</el-button>
-                <el-button type="success" icon="el-icon-edit" @click="handleMyCourse">维护</el-button>
+                <el-button type="primary" icon="el-icon-plus" @click="handleChoiceCourse">添加</el-button>
+                <el-button type="success" icon="el-icon-edit" @click="handleChoiceCourse">维护</el-button>
               </div>              
             </el-tab-pane>
           </el-tabs>
@@ -166,7 +166,7 @@ export default {
       statusArr: statusOptions,
       loading: false,      
       total: 0,
-      choiceCoursehDialogVisible: false,
+      choiceCoursehDialogVisible: true,
       successTipsDialogVisible: false,
       activeName: 'first',
       // 公共课件，我的课件列表
@@ -230,14 +230,8 @@ export default {
       this.choiceCoursehDialogVisible = false
     },
     handleCourseType(tab, event) {
-      // console.log(tab, event);
-    },
-    handleAddCourse(){
-      this.$router.push({path: '/education/addCourse'})
-    },
-    handleMyCourse(){
-      this.$router.push({path: '/education/myCourse'})
-    }                   
+      console.log(tab, event);
+    }                  
   }
 }
 </script>

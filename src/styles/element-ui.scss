@@ -105,10 +105,19 @@ $red:#e85657;
     .el-menu-item-group__title {
       display: none;
     }
-    .el-submenu .el-menu-item {
-      height: 40px;
-      line-height: 40px;
-      min-width: 198px;
+    .el-submenu {
+      .el-submenu__title{
+        padding-left: 40px!important;
+      }
+      .el-menu-item {
+          height: 40px;
+          line-height: 40px;
+          min-width: 198px;
+          padding-left: 60px!important;
+        }
+      .el-menu-item::before{
+          left: 50px;
+      }
     }
     .el-menu-item {
       height: 40px;
@@ -404,6 +413,11 @@ $red:#e85657;
       width:150px
     }
   }
+  .item-org{
+    .el-input__inner{
+      width:400px
+    }
+  }
 }
 .flex-form {
     display: -webkit-box;
@@ -450,6 +464,9 @@ $red:#e85657;
     }
   }
   .el-select{
+    width: 100%;
+  }
+  .el-date-editor.el-input {
     width: 100%;
   }
 }

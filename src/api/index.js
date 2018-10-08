@@ -8,6 +8,8 @@ import * as checking from './checking' // 现场检查
 import * as project from './project' // 系统权限管理
 import * as personal from './personal' // 个人中心
 import * as sms from './sms' // 短信验证码
+import * as education from './education' // 三级教育接口
+
 
 export default {
   ...login,
@@ -19,5 +21,6 @@ export default {
   ...record,
   ...supervisorLog,
   ...checking,
-  ...sms
+  ...sms,
+  ...education
 }

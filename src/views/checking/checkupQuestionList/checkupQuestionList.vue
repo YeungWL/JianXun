@@ -11,7 +11,7 @@
           <el-form-item label="组织：">
             <el-select v-model="listQuery.orgId" placeholder="请选择" @change="selectOrg">
               <el-option v-for="item in orgList" :key="item.projectOrgId" :label="item.orgName" :value="item.projectOrgId">
-                <span>{{item.orgName}}{{item.status}}</span>
+                <span>{{item.orgName}}</span>
               </el-option>
             </el-select>
           </el-form-item> 
