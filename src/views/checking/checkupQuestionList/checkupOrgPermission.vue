@@ -32,7 +32,7 @@ export default {
   },  
   created() {
     this.getBeAuthorOrgs()
-  },
+  }, 
   methods: {
     // 获取已授权的组织列表
     getBeAuthorOrgs() {
@@ -74,7 +74,7 @@ export default {
     /* 返回 */
     goBack() {
       this.$router.go(-1);
-    }    
+    }         
   }    
 }
 </script>

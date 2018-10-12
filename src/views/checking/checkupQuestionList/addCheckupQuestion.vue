@@ -156,8 +156,8 @@ export default {
     },
     // 提交
     handleSubmit() {
-       console.log( this.questionForm) 
-        console.log("this.questionForm.pictureJson"+ this.questionForm.pictureJson) 
+      //  console.log( this.questionForm) 
+      //   console.log("this.questionForm.pictureJson"+ this.questionForm.pictureJson) 
        this.$refs.questionForm.validate(valid => {
         if (valid) {
           this.$api.inputQuestion(this.questionForm).then(response => {
@@ -178,7 +178,11 @@ export default {
     // 返回
     goBack() {
       this.$router.go(-1);
-    }    
+    },
+    beforeRouteLeave(to, from, next) { 
+
+      next()
+    }  
   }    
 }
 </script>

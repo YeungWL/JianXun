@@ -245,7 +245,7 @@ export default {
     // 返回
     goBack() {
       this.$router.go(-1);
-    }    
+    }     
   }    
 }
 </script>

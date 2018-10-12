@@ -57,15 +57,18 @@
       <el-form ref="createForm" :model="createForm" label-width="80px">
         <div class="select">
           <el-form-item label="角色" prop="vocation" style="margin:0">
-            <el-select v-model="createForm.vocation" placeholder="请选择" style="width:300px" @change="selected">
-              <el-option label="组织负责人" value="0"></el-option>
+            <el-select v-model="createForm.vocation" placeholder="请选择" style="width:300px" @change="selected" value-key="departmentId">
+              <el-option v-for="(item, index) in vocationList" :key="index" :label="item.departmentName" :value="item"></el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="" prop="radio2" style="margin:0">
             <el-radio-group v-model="createForm.radio2" @change="radiosChange" :disabled="radioDisabled">
-              <el-radio label="正职" v-if="show"></el-radio>
+              <!-- <el-radio label="正职" v-if="show"></el-radio>
               <el-radio label="副职" v-if="show"></el-radio>
-              <el-radio label="普通员工" v-if="!show"></el-radio>
+              <el-radio label="普通员工" v-if="!show"></el-radio> -->
+              <el-radio label="正职"></el-radio>
+              <el-radio label="副职"></el-radio>
+              <el-radio label="普通员工" v-if="show"></el-radio>
             </el-radio-group>
           </el-form-item>
           <!-- </div> -->
@@ -75,10 +78,10 @@
             <!-- <span>人才库：</span> -->
             <div class="radios-person" style="overflow-y: scroll;height: 150px;">
               <el-checkbox-group v-model="createForm.checkList" :disabled="selectDisabled" v-if=" this.headRole !== 0 " @change="personSelect">
-                <el-checkbox v-for="(item,index) in memberList" :key="index" :label="item.nickName" :value="item.orgStorageId" style="display:block;margin-left:0;"></el-checkbox>
+                <el-checkbox v-for="(item,index) in memberList" :key="index" :label="item" style="display:block;margin-left:0;">{{item.nickName}}</el-checkbox>
               </el-checkbox-group>
-              <el-radio-group v-model="createForm.checkList" :disabled="selectDisabled" v-else @change="personSelect" style="margin-top:12px">
-                <el-radio v-for="(item,index) in memberList" :key="index" :label="item.nickName" :value="item.orgStorageId" style="margin-bottom:10px; display:block;margin-left:0;"></el-radio>
+              <el-radio-group v-model="createForm.radioValue" :disabled="selectDisabled" v-else @change="personSelect" style="margin-top:12px">
+                <el-radio v-for="(item,index) in memberList" :key="index" :label="item" style="margin-bottom:10px; display:block;margin-left:0;">{{item.nickName}}</el-radio>
               </el-radio-group>
             </div>
           </el-form-item>
@@ -130,8 +133,9 @@ export default {
     return {
       createForm: {
         vocation: '',
-        radio2: [],
-        checkList: []
+        radio2: '',
+        checkList: [],
+        radioValue: ''
       },
       show: true,
       nickName: '',
@@ -148,14 +152,14 @@ export default {
         name: '',
         region: ''
       },
-      vocationList: [
-        { label: '组织负责人', value: '0' },
-        { label: '部门负责人', value: '1' },
-        { label: '普通员工', value: '2' }
-      ],
+      vocationList: [],
 
       memberList: [],
-      member: {},
+      memberData: {
+        'departmentId': '',
+        'orgLeaderedId': '',
+        'memberList': []
+      },
       comList: [],
       gridData: [],
       options: [],
@@ -248,7 +252,6 @@ export default {
         projectOrgId: this.selectOrgData.projectOrgId,
         projectId: this.selectOrgData.projectId
       }).then(res => {
-        console.log(res)
         if(res.errorCode == '1') {
           let commonList = []
           let manageList = []
@@ -268,7 +271,16 @@ export default {
             manageList = []
           }
           this.tableData = departmentList
-          console.log(departmentList)
+          // console.log(this.tableData)
+          // 获取添加部门到添加人员的下拉框
+          let selectVocation = [
+            {departmentName: '组织负责人', departmentId: '0'}
+          ]
+          for(let i = 0; i < this.tableData.length; i++) {
+            selectVocation.push(this.tableData[i])
+          }
+          console.log(selectVocation)
+          this.vocationList = selectVocation
           // 处理组织负责人
           let leaderList = res.data[0].orgLeaderedList.memberList
           this.managePerson = []
@@ -370,8 +382,6 @@ export default {
       // console.log(data, 12)
       // console.log(this.orgId, this.projectId)
       console.log(this.tableData)
-      // ---?? 点击把角色的遍历好
-      this.vocationList.push()
 
       this.departmentData = data
       this.dialogFormVisible = true
@@ -381,98 +391,161 @@ export default {
       }
       this.$api.getOrgStorageList(params).then(res => {
         if (res.errorCode !== '1') return false
-        this.memberList = res.data
         // console.log(this.memberList)
-        for (let i = 0; i < this.memberList.length; i++) {
-          if (this.memberList[i].isDist === '1') {
-            this.memberList.splice(i, 1)
+        for (let i = 0; i < res.data.length; i++) {
+          if (res.data[i].isDist === '1') {
+            res.data.splice(i, 1)
           }
         }
-        // console.log(this.memberList)
+        this.memberList = res.data
+        console.log(this.memberList)
       })
     },
     // 选择角色
     selected(val) {
       this.role = val
       this.radioDisabled = false
-      if (this.role === '2') {
+      // if (this.role === '2') {
+      //   this.show = false
+      // } else {
+      //   this.show = true
+      // }
+
+      if(val.departmentId.length === 1) {
         this.show = false
-      } else {
+      }else {
         this.show = true
       }
+      this.selectDisabled = true
+      this.member = {}
     },
     // 选择职位
     radiosChange(val) {
       this.selectDisabled = false
       if (val === '正职') {
         this.headRole = 0
+        this.createForm.checkList = []
       }
       if (val === '副职') {
         this.headRole = 1
+        this.createForm.radioValue = ''
       }
       if (val === '普通员工') {
         this.headRole = 2
+        this.createForm.radioValue = ''
       }
     },
     //选择人员
     personSelect(val) {
       console.log(val)
-      console.log(this.role)
-      this.member.memberList = []
       // 组织负责人
-      if (this.role == 0) {
-        for (let i = 0; i < this.memberList.length; i++) {
-          if (val === this.memberList[i].nickName) {
-            this.member.memberList.push({
-              orgStorageId: this.memberList[i].orgStorageId,
-              memberName: this.memberList[i].nickName,
-              memberPhone: this.memberList[i].phone
-            })
-            this.comList.push(this.memberList[i].nickName)
-          }
-        }
-        this.member.departmentId = ''
-        this.member.orgLeaderedId = this.orgId
-      }
-      if (this.role == 1 && this.headRole === 0) {
-        for (let i = 0; i < this.memberList.length; i++) {
-          if (val === this.memberList[i].nickName) {
-            this.member.memberList.push({
-              orgStorageId: this.memberList[i].orgStorageId,
-              memberName: this.memberList[i].nickName,
-              memberPhone: this.memberList[i].phone
-            })
-            this.comList.push(this.memberList[i].nickName)
-          }
-        }
-        this.member.departmentId = this.departmentData.departmentId
-        this.member.orgLeaderedId = ''
-      }
+      // if (this.role.departmentId.length === 1) {
+      //   console.log(123)
+        // for (let i = 0; i < this.memberList.length; i++) {
+        //   if (val === this.memberList[i].nickName) {
+        //     this.member.memberList.push({
+        //       orgStorageId: this.memberList[i].orgStorageId,
+        //       memberName: this.memberList[i].nickName,
+        //       memberPhone: this.memberList[i].phone
+        //     })
+        //     this.comList.push(this.memberList[i].nickName)
+        //   }
+        // }
+        // this.member.departmentId = ''
+        // this.member.orgLeaderedId = this.orgId
+      // }else {
+      //   for (let i = 0; i < this.memberList.length; i++) {
+      //     if (val === this.memberList[i].nickName) {
+      //       this.member.memberList.push({
+      //         orgStorageId: this.memberList[i].orgStorageId,
+      //         memberName: this.memberList[i].nickName,
+      //         memberPhone: this.memberList[i].phone
+      //       })
+      //       this.comList.push(this.memberList[i].nickName)
+      //     }
+      //   }
+      //   this.member.departmentId = this.departmentData.departmentId
+      //   this.member.orgLeaderedId = ''
+      // }
+      // if (this.role == 1 && this.headRole === 0) {
+      //   for (let i = 0; i < this.memberList.length; i++) {
+      //     if (val === this.memberList[i].nickName) {
+      //       this.member.memberList.push({
+      //         orgStorageId: this.memberList[i].orgStorageId,
+      //         memberName: this.memberList[i].nickName,
+      //         memberPhone: this.memberList[i].phone
+      //       })
+      //       this.comList.push(this.memberList[i].nickName)
+      //     }
+      //   }
+      //   this.member.departmentId = this.departmentData.departmentId
+      //   this.member.orgLeaderedId = ''
+      // }
       // 普通员工
-      if (this.role == 2 || this.role == 1) {
-        console.log(456)
-        for (let i = 0; i < this.memberList.length; i++) {
-          for (let j = 0; j < val.length; j++) {
-            if (val[j] == this.memberList[i].nickName) {
-              this.member.memberList.push({
-                orgStorageId: this.memberList[i].orgStorageId,
-                memberName: this.memberList[i].nickName,
-                memberPhone: this.memberList[i].phone
-              })
-              this.comList.push(this.memberList[i].nickName)
-            }
-          }
-        }
-        this.member.departmentId = this.departmentData.departmentId
-        this.member.orgLeaderedId = ''
-      }
+      // if (this.role == 2 || this.role == 1) {
+      //   console.log(456)
+      //   for (let i = 0; i < this.memberList.length; i++) {
+      //     for (let j = 0; j < val.length; j++) {
+      //       if (val[j] == this.memberList[i].nickName) {
+      //         this.member.memberList.push({
+      //           orgStorageId: this.memberList[i].orgStorageId,
+      //           memberName: this.memberList[i].nickName,
+      //           memberPhone: this.memberList[i].phone
+      //         })
+      //         this.comList.push(this.memberList[i].nickName)
+      //       }
+      //     }
+      //   }
+      //   this.member.departmentId = this.departmentData.departmentId
+      //   this.member.orgLeaderedId = ''
+      // }
     },
     // 点击确定添加
     addConirm() {
-      console.log(this.comList)
-      this.member = JSON.stringify(this.member)
+      // console.log(this.comList)
+      console.log(this.createForm)
+      if(this.createForm.vocation.departmentId === '0') {
+        // 组织管理员
+        // 判断是否是单选还是多选
+        // orgStorageId: this.memberList[i].orgStorageId,
+        // memberName: this.memberList[i].nickName,
+        // memberPhone: this.memberList[i].phone
+        this.memberData.memberList = []
+        this.createForm.checkList.length === 0 ? this.memberData.memberList.push({
+          orgStorageId: this.createForm.radioValue.orgStorageId,
+          memberName: this.createForm.radioValue.nickName,
+          memberPhone: this.createForm.radioValue.phone
+        }) : this.memberData.memberList = this.createForm.checkList.map(value => {
+          return {
+            orgStorageId: value.orgStorageId,
+            memberName: value.nickName,
+            memberPhone: value.phone
+          }
+        })
+        this.memberData.departmentId = ''
+        this.memberData.orgLeaderedId = this.orgId
+        console.log('组织负责人',this.memberData)
+      }else {
+        // 部门添加人员
+        // 判断是否是单选还是多选
+        this.memberData.memberList = []
+        this.createForm.checkList.length === 0 ? this.memberData.memberList.push({
+          orgStorageId: this.createForm.radioValue.orgStorageId,
+          memberName: this.createForm.radioValue.nickName,
+          memberPhone: this.createForm.radioValue.phone
+        }) : this.memberData.memberList = this.createForm.checkList.map(value => {
+          return {
+            orgStorageId: value.orgStorageId,
+            memberName: value.nickName,
+            memberPhone: value.phone
+          }
+        })
+        this.memberData.departmentId = this.createForm.vocation.departmentId
+        this.memberData.orgLeaderedId = ''
+        console.log('部门添加人员',this.memberData)
+      }
       let params = {
-        memberJson: this.member,
+        memberJson: JSON.stringify(this.memberData),
         headRole: this.headRole
       }
       this.$api.addOrgMember(params).then(res => {

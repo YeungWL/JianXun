@@ -20,7 +20,7 @@ router.beforeEach((to, from, next) => {
   // console.log(getAccessToken())
   if (getAccessToken()) {
     if (to.path === '/' || to.path === '/login' || to.path === '/register' || to.path === '/findPwd') {
-      next('/')
+      next('/project')
     } else {
       // console.log(22222)
       next()
