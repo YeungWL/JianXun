@@ -184,14 +184,49 @@ export default {
       memberType: memberTypeOptions, 
       questionAttrs: [],   // 属性数组
       checkupTypes: [], // 类别数组
-      status: statusOptions // 状态数组
+      status: statusOptions, // 状态数组
+      // 权限和状态
+      menuAuthorityList:[],
+      addCheckupQuestionStatus: true,
+      rectifyCheckupQuestionStatus: true,
+      reviewCheckupQuestionStatus: true,
+      checkingHistoryStatus: true,
+      searchCheckupQuestionnStatus: true,
+      checkupOrgPermissionStatus: true      
     }   
-  },
-  mounted() {  
-  },  
+  }, 
   created() {
     this.getMyInPro()  
   },
+  mounted() {
+    //权限设置
+    this.menuAuthorityList=this.$getLastChildrenMenu('checkupList'); 
+    // console.log(this.menuAuthorityList); 
+     for(let i=0;i<this.menuAuthorityList.length;i++){
+      // console.log(this.menuAuthorityList[i].name);
+      switch(this.menuAuthorityList[i].name){
+        case '添加':
+          this.addCheckupQuestionStatus=this.menuAuthorityList[i].status;
+          break;
+        case '整改':
+          this.rectifyCheckupQuestionStatus=this.menuAuthorityList[i].status;
+          break;
+        case '复查':
+          this.reviewCheckupQuestionStatus=this.menuAuthorityList[i].status;
+          break;
+        case '历史':
+          this.checkingHistoryStatus=this.menuAuthorityList[i].status;
+          break;
+        case '查询':
+          this.searchCheckupQuestionnStatus=this.menuAuthorityList[i].status;
+          break;
+        case '设置':
+          this.checkupOrgPermissionStatus=this.menuAuthorityList[i].status;
+          break;    
+        default: ;
+      }
+    }        
+  },   
   methods: { 
     // 选择项目
     selectOrgList(projectOrgId) {

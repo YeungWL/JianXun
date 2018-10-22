@@ -169,9 +169,11 @@ export default {
       ctx = {}
     await this.$api.getOrganizationList(data, ctx)
     this.project = ctx.data
+    // console.log(this.project)
   },
   methods: {
     selectOrgList(orgList) {
+      // console.log(orgList)
       if (orgList.length) {
         this.projectOrgId = orgList[0].projectOrgId
         this.org = orgList[0]
@@ -201,7 +203,7 @@ export default {
       newStructure[0].departmentList = ctx.data[0].departmentList
       newStructure[0].departmentName = newStructure[0].orgLeadered
       newStructure[0].departmentId = 'root'
-      console.log(JSON.stringify(newStructure), newStructure[0])
+      // console.log(JSON.stringify(newStructure), newStructure[0])
       this.structure = newStructure
     },
     openMessage(item) {

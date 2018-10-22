@@ -1,7 +1,7 @@
 <template>
   <div class="layout">
     <header class="header">
-      <!--<div class="logo"></div>-->
+      <div class="logo"></div>
       <div class="nav">
         <el-menu :default-active="$route.menuUrl"  class="el-menu-demo" router mode="horizontal">
           <el-menu-item :index="item.menuUrl" class="index" :class="{'is-active': activeted(item.menuUrl)}" v-for="(item,index) in primaryRouteMenuList" :key="index" v-if="item.status">
@@ -152,13 +152,15 @@ export default {
       }
     };
   },
-  // watch: {
-  //   'this.rootLists'(v){
-  //     this.primaryRouteMenuList=v;
-  //   }
-  // },  
-  created() {
+  watch: {
+    'this.$store.getters.rootLists'(v){
+      this.primaryRouteMenuList=v;
+    }
+  }, 
+  mounted(){
     this.getUserRoots()
+  }, 
+  created() {
     this.account = localStorage.getItem('name')
     this.logoUrl = localStorage.getItem('logoUrl')
     //换肤
@@ -347,7 +349,7 @@ export default {
       font-size: 16px;
       line-height: 32px;
       color: #fff;
-      background: #438fe5;
+      // background: #438fe5;
       img,
       .span {
         float: left;

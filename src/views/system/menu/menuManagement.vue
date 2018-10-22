@@ -189,13 +189,13 @@ export default {
         menuUrl: [{ required: true, message: '请输入请求地址', trigger: 'blur' }],
         menuType: [{ required: true, message: '请选择菜单类型', trigger: 'blur' }]             
       },
-      menuAuthorityList:[],
-      addmenuStatus:true,
-      updatemenuStatus:true,
-      deletemenuStatus:true,
-      addDeviceUserStatus:true,
-      updatePasswordStatus:true,
-      deleteDeviceUserStatus:true
+      // menuAuthorityList:[],
+      // addmenuStatus:true,
+      // updatemenuStatus:true,
+      // deletemenuStatus:true,
+      // addDeviceUserStatus:true,
+      // updatePasswordStatus:true,
+      // deleteDeviceUserStatus:true
     }
   },
   created() {
@@ -203,28 +203,27 @@ export default {
      // 初始获取数据
     this.menuForm.parentId = [this.listQuery.parentId];   
     // console.log("parentId："+this.menuForm.parentId)  
-    this.menuAuthorityList=this.$getLastChildrenMenu('menuManagement'); 
-    // console.log(this.menuAuthorityList); 
-     for(let i=0;i<this.menuAuthorityList.length;i++){
-      // console.log(this.menuAuthorityList[i].name);
-      switch(this.menuAuthorityList[i].name){
-        case '添加':
-          this.addmenuStatus=this.menuAuthorityList[i].status;
-          break;
-        case '修改':
-          this.updatemenuStatus=this.menuAuthorityList[i].status;
-          break;
-        case '删除':
-          this.deletemenuStatus=this.menuAuthorityList[i].status;
-          break;
-        default: ;
-      }
-    }   
+ 
   },
   mounted() {
     //权限设置
-    // this.menuAuthorityList=this.$getLastChildrenMenu('roleManagement');
-    
+    // this.menuAuthorityList=this.$getLastChildrenMenu('menuManagement'); 
+    // // console.log(this.menuAuthorityList); 
+    //  for(let i=0;i<this.menuAuthorityList.length;i++){
+    //   // console.log(this.menuAuthorityList[i].name);
+    //   switch(this.menuAuthorityList[i].name){
+    //     case '添加':
+    //       this.addmenuStatus=this.menuAuthorityList[i].status;
+    //       break;
+    //     case '修改':
+    //       this.updatemenuStatus=this.menuAuthorityList[i].status;
+    //       break;
+    //     case '删除':
+    //       this.deletemenuStatus=this.menuAuthorityList[i].status;
+    //       break;
+    //     default: ;
+    //   }
+    // }  
 
   },
   methods: {
@@ -234,6 +233,7 @@ export default {
         if (response.errorCode === '1') {
           this.tableData = response.data
           this.total = response.totalRecords
+          console.log(this.tableData)
         } else {
           this.$message.warning(response.resultMsg)
         }
@@ -250,11 +250,11 @@ export default {
     },
     // 搜索按钮
     handleSearch() {
-      this.listQuery.menuName = this.listQuery.menuName.trim()
-      if ( this.listQuery.menuName.length === 0 ) {
-        this.$message('搜索内容不能为空')
-        return false
-      }
+      // // this.listQuery.menuName = this.listQuery.menuName.trim()
+      // if ( this.listQuery.menuName === '' || this.listQuery.menuCode === '' ) {
+      //   this.$message('搜索内容不能为空')
+      //   return false
+      // }
       this.getList()
     },
     // 获取所有权限
@@ -263,7 +263,7 @@ export default {
         menuName: '',
         menuCode:'',
         parentId: '',
-        isLeaf: '' 
+        isLeaf: '2' 
       }
       this.$api.menuList(params).then(response => {
         this.treeData = response.data;
@@ -320,7 +320,8 @@ export default {
           this.menuForm['isLeaf'] = '1' 
         } else {
           this.menuForm['isLeaf'] = '2'    
-        }      
+        }
+        console.log(this.menuForm.parentId)      
       })
     },    
     // 编辑弹窗

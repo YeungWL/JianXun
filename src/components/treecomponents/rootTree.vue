@@ -67,7 +67,7 @@ export default {
 	methods: {		
 		//确定选中项
 		handleNodeClick(data) {
-			console.log(data.menuId)
+			// console.log(data.menuId+'111')
 			this.selectItem = { ...data
 			};
 			this.openSelect = false;

@@ -19,7 +19,6 @@ service.interceptors.request.use(
           config.params.access_token = store.getters.accessToken
         }
       } else if (config.method === 'post') {
-        // console.log(this.getToken())
         if (!config.data.includes('access_token')) {
           config.data = config.data + '&accessToken=' + store.getters.accessToken + '&token=' + 'PC_JIANXUN_APP2018'
         }

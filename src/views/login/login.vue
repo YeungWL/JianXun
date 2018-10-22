@@ -236,8 +236,8 @@ export default {
         .then(_ => {
           // console.log(_.data.data[0].url)
           // console.log(this.$store, 999999)
-          this.$router.push(_.data.data[0].url)
-          //        this.$message.success('获取权限成功')
+          // this.$router.push(_.data.data[0].url)
+                //  this.$message.success('获取权限成功')
           setTimeout(_ => {}, 1000)
         })
         .catch(error => {
