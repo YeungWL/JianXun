@@ -445,6 +445,8 @@ export default {
       this.$api.getMyProjectList({}).then(res => {
         if (res.errorCode === "1") {
           this.projectList = res.data
+          this.selectProject = res.data[0].projectId || ''
+          this.projectChange()
         }
       });
     },
@@ -455,7 +457,8 @@ export default {
       }).then(res => {
         if(res.errorCode == '1') {
           this.organizationList = res.data
-          this.selectOrg = ''
+          this.selectOrg = res.data[0] ? res.data[0].projectOrgId : ''
+          // this.selectOrg = ''
           this.orgTemplate = {}
           this.buttonShow = false
         }
@@ -842,6 +845,13 @@ export default {
         this.$message.warning('终止日期不能小于起始日期')
         return
       }
+      let endTime = new Date(this.exportForm.endTime)
+      let beginTime = new Date(this.exportForm.beginTime)
+      let days = endTime.getTime() - beginTime.getTime()
+      if(parseInt(days / (1000 * 60 * 60 * 24)) > 31) {
+        this.$message.warning('选择的日期不能超过31天')
+        return
+      }
       let body = document.getElementsByTagName('body')[0]
       let form = document.createElement('form')
       form.setAttribute('style', 'display: none;')
@@ -865,7 +875,7 @@ export default {
         this.exportForm.endTime
       }" />`
       form.innerHTML = strHtml
-      form.submit()
+      // form.submit()
       form.parentNode.removeChild(form)
     },
     // 导出日志对话框
