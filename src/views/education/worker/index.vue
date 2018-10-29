@@ -23,11 +23,13 @@
           </el-form-item>
           <el-form-item label="时间：">
               <el-col :span="11">
-                <el-date-picker type="date" placeholder="选择入场时间" value-format="yyyy-MM-dd" v-model="listQuery.startTime" style="width: 100%;"></el-date-picker>
+                <el-date-picker type="date" placeholder="选择入场时间" value-format="yyyy-MM-dd" v-model="listQuery.startTime"   
+                :picker-options="pickerOptions0" style="width: 100%;"></el-date-picker>
               </el-col>
               <el-col class="line" :span="2">-</el-col>
               <el-col :span="11">
-                <el-date-picker type="date" placeholder="选择退场时间" value-format="yyyy-MM-dd" v-model="listQuery.endTime" style="width: 100%;"></el-date-picker>
+                <el-date-picker type="date" placeholder="选择退场时间" value-format="yyyy-MM-dd" v-model="listQuery.endTime"
+                :picker-options="pickerOptions1" style="width: 100%;"></el-date-picker>
               </el-col>
           </el-form-item>
           <el-form-item>
@@ -145,7 +147,7 @@ export default {
       tableData: [
         {name:'张三',phone:'13800138000',grade:'公司级',status:'0'},
         {name:'李四',phone:'13800138000',grade:'项目部级',status:'1'}
-      ],      
+      ],          
       listQuery: { 
         orgId: '',
         name: '',  
@@ -157,6 +159,27 @@ export default {
         showCount: '',
         currentPage: ''           
       }, 
+      // 限制结束时间不能大于开始时间 
+      pickerOptions0: {
+        disabledDate: (time) => {
+          let endDateVal = this.listQuery.endTime;
+          if ( endDateVal != "") {
+              return time.getTime() > Date.now() || time.getTime() > endDateVal;
+          } else {
+              return time.getTime() > Date.now();
+          }
+        }
+      },
+      pickerOptions1: {
+        disabledDate: time => {
+          let beginDateVal = this.listQuery.startTime;
+          if (beginDateVal) {
+            return (
+              time.getTime() < new Date(beginDateVal).getTime() - 1 * 24 * 60 * 60 * 1000
+            );
+          }
+        }
+      },            
       gradeArr: gradeOptions,
       statusArr: statusOptions,
       loading: false,      

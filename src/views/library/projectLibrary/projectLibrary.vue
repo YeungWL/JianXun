@@ -55,9 +55,9 @@
           <el-table-column prop="creator" label="上传人" min-width="40"></el-table-column>
           <el-table-column label="操作">
             <template slot-scope="scope">
-              <span class="edit" @click="deletedocument(scope.row)">删除</span>
-              <span class="edit" @click="editDetails(scope.row)">修改</span>
               <span class="edit" @click="documentDetails(scope.row)">查看</span>
+              <span class="edit" @click="deletedocument(scope.row)" v-show="scope.row.isCreator=== 'Y'">删除</span>
+              <span class="edit" @click="editDetails(scope.row)" v-show="scope.row.isCreator=== 'Y'">修改</span>
             </template>
           </el-table-column>
         </el-table>

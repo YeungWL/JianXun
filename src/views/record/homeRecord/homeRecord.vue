@@ -334,8 +334,8 @@ export default {
       },
       pickerOptions: {
         disabledDate(time) {
-          return time > new Date()
-        }
+            return time.getTime() > new Date(new Date().getTime() - 86400000);
+          }
       },
       previewUrl: ''
     }

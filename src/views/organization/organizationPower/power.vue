@@ -14,7 +14,7 @@
         <li class="scroll-item">
           <div class="pro-name">项目名称: <span>{{orgData.length > 0 ? orgData[0].projectName : ''}}</span></div>
           <el-checkbox-group v-model="selectData">
-            <el-checkbox :label="item.projectOrgId" v-for="(item, index) in checkList" :key="index">{{item.orgName}}</el-checkbox>
+            <el-checkbox :label="item.projectOrgId" v-for="(item, index) in checkList" :key="index" style="line-height:40px;">{{item.orgName}}</el-checkbox>
           </el-checkbox-group>
         </li>
       </ul>

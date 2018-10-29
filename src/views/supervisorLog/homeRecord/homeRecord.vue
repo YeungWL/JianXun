@@ -1,186 +1,188 @@
 <template>
-  <div class="homeRecord" v-loading="loading" element-loading-text="拼命加载中">
-    <div class="my-dialog scwj-dialog">
-      <el-form size="mini">
-        <el-row :gutter="24">
-          <el-col :span="8">
-            <el-form-item label="项目名称" label-width="90px">
-              <el-select v-model="selectProject" placeholder="请选择项目" @change="handleProjectChange">
-                <el-option v-for="item in projectList" :key="item.projectId" :label="item.proName" :value="item.projectId">
-                </el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="组织名称" label-width="90px">
-              <el-select v-model="selectOrg" placeholder="请选择组织" @change="handleOrgChange">
-                <el-option v-for="item in organizationList" :key="item.projectOrgId" :label="item.orgName" :value="item.projectOrgId">
-                </el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="日志名称" label-width="90px">
-              <el-select v-model="selectLog" placeholder="请选择日志" @change="handleLogChange">
-                <el-option v-for="item in logList" :key="item.id" :label="item.extendName" :value="item.index">
-                </el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-        </el-row>
-      </el-form>
-    </div>
-
-    <div class="calinder">
-      <vue-event-calendar :events="logHistoryList" @day-changed="dayChange" style="width:55%" ></vue-event-calendar>
-      <div style="padding-left:40%"  >
-        <el-button type="primary" @click="handleExportFile()" class="rzbtn">导出日志</el-button>
-        <el-button type="primary" @click="handleSetting()" class="setion" v-if="buttonShow">设置</el-button>
+  <div class="page-content-body">
+    <div class="homeRecord" v-loading="loading" element-loading-text="拼命加载中">
+      <div class="my-dialog scwj-dialog">
+        <el-form size="mini">
+          <el-row :gutter="24">
+            <el-col :span="8">
+              <el-form-item label="项目名称" label-width="90px">
+                <el-select v-model="selectProject" placeholder="请选择项目" @change="handleProjectChange">
+                  <el-option v-for="item in projectList" :key="item.projectId" :label="item.proName" :value="item.projectId">
+                  </el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col :span="8">
+              <el-form-item label="组织名称" label-width="90px">
+                <el-select v-model="selectOrg" placeholder="请选择组织" @change="handleOrgChange">
+                  <el-option v-for="item in organizationList" :key="item.projectOrgId" :label="item.orgName" :value="item.projectOrgId">
+                  </el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col :span="8">
+              <el-form-item label="日志名称" label-width="90px">
+                <el-select v-model="selectLog" placeholder="请选择日志" @change="handleLogChange">
+                  <el-option v-for="item in logList" :key="item.id" :label="item.extendName" :value="item.index">
+                  </el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+          </el-row>
+        </el-form>
       </div>
-    </div>
 
-    <!-- 设置的dialog -->
-    <el-dialog title="设置" :visible.sync="dialogSettingFormVisible" width="560px" class="my-dialog">
-      <div class="setting">
-        <div class="project">
-          <span class="left">添加日志</span>
-          <el-button icon="el-icon-plus" style="padding: 0;width: 30px;height: 32px;" @click="dialogAddLogFormVisible = true"></el-button>
-        </div>
-        <div>
-          <ul>
-            <li v-for="item in logList" :key="item.index" :label="item.extendName" :value="item.extendName">
-              <div class="project">
-                <span class="left">{{item.extendName}}</span>
-                <span>
-                  <el-button style="height: 32px;" type="primary" @click="handleExtendNameUpdate(item)">修改名称</el-button>
-                  <el-button style="height: 32px;" type="success" @click="handlePreView(item)">预览</el-button>
-                  <el-button style="height: 32px;" type="info" @click="handleLogParaUpdate(item)">设置参数</el-button>
-                </span>
-              </div>
-            </li>
-          </ul>
+      <div class="calinder">
+        <vue-event-calendar :events="logHistoryList" @day-changed="dayChange" style="width:55%"></vue-event-calendar>
+        <div style="padding-left:40%">
+          <el-button type="primary" @click="handleExportFile()" class="rzbtn">导出日志</el-button>
+          <el-button type="primary" @click="handleSetting()" class="setion" v-if="buttonShow">设置</el-button>
         </div>
       </div>
-      <div slot="footer" class="dialog-footer" style="text-align: center;">
-        <el-button type="primary" @click="dialogSettingFormVisible = false ">关闭</el-button>
-      </div>
-    </el-dialog>
 
-    <!-- 添加日志dialog -->
-    <el-dialog title="添加日志" :visible.sync="dialogAddLogFormVisible" width="560px" class="my-dialog" center>
-      <div class="setting">
-        <div class="project">
-          <div style="width: 90px;">日志名称</div>
-          <el-input placeholder="请输入日志名称" v-model="extendName"></el-input>
-        </div>
-        <div class="project">
-          <el-select v-model="templateSelect" placeholder="请选择监理日志模板">
-            <el-option v-for="item in templateList" :key="item.tempId" :label="item.name" :value="item">
-            </el-option>
-          </el-select>
-        </div>
-        <div class="project">
-          <div style="margin:0 auto;">预览</div>
-        </div>
-      </div>
-      <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="handleAddLog()">确定</el-button>
-      </span>
-    </el-dialog>
-
-    <!-- 设置详情主页面的dialog -->
-    <el-dialog title="设置参数" :visible.sync="dialogSettingDetailVisible" width="560px" class="my-dialog">
-      <div class="setting">
-        <div class="project">
-          <span style="width: 150px;">工程名称：</span>
-          <el-input placeholder="请输入工程名称" v-model="currentProjectName"></el-input>
-        </div>
-        <hr />
-        <div class="project">
-          <span>组织负责人审阅日志时间：</span>
-          <el-input style="width: 80px;" placeholder="" v-model="currentProjectTime"></el-input>
-          <span>-</span>
-          <el-input style="width: 80px;" placeholder="24" :disabled="true"></el-input>
-        </div>
-        <div class="project">
-          <span>注：日志填写人员需要在组织负责人审阅时间开始前完成填写</span>
-        </div>
-        <div class="project">
-          <span></span>
-        </div>
-        <hr />
-       
-        <div v-if="isRealChargeMan" >
-          <span>查阅权限</span>
+      <!-- 设置的dialog -->
+      <el-dialog title="设置" :visible.sync="dialogSettingFormVisible" width="560px" class="my-dialog">
+        <div class="setting">
           <div class="project">
+            <span class="left">添加日志</span>
+            <el-button icon="el-icon-plus" style="padding: 0;width: 30px;height: 32px;" @click="dialogAddLogFormVisible = true"></el-button>
+          </div>
+          <div>
             <ul>
-              <li v-for="item in SettingOrgList" :key="item.index" :label="item.orgName" :value="item.orgName">
-                <el-checkbox v-model="item.isAuthor">{{item.orgName}}</el-checkbox>
+              <li v-for="item in logList" :key="item.index" :label="item.extendName" :value="item.extendName">
+                <div class="project">
+                  <span class="left">{{item.extendName}}</span>
+                  <span>
+                    <el-button style="height: 32px;" type="primary" @click="handleExtendNameUpdate(item)">修改名称</el-button>
+                    <el-button style="height: 32px;" type="success" @click="handlePreView(item)">预览</el-button>
+                    <el-button style="height: 32px;" type="info" @click="handleLogParaUpdate(item)">设置参数</el-button>
+                  </span>
+                </div>
               </li>
             </ul>
           </div>
         </div>
-      
-      </div>
-      <div slot="footer" class="dialog-footer" style="text-align: center;">
-        <el-button type="primary" @click="setPermission()">提 交</el-button>
-      </div>
-    </el-dialog>
-
-    <!-- 修改监理日志的名称的dialog -->
-    <el-dialog title="修改监理日志的名称" :visible.sync="dialogUpdateExtendNameFormVisible" width="560px" class="my-dialog">
-      <div class="setting">
-        <div class="project">
-          <div style="width: 450px;">原监理日志名称：{{editExtendNameInfo.extendName}}</div>
+        <div slot="footer" class="dialog-footer" style="text-align: center;">
+          <el-button type="primary" @click="dialogSettingFormVisible = false ">关闭</el-button>
         </div>
-        <div class="project">
-          <div style="width: 150px;">新监理日志名称：</div>
-          <el-input placeholder="请输入日志名称" v-model="inputNewLogName"></el-input>
+      </el-dialog>
+
+      <!-- 添加日志dialog -->
+      <el-dialog title="添加日志" :visible.sync="dialogAddLogFormVisible" width="560px" class="my-dialog" center>
+        <div class="setting">
+          <div class="project">
+            <div style="width: 90px;">日志名称</div>
+            <el-input placeholder="请输入日志名称" v-model="extendName"></el-input>
+          </div>
+          <div class="project">
+            <el-select v-model="templateSelect" placeholder="请选择监理日志模板">
+              <el-option v-for="item in templateList" :key="item.tempId" :label="item.name" :value="item">
+              </el-option>
+            </el-select>
+          </div>
+          <div class="project">
+            <div style="margin:0 auto;">预览</div>
+          </div>
         </div>
-      </div>
-      <div slot="footer" class="dialog-footer" style="text-align: center;">
-        <el-button type="primary" @click="updateExtendName()">提 交</el-button>
-      </div>
-    </el-dialog>
+        <span slot="footer" class="dialog-footer">
+          <el-button type="primary" @click="handleAddLog()">确定</el-button>
+        </span>
+      </el-dialog>
 
-    <!-- 预览监理日志的dialog -->
-    <el-dialog title="预览" :visible.sync="dialogPreviewFormVisible" width="1060px" class="my-dialog">
-      <div class="setting">
-        <iframe :src="srcUrl" width="800px" height="1100px"></iframe>
-      </div>
-      <div slot="footer" class="dialog-footer" style="text-align: center;">
-        <el-button type="primary" @click="dialogPreviewFormVisible=false">关闭</el-button>
-      </div>
-    </el-dialog>
+      <!-- 设置详情主页面的dialog -->
+      <el-dialog title="设置参数" :visible.sync="dialogSettingDetailVisible" width="560px" class="my-dialog">
+        <div class="setting">
+          <div class="project">
+            <span style="width: 150px;">工程名称：</span>
+            <el-input placeholder="请输入工程名称" v-model="currentProjectName"></el-input>
+          </div>
+          <hr />
+          <div class="project">
+            <span>组织负责人审阅日志时间：</span>
+            <el-input style="width: 80px;" placeholder="" v-model="currentProjectTime"></el-input>
+            <span>-</span>
+            <el-input style="width: 80px;" placeholder="24" :disabled="true"></el-input>
+          </div>
+          <div class="project">
+            <span>注：日志填写人员需要在组织负责人审阅时间开始前完成填写</span>
+          </div>
+          <div class="project">
+            <span></span>
+          </div>
+          <hr />
 
-    <!-- 导出dialog -->
-    <el-dialog title="导出" :visible.sync="dialogExportFormVisible" center>
-      <el-form :model="form">
+          <div v-if="isRealChargeMan">
+            <span>查阅权限</span>
+            <div class="project">
+              <ul>
+                <li v-for="item in SettingOrgList" :key="item.index" :label="item.orgName" :value="item.orgName">
+                  <el-checkbox v-model="item.isAuthor">{{item.orgName}}</el-checkbox>
+                </li>
+              </ul>
+            </div>
+          </div>
 
-        <el-form-item label="日志名称" :label-width="formLabelWidth">
-          <el-select v-model="form.selectLog" placeholder="请选择日志">
-            <el-option v-for="item in logList" :key="item.id" :label="item.extendName" :value="item.index">
-            </el-option>
-          </el-select>
-        </el-form-item>
+        </div>
+        <div slot="footer" class="dialog-footer" style="text-align: center;">
+          <el-button type="primary" @click="setPermission()">提 交</el-button>
+        </div>
+      </el-dialog>
 
-        <el-form-item label="起始日期" :label-width="formLabelWidth">
-          <el-date-picker type="date" placeholder="开始日期" v-model="form.beginTime" value-format="yyyy-MM-dd">
-          </el-date-picker>
+      <!-- 修改监理日志的名称的dialog -->
+      <el-dialog title="修改监理日志的名称" :visible.sync="dialogUpdateExtendNameFormVisible" width="560px" class="my-dialog">
+        <div class="setting">
+          <div class="project">
+            <div style="width: 450px;">原监理日志名称：{{editExtendNameInfo.extendName}}</div>
+          </div>
+          <div class="project">
+            <div style="width: 150px;">新监理日志名称：</div>
+            <el-input placeholder="请输入日志名称" v-model="inputNewLogName"></el-input>
+          </div>
+        </div>
+        <div slot="footer" class="dialog-footer" style="text-align: center;">
+          <el-button type="primary" @click="updateExtendName()">提 交</el-button>
+        </div>
+      </el-dialog>
 
-        </el-form-item>
-        <el-form-item label="终止日期" :label-width="formLabelWidth">
-          <el-date-picker type="date" range-separator="至" placeholder="结束日期" v-model="form.endTime" value-format="yyyy-MM-dd">
-          </el-date-picker>
-        </el-form-item>
-      </el-form>
-      <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="exportLogFile()">导出</el-button>
-        <el-button @click="dialogExportFormVisible = false">关 闭</el-button>
-      </span>
-    </el-dialog>
+      <!-- 预览监理日志的dialog -->
+      <el-dialog title="预览" :visible.sync="dialogPreviewFormVisible" width="1060px" class="my-dialog">
+        <div class="setting">
+          <iframe :src="srcUrl" width="800px" height="1100px"></iframe>
+        </div>
+        <div slot="footer" class="dialog-footer" style="text-align: center;">
+          <el-button type="primary" @click="dialogPreviewFormVisible=false">关闭</el-button>
+        </div>
+      </el-dialog>
+
+      <!-- 导出dialog -->
+      <el-dialog title="导出" :visible.sync="dialogExportFormVisible" center>
+        <el-form :model="form">
+
+          <el-form-item label="日志名称" :label-width="formLabelWidth">
+            <el-select v-model="form.selectLog" placeholder="请选择日志">
+              <el-option v-for="item in logList" :key="item.id" :label="item.extendName" :value="item.index">
+              </el-option>
+            </el-select>
+          </el-form-item>
+
+          <el-form-item label="起始日期" :label-width="formLabelWidth">
+            <el-date-picker type="date" placeholder="开始日期" v-model="form.beginTime" value-format="yyyy-MM-dd"  :picker-options="pickerOptions">
+            </el-date-picker>
+
+          </el-form-item>
+          <el-form-item label="终止日期" :label-width="formLabelWidth">
+            <el-date-picker type="date" range-separator="至" placeholder="结束日期" v-model="form.endTime" value-format="yyyy-MM-dd"  :picker-options="pickerOptions">
+            </el-date-picker>
+          </el-form-item>
+        </el-form>
+        <span slot="footer" class="dialog-footer">
+          <el-button type="primary" @click="exportLogFile()">导出</el-button>
+          <el-button @click="dialogExportFormVisible = false">关 闭</el-button>
+        </span>
+      </el-dialog>
 
 
+    </div>
   </div>
 </template>
 
@@ -190,6 +192,11 @@ export default {
   components: {},
   data() {
     return {
+      pickerOptions: {
+        disabledDate(time) {
+          return time > new Date();
+        }
+      },
       /* 加载 */
       loading: false,
 
@@ -456,7 +463,12 @@ export default {
         extendName: this.extendName
       };
       this.$api.addTemp(params, {}).then(res => {
-        if (res.resultMsg !== "查询成功") return false;
+        if (res.errorCode === "1") {
+          this.dialogAddLogFormVisible = false;
+          this.$message.success("成功添加监理日志--" + this.extendName);
+        } else if (res.errorCode === "1009") {
+          this.$message.success(res.resultMsg);
+        }
       });
     },
 
@@ -706,6 +718,17 @@ export default {
       this.dialogExportFormVisible = true;
     },
 
+    DateDiff(sDate1, sDate2) {
+      //sDate1和sDate2是2002-12-18格式
+      var aDate, oDate1, oDate2, iDays;
+      aDate = sDate1.split("-");
+      oDate1 = new Date(aDate[1] + "-" + aDate[2] + "-" + aDate[0]); //转换为12-18-2002格式
+      aDate = sDate2.split("-");
+      oDate2 = new Date(aDate[1] + "-" + aDate[2] + "-" + aDate[0]);
+      iDays = parseInt(Math.abs(oDate1 - oDate2) / 1000 / 60 / 60 / 24); //把相差的毫秒数转换为天数
+      return iDays;
+    },
+
     exportLogFile() {
       var date = new Date();
       var nowDay = date.getDate();
@@ -734,6 +757,14 @@ export default {
 
       if (this.form.endTime == "") {
         this.$message("请选择结束时间");
+        return false;
+      }
+
+      if (this.DateDiff(this.form.beginTime, this.form.endTime) > 31) {
+        this.$message({
+          message: "一次最多只能导出31天的数据",
+          type: "warning"
+        });
         return false;
       }
 

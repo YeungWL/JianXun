@@ -7,11 +7,11 @@ export function checkupQuestionList(data) {
   return service.post(OAUTH_API + '/ck/checkupQuestionList.do', qs.stringify(data))
 }
 // 现场检查 - 2、获取用户参与的项目列表
-export function getMyInPro(data) {
+export function getCkMyInPro(data) {
   return service.post(OAUTH_API + '/ck/getMyInPro.do', qs.stringify(data))
 }
 // 现场检查 - 3、根据项目id查询我所在的组织和授权与我的组织
-export function getOrgList(data) {
+export function getCkOrgList(data) {
   return service.post(OAUTH_API + '/ck/getOrgList.do', qs.stringify(data))
 }
 // 现场检查 - 4、添加现场检查问题
@@ -51,17 +51,17 @@ export function getBeAuthorOrgs(data) {
   return service.post(OAUTH_API + '/ck/getBeAuthorOrgs.do', qs.stringify(data))
 }
 // 现场检查 - 13、获取未关联的组织列表
-export function getNotBindOrgs(data) {
+export function getCkNotBindOrgs(data) {
   return service.post(OAUTH_API + '/ck/getNotBindOrgs.do', qs.stringify(data))
 }
 // 现场检查 - 14、获取用户参与的项目
-export function getMyPro(data) {
-  return service.post(OAUTH_API + '/ck/getMyPro.do', qs.stringify(data))
-}
+// export function getMyPro(data) {
+//   return service.post(OAUTH_API + '/ck/getMyPro.do', qs.stringify(data))
+// }
 // 现场检查 - 15、根据项目id查询组织
-export function getOrgs(data) {
-  return service.post(OAUTH_API + '/ck/getOrgs.do', qs.stringify(data))
-}
+// export function getCkOrgs(data) {
+//   return service.post(OAUTH_API + '/ck/getOrgs.do', qs.stringify(data))
+// }
 
 // 现场检查 - 16、删除问题
 export function deleteQues(data) {

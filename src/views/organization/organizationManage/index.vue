@@ -29,7 +29,7 @@
         </el-table-column>
         <el-table-column prop="orgName" label="组织名称" min-width="150">
         </el-table-column>
-        <el-table-column prop="creator" label="组织创建人" min-width="150">
+        <el-table-column prop="creatorName" label="组织创建人" min-width="150">
         </el-table-column>
         <el-table-column prop="createTime" label="创建时间" min-width="150">
         </el-table-column>
@@ -37,8 +37,8 @@
         </el-table-column>
         <el-table-column label="操作" width="150">
           <template slot-scope="scope">
-            <el-button size="mini" @click="updateShow(scope.row)" :disabled="scope.row.isFreeze == 1">修改</el-button>
-            <el-button size="mini" type="danger" @click="deleteByOrg(scope.row.projectOrgId)" :disabled="scope.row.isFreeze == 1">删除</el-button>
+            <el-button size="mini" @click="updateShow(scope.row)">修改</el-button>
+            <el-button size="mini" type="danger" @click="deleteByOrg(scope.row.projectOrgId)" v-if="scope.row.isCreator === 'Y'">删除</el-button>
             <!-- <el-button size="mini" @click="freezeOrRecoverOrg(scope.row)">{{scope.row.isFreeze == 0? '冻结':'解冻'}}</el-button> -->
           </template>
         </el-table-column>

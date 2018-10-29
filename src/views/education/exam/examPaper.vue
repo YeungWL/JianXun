@@ -1,474 +1,408 @@
 <template>
-  <div class="page-content-body">
-    <div class="my-dialog scwj-dialog">
-      <el-form size="mini">
-        <el-row :gutter="24">
-          <el-col :span="8">
-            <el-form-item label="考题名称" label-width="90px">
-              <el-input placeholder="请输入考题名称" v-model="queryInfo.title"></el-input>
+  <div class="page-content-body" v-loading="loading" element-loading-text="拼命加载中">
+    <div class="page-header clearfix">
+      <el-form class="search-form" :inline="true" ref="form">
+        <el-form-item label="组织：">
+          <el-select v-model="selectOrgID" placeholder="请选择" class="item-org" @change="UpdatePaperList">
+            <el-option v-for="item in orgList" :key="item.orgId" :label="item.orgName" :value="item.orgId">
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <div class="btn-group fr">
+          <el-button type="primary" icon="el-icon-plus" @click="handleAddPaper">添加考卷</el-button>
+          <el-button type="primary" icon="el-icon-plus" @click="handleChoiceCourse">一键生成考卷</el-button>
+        </div>
+      </el-form>
+    </div>
+    <!--  table开始  -->
+    <div class="page-main customTable">
+      <el-table ref="multipleTable" style="width: 100%" :data="tableData">
+        <el-table-column prop="examName" label="考卷名称" min-width="200" show-overflow-tooltip></el-table-column>
+        <el-table-column prop="avgScore" label="合格分数" min-width="60" show-overflow-tooltip></el-table-column>
+        <el-table-column prop="isDeleted" label="考卷开关" min-width="60" show-overflow-tooltip>
+          <template slot-scope="scope"  >
+            <span v-if='scope.row.isDeleted === "N"' class="green" @click="setExamIsDeleted(scope.row)">开</span>
+            <span v-else class="red" @click="setExamIsDeleted(scope.row)">关</span>
+          </template>
+        </el-table-column>
+
+        <el-table-column label="操作" min-width="100">
+          <template slot-scope="scope">
+            <span class="btn" title="编辑" @click="handleUpdate(scope.row)">
+              <i class="iconfont icon-edit iconblue"></i>
+            </span>
+            <span class="btn" @click="handelDelete(scope.row)" title="删除">
+              <i class="iconfont icon-del iconred"></i>
+            </span>
+            <span class="btn" @click="handelDelete(scope.row)" title="查看">
+              <i class="iconfont icon-chakan iconred"></i>
+            </span>
+          </template>
+        </el-table-column>
+      </el-table>
+    </div>
+
+    <!-- 分页-->
+    <div class="pagination">
+      <el-pagination background layout="total, prev, pager, next" @current-change="handlePageChange" :current-page.sync="currentPage"
+        :page-size="showCount" :total="total">
+      </el-pagination>
+    </div>
+
+
+    <!-- 选课 -->
+    <el-dialog title="选课" :visible.sync="choiceCoursehDialogVisible" :close-on-click-modal='false' width="605px" class="my-dialog">
+      <div class="dialog-content">
+        <div class="ui-form">
+          <el-form :inline="true" :model="listQuery" class='my-form search-form'>
+            <el-form-item label="课件名称：">
+              <el-input v-model="listQuery.title" clearable></el-input>
             </el-form-item>
-          </el-col>
-          <el-col :span="5">
-            <el-form-item label="考题类型" label-width="90px">
-              <el-select v-model="queryInfo.type" placeholder="全部">
-                <el-option v-for="item in questionType" :key="item.value" :label="item.label" :value="item.value">
+            <el-form-item>
+              <el-button type="primary" icon="el-icon-search">搜索</el-button>
+            </el-form-item>
+          </el-form>
+          <el-tabs v-model="activeName" @tab-click="handleCourseType">
+            <!--公共课件-->
+            <el-tab-pane label="公共课件" name="first">
+              <div class="customTable">
+                <el-table ref="multipleTable" style="width: 100%" v-loading="loading" element-loading-text="拼命加载中"
+                  :data="courseTableData">
+                  <el-table-column type="selection" min-width="57"></el-table-column>
+                  <el-table-column prop="title" label="课件名称" min-width="180" show-overflow-tooltip></el-table-column>
+                  </el-table-column>
+                </el-table>
+              </div>
+            </el-tab-pane>
+            <!--我的课件-->
+            <el-tab-pane label="我的课件" name="second">
+              <div class="customTable">
+                <el-table ref="multipleTable" style="width: 100%" v-loading="loading" element-loading-text="拼命加载中"
+                  :data="courseTableData">
+                  <el-table-column type="selection" min-width="57"></el-table-column>
+                  <el-table-column prop="title" label="课件名称" min-width="180" show-overflow-tooltip></el-table-column>
+                  </el-table-column>
+                </el-table>
+              </div>
+              <div class="btn-group mt20">
+                <el-button type="primary" icon="el-icon-plus" @click="handleAddCourse">添加</el-button>
+                <el-button type="success" icon="el-icon-edit" @click="handleMyCourse">维护</el-button>
+              </div>
+            </el-tab-pane>
+          </el-tabs>
+
+          <el-form ref="form" :inline="true" v-model="listQuery" class='mt20'>
+            <el-form-item label="匹配给：">
+              <el-select v-model="listQuery.grade" placeholder="请选择">
+                <el-option v-for="item in gradeArr" :key="item.id" :label="item.name" :value="item.id">
+                  <span>{{item.name}}</span>
                 </el-option>
               </el-select>
             </el-form-item>
-          </el-col>
-          <el-col :span="4">
-            <el-button type="primary" @click="handleSearch()">搜索</el-button>
-          </el-col>
-          <el-col :span="7">
-            <div class="btn-group fr">
-              <el-button type="primary" @click="questionTypeDialogVisible=true">录入考题</el-button>
-            </div>
-          </el-col>
-        </el-row>
-      </el-form>
-      <div class="page-main customTable">
-        <el-table ref="multipleTable" style="width: 100%" v-loading="loading" element-loading-text="拼命加载中" :data="tablelist"
-          key="ArcDataArr">
-          <el-table-column prop="title" label="考题名称" min-width="400" show-overflow-tooltip></el-table-column>
-          <el-table-column label="考题类型" min-width="80">
-            <template slot-scope="scope"> {{ scope.row.type=== "1"? '单选题' : (scope.row.type=== "2"? '多选题' : '判断题') }}</template>
-          </el-table-column>
-          <el-table-column label="操作" min-width="100">
-            <template slot-scope="scope">
-              <span class="edit" @click="changeQuestionStatus(scope.row)">{{ scope.row.isDeleted=== "N"? '冻结' : '激活' }}</span>
-              <span class="edit" @click="handleEdit(scope.row)">修改</span> 
-            </template>
-          </el-table-column>
-        </el-table>
+          </el-form>
+        </div>
       </div>
-      <!-- 分页-->
-      <div class="pagination">
-        <el-pagination background layout="total, prev, pager, next" @current-change="handlePageChange"
-          :current-page.sync="queryInfo.currentPage" :page-size="queryInfo.showCount" :total="total">
-        </el-pagination>
-      </div>
-    </div>
-
-    <!-- 录入题型选择弹框 -->
-    <el-dialog title="考题类型" :visible.sync="questionTypeDialogVisible" width="30%" append-to-body center>
-      <el-button style="width:100%" type="primary" @click="addQuestionDialogVisible=true;InputFrom.type=1;reSetForm();questionTypeDialogVisible=false">单选</el-button>
-      <br /><br />
-      <el-button style="width:100%" type="primary" @click="addQuestionDialogVisible=true;InputFrom.type=2;reSetForm();questionTypeDialogVisible=false">多选</el-button>
-      <br /><br />
-      <el-button style="width:100%" type="primary" @click="addQuestionDialogVisible=true;InputFrom.type=3;reSetForm();questionTypeDialogVisible=false">判断</el-button>
-    </el-dialog>
-
-
-    <!--新建题目-->
-    <el-dialog :title="isEdit?'编辑题目':'新建题目'" :visible.sync="addQuestionDialogVisible" size="tiny" class="customDialog createExamDialog"
-      width='800px' append-to-body center>
-      <el-form ref="InputFrom" label-width="110px" :model="InputFrom" :rules="fromRules">
-        <el-form-item label="题目：" prop="title">
-          <el-input type="textarea" v-model="InputFrom.title"></el-input>
-        </el-form-item>
-
-        <el-form-item label="选项及答案：" v-if="InputFrom.type=='1'" prop="answer">
-          <el-radio-group v-model="InputFrom.answer">
-            <el-radio :key="index" :label="item.optName" v-for="(item,index) in InputFrom.optionList">
-              <a class="value">{{item.optName}}</a>
-              <el-form-item class="inlineItem">
-                <el-input v-model="item.optContent" style="width:500px"></el-input>
-              </el-form-item>
-              <a class="delete" @click.prevent="reDelete(index, InputFrom.optionList)">删除</a>
-            </el-radio>
-          </el-radio-group>
-          <a class="add" @click="reAdd(InputFrom.optionList)">添加选项</a>
-        </el-form-item>
-
-        <el-form-item label="选项及答案：" v-if="InputFrom.type=='2'" prop="answer">
-          <el-checkbox-group v-model="InputFrom.answer">
-            <el-checkbox v-for="(item,index) in InputFrom.optionList" :label="item.optName" :key="item.optName">
-              <a class="value">{{item.optName}}</a>
-              <el-form-item class="inlineItem">
-                <el-input v-model="item.optContent" style="width:500px"></el-input>
-              </el-form-item>
-              <a class="delete" @click.prevent="reDelete(index, InputFrom.optionList)">删除</a>
-            </el-checkbox>
-          </el-checkbox-group>
-          <a class="add" @click="reAdd(InputFrom.optionList)">添加选项</a>
-        </el-form-item>
-
-        <el-form-item label="正确答案：" v-if="InputFrom.type=='3'" prop="answer">
-          <el-select placeholder="全部" v-model="InputFrom.answer">
-            <el-option label="正确" value="true"></el-option>
-            <el-option label="错误" value="false"></el-option>
-          </el-select>
-        </el-form-item>
-      </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="addQuestion">确认</el-button>
+        <el-button @click="handleClose">取 消</el-button>
+        <el-button type="primary" @click="choiceCourse()">确 定</el-button>
+      </span>
+    </el-dialog>
+    <!-- 选课成功提示 -->
+    <el-dialog title="提示" :visible.sync="successTipsDialogVisible" width="30%" center>
+      <span>选课成功！</span>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="gobackList">返 回</el-button>
+        <el-button type="primary" @click="successTipsDialogVisible = false">继续选课</el-button>
       </span>
     </el-dialog>
 
+    <!-- 添加/编辑考卷 -->
+    <el-dialog :title="isEdit?'编辑考卷':'添加考卷'" :visible.sync="paperDialogVisible" width="700px" center>
+      <el-form ref="form" v-model="createPaper" size="mini">
+        <el-row :gutter="24">
+          <el-col :span="16">
+            <el-form-item label="考卷名称：" label-width="120px">
+              <el-input placeholder="" v-model="createPaper.examName" clearable></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="试卷合格分数：" label-width="120px">
+              <el-input placeholder="" v-model="createPaper.avgScore" clearable></el-input>
+            </el-form-item>
+          </el-col>
+        </el-row>
 
+        <el-row :gutter="24">
+          <el-col :span="8">
+            <el-form-item label="单选题每题(分)：" label-width="120px">
+              <el-input placeholder="" v-model="createPaper.radioScore" clearable></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="多选题每题(分)：" label-width="120px">
+              <el-input placeholder="" v-model="createPaper.selectScore" clearable></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="判断题每题(分)：" label-width="120px">
+              <el-input placeholder="" v-model="createPaper.judgeScore" clearable></el-input>
+            </el-form-item>
+          </el-col>
+        </el-row>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="handleCreatePaper">下一步</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
 <script>
+const gradeOptions = [
+  {
+    id: "1",
+    name: "公司级"
+  },
+  {
+    id: "2",
+    name: "项目级"
+  },
+  {
+    id: "3",
+    name: "土木班"
+  }
+];
+const statusOptions = [
+  {
+    id: "0",
+    name: "开"
+  },
+  {
+    id: "1",
+    name: "关"
+  }
+];
 export default {
-  name: "EducationExam",
+  name: "examQuestions",
   data() {
-    const validateAnswer = (rule, value, callback) => {
-      let opArr = [];
-      let sign = this.InputFrom.optionList.every(item => {
-        if (opArr.indexOf(item.optContent) === -1) {
-          opArr.push(item.optContent);
-        }
-        return item.optContent !== "";
-      });
-      if (this.InputFrom.answer.length === 0) {
-        callback(new Error("请填写正确答案"));
-      } else if (
-        !sign &&
-        (this.InputFrom.type === 1 || this.InputFrom.type === 2)
-      ) {
-        callback(new Error("选项答案不能为空"));
-      } else if (
-        opArr.length < this.InputFrom.optionList.length &&
-        (this.InputFrom.type === 1 || this.InputFrom.type === 2)
-      ) {
-        callback(new Error("选项答案不能重复"));
-      } else {
-        callback();
-      }
-    };
     return {
-      // loading 事件控制开关
-      loading: true,
-
-      // 录入题型选择弹框开关
-      questionTypeDialogVisible: false,
-
-      // 录入问题弹框开关
-      addQuestionDialogVisible: false,
-
-      // 题库总数量
+      //组织列表
+      orgList: [],
+      //当前选择的组织ID
+      selectOrgID: "",
+      //录入考卷弹框开关
+      paperDialogVisible: false,
+      //能否进行操作
+      canProcess: false,
+      //一页显示几个
+      showCount: 10,
+      //当前是第几页
+      currentPage: 1,
+      //总共有几条记录
       total: 0,
-      // 题库查询条件
-      queryInfo: {
-        type: "",
+      //创建考卷
+      createPaper: {
+        examId: "",
+        examName: "",
+        examDesc: "",
+        orgId: "",
+        avgScore: "",
+        radioScore: "",
+        selectScore: "",
+        judgeScore: "",
+        setTime: "",
+        pattern: "",
+        totalScore: "",
+        optionCount: "",
+        isDeleted: "",
+        creator: "",
+        createTime: "",
+        updateTime: "",
+        updateBy: "",
+        isEdit: ""
+      },
+      //考卷列表
+      tableData: [],
+      listQuery: {
+        orgId: "",
+        bianma: "",
         title: "",
-        isPublic: "",
+        grade: "",
+        status: "",
         showCount: "",
-        currentPage: "",
-        showCount: 10,
-        currentPage: 1 //页码
+        currentPage: ""
       },
-      // 题库列表
-      tablelist: [],
-      //题目类型
-      questionType: [
+      // 是否是编辑考卷
+      isEdit: false,
+
+      gradeArr: gradeOptions,
+      statusArr: statusOptions,
+      loading: true,
+      total: 0,
+      choiceCoursehDialogVisible: false,
+      successTipsDialogVisible: false,
+      activeName: "first",
+      // 公共课件，我的课件列表
+      courseTableData: [
         {
-          value: "",
-          label: "全部"
+          bianma: "10001",
+          title: "中华人民共和国安全生产法",
+          grade: "公司级",
+          status: "0"
         },
         {
-          value: "1",
-          label: "单选"
-        },
-        {
-          value: "2",
-          label: "多选"
-        },
-        {
-          value: "3",
-          label: "判断"
+          bianma: "10002",
+          title: "中华人民共和国安全生产法",
+          grade: "项目部级",
+          status: "1"
         }
-      ],
-      InputFrom: {
-        // 单项选择题表单
-        title: "", // 新建单选题目
-        type: "1", // 题目类型 (1 单选题, 2 多选题, 3 判断题)
-        qaId: "",
-        isPublic: "",
-        optionList: [
-          {
-            // 新建单选选项数组
-            optName: "A",
-            optContent: "",
-            optId: ""
-          },
-          {
-            optName: "B",
-            optContent: "",
-            optId: ""
-          },
-          {
-            optName: "C",
-            optContent: "",
-            optId: ""
-          }
-        ],
-        answer: "" // 新建选中的答案 或者填写的答案
-      },
-
-      isEdit: false, // 新建题目和编辑题目共用了一个弹窗，用此来区分是新建还是编辑
-
-      fromRules: {
-        // 验证规则
-        title: [
-          {
-            required: true,
-            trigger: "blur",
-            message: "题目不能为空"
-          }
-        ],
-        answer: [
-          {
-            required: true,
-            trigger: "blur",
-            validator: validateAnswer
-          }
-        ]
-      }
+      ]
     };
   },
   created() {
-    this.getQuestionList();
+    this.getOrgList();
   },
   methods: {
-    /* 初始化数据 */
-    reSetForm() {
-      // 初始化数据
-      this.InputFrom.title = "";
-      this.InputFrom.optionList = [
-        {
-          // 新建单选选项数组
-          optName: "A",
-          optContent: "",
-          optId: ""
-        },
-        {
-          optName: "B",
-          optContent: "",
-          optId: ""
-        },
-        {
-          optName: "C",
-          optContent: "",
-          optId: ""
+    //获取组织列表
+    getOrgList() {
+      this.$api.getCkOrgList().then(res => {
+        if (res.errorCode === "1") {
+          this.orgList = res.data;
+          this.loading = false;
+        } else {
+          this.$message.error(res.message);
         }
-      ];
-      this.InputFrom.answer_analysis = "";
-
-      if (this.InputFrom.type === 2) {
-        this.InputFrom.answer = [];
-      } else {
-        this.InputFrom.answer = "";
-      }
-    },
-
-    /* 单、多项选择项删除 */
-    reDelete(index, obj) {
-      let deleteData = obj.splice(index, 1)[0];
-      // 删选项时考虑一下是否是把当前选中的项给删了，如果是，选中项要去除这一项
-      if (this.createTestType === "单项选择题") {
-        // 如果是单项选择，选中项是string
-        deleteData.optName === this.InputFrom.answer
-          ? (this.InputFrom.answer = "")
-          : "";
-        if (this.InputFrom.answer > deleteData.optName) {
-          this.InputFrom.answer = String.fromCharCode(
-            this.InputFrom.answer.charCodeAt(0) - 1
-          );
-        }
-      } else if (this.createTestType === "多项选择题") {
-        // 如果是多项选择题，选中项是arr
-        // 如果删掉的事选中项，从选中项数组中把它去掉，否则不做处理
-        this.InputFrom.answer.indexOf(deleteData.optName) !== -1
-          ? this.InputFrom.answer.splice(
-              this.InputFrom.answer.indexOf(deleteData.optName),
-              1
-            )
-          : "";
-        // 之后看一看是否有选中项在被删掉的项的后头，在的话因为后面重新计算了选择序号，相应的在被删掉的项后面的选中项的值也要重新计算
-        let checkArr = this.InputFrom.answer.map((item, index, arr) => {
-          if (item > deleteData.optName) {
-            item = String.fromCharCode(item.charCodeAt(0) - 1);
-          }
-          return item;
-        });
-        this.InputFrom.answer = checkArr;
-      }
-      this.reCount(this.InputFrom.optionList);
-    },
-    /* 重新计算选项值 */
-    reCount(arr) {
-      arr.forEach((item, index) => {
-        item.optName = String.fromCharCode(65 + index);
-      });
-    },
-    /* 单、多项选择项增加 */
-    reAdd(oldArr) {
-      oldArr.push({
-        optName: "",
-        optContent: "",
-        optId: ""
-      });
-      this.reCount(oldArr);
-    },
-
-    /* 创建题目 */
-    addQuestion() {
-      this.$refs.InputFrom.validate(valid => {
-        if (valid) {
-          let data = Object.assign({}, this.InputFrom);
-          data.answer =
-            typeof data.answer === "object"
-              ? data.answer.join(",")
-              : data.answer;
-          data.optionList = JSON.stringify(data.optionList);
-
-          if (this.isEdit) {
-            // 编辑题目提交
-            console.log("编辑题目提交");
-            data.question_id = this.question_id;
-            this.$api.editQuestion(data).then(res => {
-              if (res.errorCode==="1") {
-                this.$message.success("编辑题目成功");
-              } else {
-                this.$message.error(res.message);
-              }
-              this.createExamDialogVisible = false;
-              this.isEdit = false;
-            });
-          } else {
-            // 新建题目提交
-            this.$api.saveQuestion(data).then(res => {
-              if (res.errorCode === "1") {
-                // this.$message.success("新建题目成功，可在题库管理中查看！");
-
-                this.$confirm("题目添加成功, 是否继续?", "提示", {
-                  confirmButtonText: "确定",
-                  cancelButtonText: "取消",
-                  type: "warning"
-                })
-                  .then(() => {
-                    this.questionTypeDialogVisible = true;
-                    this.addQuestionDialogVisible = false;
-                    this.reSetForm();
-                    this.getQuestionList();
-                  })
-                  .catch(() => {
-                    this.addQuestionDialogVisible = false;
-                    // this.$message({
-                    //   type: "info",
-                    //   message: "已取消删除"
-                    // });
-                  });
-              } else {
-                this.$message.error("网络......");
-              }
-            });
-          }
-        }
+        this.createExamDialogVisible = false;
+        this.isEdit = false;
       });
     },
 
-    // 获取题目列表
-    getQuestionList() {
+    //获取试卷列表
+    UpdatePaperList() {
       this.$api
-        .questionList(this.queryInfo)
+        .examList({
+          orgId: this.selectOrgID
+        })
         .then(res => {
           if (res.errorCode === "1") {
-            this.tablelist = res.data;
-            this.loading = false;
+            this.tableData = res.data;
+            this.showCount = res.pageSize;
+            this.currentPage = res.currentPage;
             this.total = res.totalRecords;
+          } else {
+            this.$message.error(res.message);
           }
-        })
-        .catch(err => {
-          this.$message.error(err);
-          return false;
         });
     },
-    handleSearch() {
-      this.getQuestionList();
+
+    //处理创建考卷按钮事件
+    handleCreatePaper() {
+      this.isSelectOrg();
+      if (this.canProcess === false) return false;
+      this.createPaper.orgId = this.selectOrgID;
+      this.$api.saveOrUpdateExam(this.createPaper).then(res => {
+        if (res.errorCode === "1") {
+          this.loading = false;
+        } else {
+          this.$message.error(res.message);
+        }
+      });
     },
-    //列表切换相应方法
-    handlePageChange(val) {
-      this.queryInfo.currentPage = val;
-      this.getQuestionList();
+
+    //判断是否已经选择了组织
+    isSelectOrg() {
+      if (this.selectOrgID === "") {
+        this.canProcess = false;
+        this.$message.warning("请选择要操作的组织");
+      } else {
+        this.canProcess = true;
+      }
     },
-    changeQuestionStatus(val) {
+
+    handlePageChange() {},
+
+    // 删除考卷
+    handelDelete(data) {
       this.$api
-        .freezeQuestion({
-          qaId: val.qaId,
-          isDeleted: val.isDeleted === "N" ? "Y" : "N"
+        .deletedExam({
+          examId: data.examId
         })
-        .then(res => {
-          if (res.errorCode === "1") {
-            this.getQuestionList();
-            this.$message.success(
-              val.isDeleted === "N" ? "成功激活题目" : "成功冻结题目"
-            );
+        .then(response => {
+          if (response.errorCode === "1") {
+            this.$message.success("删除成功！");
+            this.UpdatePaperList();
+          } else {
+            this.$message.warning(response.resultMsg);
           }
         })
-        .catch(err => {
-          this.$message.error(err);
+        .catch(error => {
+          this.$message.error(error);
           return false;
         });
     },
-    handleEdit(val) {
+
+    //控制考卷开关
+    setExamIsDeleted(data){
+      this.$api.setExamIsDeleted({ examId: data.examId, isDeleted: data.isDeleted==="Y"?"N":"Y"}).then(res => {
+        if (res.errorCode === "1") {
+       
+          console.log(res.data);
+        } else {
+          this.$message.error(res.message);
+        }
+      });
+    },
+
+    //编辑考卷
+    handleUpdate(data) {
+      // 获取考卷信息
+      this.$api.getExamInfo({ examId: data.examId }).then(res => {
+        if (res.errorCode === "1") {
+          this.createPaper = res.data;
+          console.log(res.data);
+        } else {
+          this.$message.error(res.message);
+        }
+      });
       this.isEdit = true;
-      this.$api
-        .questionPage({
-          qaId: val.qaId
-        })
-        .then(res => {
-          if (res.errorCode === "1") {
-            this.InputFrom.type = res.data.type;
-            this.reSetForm();
+      this.paperDialogVisible = true;
+    },
 
-            this.InputFrom = res.data;
+    // 添加考卷
+    handleAddPaper() {
+      this.paperDialogVisible = true;
+      this.createPaper = [];
+    },
 
-            if (this.InputFrom.type === "2") {
-              var arr = this.InputFrom.answer.split(",");
-              this.InputFrom.answer = [];
-              this.InputFrom.answer = arr;
-            }
+    handleChoiceCourse() {},
 
-            this.addQuestionDialogVisible = true;
-          }
-        })
-        .catch(err => {
-          this.$message.error(err);
-          return false;
-        });
+    choiceCourse() {
+      this.successTipsDialogVisible = true;
+    },
+    // 关闭弹窗
+    handleClose() {
+      this.choiceCoursehDialogVisible = false;
+    },
+    // 放回列表
+    gobackList() {
+      this.successTipsDialogVisible = false;
+      this.choiceCoursehDialogVisible = false;
+    },
+    handleCourseType(tab, event) {
+      // console.log(tab, event);
+    },
+    handleAddCourse() {
+      this.$router.push({
+        path: "/education/addCourse"
+      });
+    },
+    handleMyCourse() {
+      this.$router.push({
+        path: "/education/myCourse"
+      });
     }
   }
 };
 </script>
 <style lang="scss" scoped>
-.createExamDialog {
-  label.el-radio,
-  label.el-checkbox {
-    margin-left: -0;
-    margin-bottom: 10px;
-  }
-
-  .inlineItem {
-    display: inline-block;
-  }
-
-  .value {
-    margin-right: 5px;
-  }
-
-  .delete,
-  .add {
-    color: #555;
-    text-decoration: underline;
-    cursor: pointer;
-    margin-left: 5px;
-  }
-
-  .msg {
-    color: red;
-  }
-}
 </style>

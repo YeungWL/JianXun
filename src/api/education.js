@@ -27,3 +27,38 @@ export function editQuestion(data) {
 export function freezeQuestion(data) {
   return service.post(OAUTH_API + '/eduExam/freezeQuestion.do', qs.stringify(data))
 }
+
+// 三级教育考题 - 6、删除题目选项
+export function deletedQption(data) {
+  return service.post(OAUTH_API + '/eduExam/deletedQption.do', qs.stringify(data))
+}
+
+// 三级教育考题 - 7、考卷列表
+export function examList(data) {
+  return service.post(OAUTH_API + '/eduExam/examList.do', qs.stringify(data))
+}
+
+// 三级教育考题 - 8、添加或编辑考卷
+export function saveOrUpdateExam(data) {
+  return service.post(OAUTH_API + '/eduExam/saveOrUpdateExam.do', qs.stringify(data))
+}
+
+// 三级教育考题 - 9、获取考卷信息
+export function getExamInfo(data) {
+  return service.post(OAUTH_API + '/eduExam/getExamInfo.do', qs.stringify(data))
+}
+
+// 三级教育考题 - 10、删除考卷
+export function deletedExam(data) {
+  return service.post(OAUTH_API + '/eduExam/deletedExam.do', qs.stringify(data))
+}
+
+// 三级教育考题 - 11、获取组织列表
+export function getOrgList(data) {
+  return service.post(OAUTH_API + '/eduExam/getOrgList.do', qs.stringify(data))
+}
+
+// 三级教育考题 - 12、设置考卷开关
+export function setExamIsDeleted(data) {
+  return service.post(OAUTH_API + '/eduExam/setExamIsDeleted.do', qs.stringify(data))
+}

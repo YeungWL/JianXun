@@ -164,7 +164,9 @@ export default {
             if (response.errorCode === '1') {
    
               this.$message.success(response.resultMsg)
-
+              setTimeout(_ => {
+                  this.goBack()
+              }, 1000)
             } else {
               this.$message.warning(response.resultMsg)
             }

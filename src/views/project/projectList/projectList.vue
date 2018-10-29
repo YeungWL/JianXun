@@ -13,6 +13,7 @@
         <el-table-column label="操作" min-width="120">
           <template slot-scope="scope">
             <el-button type="primary" size="mini" @click="modifyProject(scope.row)" >修改</el-button>
+            <el-button size="mini" type="danger" @click="delOrRecoverProject(scope.row)">删除</el-button>
             <!-- <el-button type="success" size="mini" @click="attorn(scope.row)" :disabled="btnDisabled">转让</el-button>
             <el-button size="mini" @click="fronze">冻结</el-button> -->
           </template>
@@ -104,9 +105,7 @@ export default {
     },
     // 获取项目列表
     getProjectList() {
-      this.$api.getMyProjectList({
-        operateType: '0'
-      }).then(res => {
+      this.$api.getManageProjectList({}).then(res => {
         if (res.errorCode === '1') {
           this.projectList = res.data
         }
@@ -161,6 +160,26 @@ export default {
         this.$message.success('项目修改成功')
         this.creationForm.name = ''
         this.creationForm.forShort = ''
+      })
+    },
+    delOrRecoverProject(data) {
+      this.$confirm('此操作将删除该数据, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(_ => {
+        this.$api.delOrRecoverProject({
+          projectId: data.projectId
+        }).then(res => {
+          if(res.errorCode === '1') {
+            this.$message.success('删除成功')
+            this.getProjectList()
+          } else {
+            this.$message.warning(res.resultMsg)
+          }
+        })
+      }).catch(_ => {
+        this.$message('已取消删除')
       })
     },
     //转让项目

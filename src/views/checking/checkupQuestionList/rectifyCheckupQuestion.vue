@@ -9,7 +9,7 @@
     </div>
     <div class="page-main" style="width:70%">
       <section>
-        <div class="ui-form" >
+        <div class="ui-form form-bdnone" >
           <el-form ref="historyForm" label-width="100px" :model="questionForm" class='flex-form'>
             <el-form-item label="问题名称："  class="flex-100">
               <el-input v-model="questionForm.title" :readonly="readonly"></el-input>
@@ -42,7 +42,7 @@
       </section>
       <div  v-if="replyVoListForm.length != 0">
         <section v-for="(item, index) in replyVoListForm">
-          <div class="ui-form" v-if="(index%2) != 1">
+          <div class="ui-form form-bdnone" v-if="(index%2) != 1">
             <el-form label-width="100px" class='flex-form'>
               <el-form-item label="整改描述："  class="flex-100">
                 <el-input type="textarea" v-model="item.replyDesc" :readonly="readonly"></el-input>
@@ -209,7 +209,8 @@ export default {
     },
     // 整改回复提交
     handleRectify() {
-        // console.log("this.rectifyForm.pictureJson"+ this.rectifyForm.pictureJson) 
+        console.log( this.rectifyForm.pictureJson)
+        // console.log("this.rectifyForm.pictureJson"+ this.rectifyForm.pictureJson)  
         // console.log(this.rectifyForm)
       delete this.rectifyForm.requireTime
       delete this.rectifyForm.status    
@@ -218,6 +219,9 @@ export default {
           this.$api.rectifyCheckupQuestion(this.rectifyForm).then(response => {
             if (response.errorCode === '1') {
               this.$message.success(response.resultMsg)
+              setTimeout(_ => {
+                  this.goBack()
+              }, 1000)
             } else {
               this.$message.warning(response.resultMsg)
             }
@@ -227,20 +231,24 @@ export default {
     },
     // 复查回复提交
     handleReview(status) {
+       console.log( this.rectifyForm.pictureJson)
         // console.log("this.rectifyForm.pictureJson"+ this.rectifyForm.pictureJson) 
         // console.log(this.rectifyForm) 
       this.rectifyForm.status = status // 复查是否通过[必填项，1通过，2是重整]
-      this.$refs.rectifyForm.validate(valid => {
-        if(valid){
-          this.$api.reviewCheckupQuestion(this.rectifyForm).then(response => {
-            if (response.errorCode === '1') {
-              this.$message.success(response.resultMsg)
-            } else {
-              this.$message.warning(response.resultMsg)
-            }
-          })
-        }
-      })
+      // this.$refs.rectifyForm.validate(valid => {
+      //   if(valid){
+      //     this.$api.reviewCheckupQuestion(this.rectifyForm).then(response => {
+      //       if (response.errorCode === '1') {
+      //         this.$message.success(response.resultMsg)
+      //         setTimeout(_ => {
+      //             this.goBack()
+      //         }, 1000)
+      //       } else {
+      //         this.$message.warning(response.resultMsg)
+      //       }
+      //     })
+      //   }
+      // })
     },                   
     // 返回
     goBack() {

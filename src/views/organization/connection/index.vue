@@ -1,8 +1,8 @@
 <template>
   <div class="connection page-content-body">
     <div class="selectArea">
-      项目编码：
-      <el-input v-model="listQuery.proCodeInput" placeholder="请输入项目编码" style="width:200px;margin-right:10px" clearable @clear="getProjectList"></el-input>
+      <!-- 项目编码：
+      <el-input v-model="listQuery.proCodeInput" placeholder="请输入项目编码" style="width:200px;margin-right:10px" clearable @clear="getProjectList"></el-input> -->
       项目名称：
       <el-input v-model="listQuery.proNameInput" placeholder="请输入项目名称" style="width:200px" clearable @clear="getProjectList"></el-input>
       <el-button type="primary" style="margin-left:10px" @click="getProjectList">搜索</el-button>
@@ -135,7 +135,7 @@ export default {
     }
   },
   created() {
-    this.getProjectList()
+    // this.getProjectList()
     this.getNotBindOrgList()
   }
 };

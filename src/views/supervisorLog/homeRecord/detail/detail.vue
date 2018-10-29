@@ -65,7 +65,6 @@ export default {
           this.tempId +
           "&createDate=" +
           this.logDate;
-        console.log("原始数据" +this.detailUrl);
       } else {
         this.dataType = "原始数据";
         this.detailUrl =
@@ -85,7 +84,6 @@ export default {
           this.tempId +
           "&createDate=" +
           this.logDate;
-          console.log("终版数据" +this.detailUrl);
       }
     },
 
@@ -147,12 +145,12 @@ export default {
       var date = new Date();
       var nowDay = date.getDate();
       let big = [1, 3, 5, 7, 8, 10, 12];
-      this.day = this.day + this.count;
 
-      if (this.day === nowDay) {
+      if (this.day + this.count >= nowDay) {
         this.isCanClick = true;
         return false;
       }
+      this.day = this.day + this.count;
 
       // 判断大小月
       if (this.day < 1) {
@@ -203,15 +201,14 @@ export default {
         "&createDate=" +
         this.logDate;
     },
-    
+
     //关闭监理日志历史记录界面
     close() {
-       this.$router.go(-1);
-      // this.$router.replace({
-      //   path: "/supervisorLog/homeRecord"
-      // });
+      //this.$router.go(-1);
+      this.$router.replace({
+        path: "/supervisorLog/homeRecord"
+      });
     }
-
   },
   created() {
     this.logDate = this.logDate.replace(/\//g, "-");
@@ -221,7 +218,6 @@ export default {
     this.year = Number(this.date[0]);
     this.month = Number(this.date[1]);
     this.day = Number(this.date[2]);
-  
 
     this.detailUrl =
       this.baseURL() +
@@ -240,7 +236,6 @@ export default {
       this.tempId +
       "&createDate=" +
       this.logDate;
-    console.log("AAA: " + this.detailUrl);
   }
 };
 </script>
@@ -258,7 +253,7 @@ export default {
   }
   .content {
     width: 100%;
-    height: 700px;
+    height: 600px;
     border: 1px solid #bbb;
     margin-top: 20px;
   }

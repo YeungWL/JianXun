@@ -1,5 +1,5 @@
 <template>
-  <div class="page-content-body" v-loading.fullscreen.lock="fullscreenLoading">
+  <div class="page-content-body"  v-loading.fullscreen.lock="fullscreenLoading">
       <div class="page-header clearfix">
         <el-form class="" :inline="true" :model="listQuery" ref="form">
           <el-form-item label="项目：">
@@ -11,14 +11,14 @@
           <el-form-item label="组织：">
             <el-select v-model="listQuery.orgId" placeholder="请选择" @change="selectOrg">
               <el-option v-for="item in orgList" :key="item.projectOrgId" :label="item.orgName" :value="item.projectOrgId">
-                <!--<span>{{item.orgName}}</span>-->
+                <span>{{item.orgName}}</span>
               </el-option>
             </el-select>
           </el-form-item> 
           <div class="btn-group fr">
             <el-button type="primary"  icon="el-icon-search" @click="handleSearch">高级查询</el-button> 
-            <el-button type="primary" icon="el-icon-plus" @click="handleCreate" v-show="addCheckupQuestionStatus">新增</el-button>
-            <el-button icon="el-icon-setting" v-show="isChargeManShow&&checkupOrgPermissionStatus"  @click="handleSetting">设置</el-button>
+            <el-button type="primary" icon="el-icon-plus" @click="handleCreate">新增</el-button>
+            <el-button icon="el-icon-setting" v-show="isChargeManShow"  @click="handleSetting">设置</el-button>
           </div>                        
         </el-form>
       </div>
@@ -34,6 +34,15 @@
               <span class="tag">{{scope.row.questionAttr}}</span>
             </template>
           </el-table-column>         
+          <!--<el-table-column prop="questionAttr" label="问题属性" min-width="80" 
+            :filters="[{ text: '质量', value: '质量' }, { text: '安全', value: '安全' }]"
+            :filter-method="filterTag"
+            filter-placement="bottom-end">
+            <template slot-scope="scope">
+              <el-tag v-if='scope.row.questionAttr === "质量"' type="primary" disable-transitions>{{scope.row.questionAttr}}</el-tag>
+              <el-tag v-else-if='scope.row.questionAttr === "安全"' type="primary" disable-transitions>{{scope.row.questionAttr}}</el-tag>
+            </template>
+          </el-table-column>-->
           <el-table-column prop="checkType" label="检查类别" min-width="80" show-overflow-tooltip></el-table-column>
           <el-table-column prop="status" label="状态" min-width="100" show-overflow-tooltip>
             <template slot-scope="scope">
@@ -142,8 +151,10 @@ export default {
   name: 'buildingDiary',
   data() {
     return {
-      isChargeManShow: false,// 是否显示设置授权按钮
       fullscreenLoading: false,
+      isChargeManShow: false,// 是否显示设置授权按钮
+      projectId:'',
+      orgId:'',
       project: [],
       orgList: [],
       org: {},            
@@ -184,69 +195,38 @@ export default {
       memberType: memberTypeOptions, 
       questionAttrs: [],   // 属性数组
       checkupTypes: [], // 类别数组
-      status: statusOptions, // 状态数组
-      // 权限和状态
-      menuAuthorityList:[],
-      addCheckupQuestionStatus: true,
-      rectifyCheckupQuestionStatus: true,
-      reviewCheckupQuestionStatus: true,
-      checkingHistoryStatus: true,
-      searchCheckupQuestionnStatus: true,
-      checkupOrgPermissionStatus: true      
+      status: statusOptions // 状态数组
     }   
-  }, 
-  created() {
-    // this.getCkMyInPro()  
   },
-  mounted() {
-    this.getCkMyInPro()  
-    //权限设置
-    this.menuAuthorityList=this.$getLastChildrenMenu('checkupList'); 
-    // console.log(this.menuAuthorityList); 
-     for(let i=0;i<this.menuAuthorityList.length;i++){
-      // console.log(this.menuAuthorityList[i].name);
-      switch(this.menuAuthorityList[i].name){
-        case '添加':
-          this.addCheckupQuestionStatus=this.menuAuthorityList[i].status;
-          break;
-        case '整改':
-          this.rectifyCheckupQuestionStatus=this.menuAuthorityList[i].status;
-          break;
-        case '复查':
-          this.reviewCheckupQuestionStatus=this.menuAuthorityList[i].status;
-          break;
-        case '历史':
-          this.checkingHistoryStatus=this.menuAuthorityList[i].status;
-          break;
-        case '查询':
-          this.searchCheckupQuestionnStatus=this.menuAuthorityList[i].status;
-          break;
-        case '设置':
-          this.checkupOrgPermissionStatus=this.menuAuthorityList[i].status;
-          break;    
-        default: ;
-      }
-    }        
-  },   
+  mounted() {  
+  },  
+  created() {
+    this.getMyInPro()  
+  },
+  // async created() {
+  //   let ctx = {}
+  //   await this.$api.getMyInPro(ctx)
+  //   this.project = ctx.data  
+  //   this.project.push({
+  //     proName:"未关联",projectId:"001"
+  //   })  
+  // },
   methods: { 
     // 选择项目
     selectOrgList(projectOrgId) {
-      // 重新选择后先清除掉缓存，加载新的值，默认显示该项目下第一个组织
-      localStorage.removeItem('projectId')
-      localStorage.removeItem('orgId')
+      console.log(projectOrgId)
       if (projectOrgId.length&&projectOrgId != '001') {
-        this.getCkOrgList()
+        this.listQuery.orgId = projectOrgId[0].projectOrgId
+        this.org = projectOrgId[0]
+        this.getOrgList()
       } else if(projectOrgId === '001'){
-        this.listQuery.orgId = ''
-        this.getCkNotBindOrgs()
-        
+        this.getNotBindOrgs()
       } else {
         this.listQuery.orgId = ''
       }
     },
     // 选择组织
     selectOrg(projectOrgId) {
-      // console.log(projectOrgId)
       for (let i = 0; i < this.orgList.length; i++) {
         if (this.orgList[i].projectOrgId == projectOrgId) {
           this.org = this.orgList[i]
@@ -259,49 +239,49 @@ export default {
 
     },       
     // 获取用户参与的项目列表
-    async getCkMyInPro() {
-     await this.$api.getCkMyInPro().then(response => {     
+    getMyInPro() {
+      this.$api.getMyInPro().then(response => {     
         if (response.errorCode === '1') {          
           this.project = response.data
           this.project.push({
             proName:"未关联",projectId:"001"
           })
-          // 默认选中第一条数据
-          this.listQuery.projectId = response.data[0].projectId 
-        } 
-      })
+          // if(this.project.length != 0){
+          //   // 默认选中第一条数据
+          //   this.listQuery.projectId = response.data[0].projectId           
+          //   this.getOrgList()
+          // } 
+          if( localStorage.getItem('projectId') != ''){            
+            this.listQuery.projectId = localStorage.getItem('projectId')
+            this.getOrgList()
+          }
 
-      // console.log(localStorage.getItem('projectId'))
-      if( localStorage.getItem('projectId') != '' && localStorage.getItem('projectId') != null){            
-          this.listQuery.projectId = localStorage.getItem('projectId')
-          this.getCkOrgList()
-      } 
-    },
-    // 根据项目id查询我所在的组织和授权与我的组织  
-    async  getCkOrgList() {
-     await  this.$api.getCkOrgList({projectId: this.listQuery.projectId}).then(response => {     
-        if (response.errorCode === '1') {          
-          this.orgList = response.data 
-          // 默认选中第一条数据
-          this.listQuery.orgId = response.data[0].projectOrgId        
         }      
-      })
-
-      // 判断是否有保存ID值
-      if(localStorage.getItem('orgId') != '' && localStorage.getItem('orgId') != null){
-        this.listQuery.orgId = localStorage.getItem('orgId')
-        // console.log(this.listQuery.orgId)
-        // this.getList()        
-      }
-       this.getList()        
+      }) 
     },
-    // 获取未关联的组织列表
-    getCkNotBindOrgs() {
-      this.$api.getCkNotBindOrgs().then(response => {     
+    // 根据项目id查询我所在的组织和授权与我的组织
+    getOrgList() {
+      this.$api.getOrgList({projectId: this.listQuery.projectId}).then(response => {     
         if (response.errorCode === '1') {          
           this.orgList = response.data
-          // 默认选中第一条数据
-          this.listQuery.orgId = response.data[0].projectOrgId            
+          if( localStorage.getItem('orgId') != ''){
+              this.listQuery.orgId = localStorage.getItem('orgId')
+              this.getList()
+            // console.log(this.listQuery.orgId)
+          }
+          // if( this.project.length != 0  && this.orgList.length != 0){
+          //   // 默认选中第一条数据
+          //   this.listQuery.orgId = response.data[0].projectOrgId
+          //   this.getList()
+          // }          
+        }      
+      }) 
+    },
+    // 获取未关联的组织列表
+    getNotBindOrgs() {
+      this.$api.getNotBindOrgs().then(response => {     
+        if (response.errorCode === '1') {          
+          this.orgList = response.data
         }      
       }) 
     },              
@@ -317,8 +297,8 @@ export default {
           this.tableData = response.data
           this.total = response.totalRecords
           this.searchDialogVisible = false
-          localStorage.setItem('projectId', this.listQuery.projectId) 
-          localStorage.setItem('orgId' ,this.listQuery.orgId) 
+          // localStorage.setItem('projectId', this.listQuery.projectId) 
+          // localStorage.setItem('orgId' ,this.listQuery.orgId) 
         } else {
           this.$message.warning(response.resultMsg)
         }      

@@ -103,9 +103,9 @@
           </el-table-column>
           <el-table-column label="操作" min-width="100">
             <template slot-scope="scope">
-              <span class="edit" @click="editDetails(scope.row)">修改</span>
-              <span class="edit" @click="documentPublicHandle(scope.row)">{{ scope.row.putaway=== "Y"? '下架' : '上架' }}</span>
               <span class="edit" @click="documentDetails(scope.row)">查看</span>
+              <span class="edit" @click="editDetails(scope.row)" v-show="scope.row.isCreator=== 'Y'"  >修改</span>
+              <span class="edit" @click="documentPublicHandle(scope.row)" v-show="scope.row.isCreator=== 'Y'" >{{ scope.row.putaway=== "Y"? '下架' : '上架' }}</span>
             </template>
           </el-table-column>
         </el-table>

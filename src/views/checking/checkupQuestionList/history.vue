@@ -6,7 +6,7 @@
     </div>
     <div class="page-main" style="width:70%">
       <section>
-        <div class="ui-form" >
+        <div class="ui-form form-bdnone" >
           <el-form ref="historyForm" label-width="100px" :model="questionForm" class='flex-form'>
             <el-form-item label="问题名称："  class="flex-100">
               <el-input v-model="questionForm.title" :readonly="readonly"></el-input>
@@ -39,7 +39,7 @@
       </section>
       <div  v-if="replyVoListForm.length != 0">
         <section v-for="(item, index) in replyVoListForm">
-          <div class="ui-form" v-if="(index%2) != 1">
+          <div class="ui-form form-bdnone" v-if="(index%2) != 1">
             <el-form label-width="100px" class='flex-form'>
               <el-form-item label="整改描述："  class="flex-100">
                 <el-input type="textarea" v-model="item.replyDesc" :readonly="readonly"></el-input>
@@ -57,7 +57,7 @@
               </el-form-item>                                              
             </el-form>
           </div>
-          <div class="ui-form" v-else>
+          <div class="ui-form form-bdnone" v-else>
             <el-form label-width="100px" class='flex-form'>
               <el-form-item label="复查描述："  class="flex-100">
                 <el-input type="textarea" v-model="item.replyDesc" :readonly="readonly"></el-input>

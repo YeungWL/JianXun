@@ -12,6 +12,8 @@
       </span>
       <div class="btn">
         <el-button type="primary" @click="addDepartment">添加部门</el-button>
+        <el-button type="primary" @click="addMember">添加人员</el-button>
+        <el-button type='primary' @click="service">维护人才库</el-button>
         <!-- <el-button type="primary">添加组织负责人</el-button> -->
       </div>
     </div>
@@ -42,11 +44,10 @@
             <el-tag style="margin:0 10px 10px 0" v-for="(item,index) in scope.row.commonList" :key="index" closable @close="handleClose(item)">{{item.memberName}}</el-tag>
           </template>
         </el-table-column>
-        <el-table-column prop="operate" label="操作" width="250">
+        <el-table-column prop="operate" label="操作" width="150">
           <template slot-scope="scope">
             <el-button type="button" size="small" @click="modify(scope.row)">修改</el-button>
             <el-button type="danger" size="small" @click="del(scope.row)">删除</el-button>
-            <el-button type="button" size="small" @click="addMember(scope.row)">添加人员</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -80,8 +81,8 @@
               <el-checkbox-group v-model="createForm.checkList" :disabled="selectDisabled" v-if=" this.headRole !== 0 " @change="personSelect">
                 <el-checkbox v-for="(item,index) in memberList" :key="index" :label="item" style="display:block;margin-left:0;">{{item.nickName}}</el-checkbox>
               </el-checkbox-group>
-              <el-radio-group v-model="createForm.radioValue" :disabled="selectDisabled" v-else @change="personSelect" style="margin-top:12px">
-                <el-radio v-for="(item,index) in memberList" :key="index" :label="item" style="margin-bottom:10px; display:block;margin-left:0;">{{item.nickName}}</el-radio>
+              <el-radio-group v-model="createForm.radioValue" :disabled="selectDisabled" v-else @change="personSelect">
+                <el-radio v-for="(item,index) in memberList" :key="index" :label="item" style="display:block;margin-left:0;line-height:40px;">{{item.nickName}}</el-radio>
               </el-radio-group>
             </div>
           </el-form-item>
@@ -97,13 +98,14 @@
     <!-- 维护人才库的dialog -->
     <div class="member">
       <el-dialog title="维护人才库" :visible.sync="dialogTableVisible">
-        <div class="title">广州市轨道交通十五号线建设项目管理办公室</div>
-        <el-table :data="memberList" height="200" align>
+        <!-- <div class="title">广州市轨道交通十五号线建设项目管理办公室</div> -->
+        <el-table :data="allMemberList" height="200" align>
           <el-table-column property="nickName" label="姓名" align="center"></el-table-column>
           <el-table-column property="phone" label="电话号码" align="center"></el-table-column>
           <el-table-column property="address" label="操作" align="center">
             <template slot-scope="scope">
-              <el-button type="text" size="small" @click="delPerson(scope.row)">删除</el-button>
+              <span v-if="scope.row.isDist === '1'">已分配</span> 
+              <el-button type="text" size="small" @click="delPerson(scope.row)" v-else>删除</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -153,7 +155,7 @@ export default {
         region: ''
       },
       vocationList: [],
-
+      allMemberList: [],
       memberList: [],
       memberData: {
         'departmentId': '',
@@ -349,7 +351,6 @@ export default {
     },
     // 删除部门
     del(val) {
-      console.log(val)
       let params = {
         departmentId: val.departmentId
       }
@@ -379,26 +380,31 @@ export default {
     },
     //添加成员
     addMember(data) {
+      if (this.orgId == '') {
+        this.$message('请选择一个组织')
+        return false
+      }
       // console.log(data, 12)
       // console.log(this.orgId, this.projectId)
-      console.log(this.tableData)
 
-      this.departmentData = data
-      this.dialogFormVisible = true
+      // this.departmentData = data
+      if(data !== 1) {
+        this.dialogFormVisible = true
+      }
       // 获取组织预存成员
       let params = {
         orgId: this.orgId
       }
       this.$api.getOrgStorageList(params).then(res => {
         if (res.errorCode !== '1') return false
-        // console.log(this.memberList)
-        for (let i = 0; i < res.data.length; i++) {
-          if (res.data[i].isDist === '1') {
-            res.data.splice(i, 1)
+        let memberList = []
+        this.allMemberList = res.data
+        for(let i = 0; i < res.data.length; i++) {
+          if(res.data[i].isDist !== '1') {
+            memberList.push(res.data[i])
           }
         }
-        this.memberList = res.data
-        console.log(this.memberList)
+        this.memberList = memberList
       })
     },
     // 选择角色
@@ -587,6 +593,7 @@ export default {
         this.$message('请选择一个组织')
         return false
       }
+      this.addMember(1)
       this.dialogTableVisible = true
     },
     // 添加预存成员
@@ -620,32 +627,39 @@ export default {
           message: '成员添加成功',
           type: 'success'
         })
+        this.phone = ''
+        this.nickName = ''
+        this.addMember()
         // 重新获取成员列表
-        this.$api.getOrgStorageList({ orgId: this.orgId }).then(res => {
-          if (res.errorCode !== '1') return false
-          this.memberList = res.data
-          this.phone = ''
-          this.nickName = ''
-        })
+        // this.$api.getOrgStorageList({ orgId: this.orgId }).then(res => {
+        //   if (res.errorCode !== '1') return false
+        //   this.memberList = res.data
+        //   this.phone = ''
+        //   this.nickName = ''
+        // })
+
       })
     },
     // 删除预存成员
     delPerson(data) {
-      console.log(data)
       let params = {
         orgStorageId: data.orgStorageId
       }
-      this.$api.delOrgStorage(params).then(res => {
-        console.log(res)
-        if (res.errorCode !== '1') return false
-        this.$message({
-          message: '删除成功',
-          type: 'success'
-        })
-        this.$api.getOrgStorageList({ orgId: this.orgId }).then(res => {
+      this.$confirm('此操作将删除该数据, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(_ => {
+        this.$api.delOrgStorage(params).then(res => {
           if (res.errorCode !== '1') return false
-          this.memberList = res.data
+          this.$message({
+            message: '删除成功',
+            type: 'success'
+          })
+          this.addMember()
         })
+      }).catch(_ => {
+        this.$message('已取消删除')
       })
     }
   },

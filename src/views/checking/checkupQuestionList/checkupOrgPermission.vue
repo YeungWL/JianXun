@@ -67,6 +67,9 @@ export default {
       .then(response => {     
         if (response.errorCode === '1') {          
           this.$message.success(response.resultMsg)
+          setTimeout(_ => {
+              this.goBack()
+          }, 1000)
         }      
       }) 
            

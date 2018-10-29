@@ -54,7 +54,7 @@ export default {
     // },
     getMyOrgBindList() {
       this.$api.getMyOrgBindList({
-        isMyCreate: '2'
+        isMyCreate: '1'
       }).then(res => {
         console.log(res)
         if(res.errorCode == '1') {

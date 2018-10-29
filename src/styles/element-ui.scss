@@ -434,6 +434,20 @@ $red:#e85657;
     text-align: center;
   }
 }
+.form-bdnone{
+  .el-input{
+    .el-input__inner{
+      border:none;
+    }
+  }
+  .el-textarea__inner {
+     border:none;
+      resize: none;
+  }
+  .el-form-item {
+    margin-bottom: 0px;
+ }
+}
 .my-dialog {
   .el-dialog--center .el-dialog__header {
     padding: 0;
