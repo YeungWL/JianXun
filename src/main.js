@@ -20,7 +20,7 @@ import * as filters from './filters/filters.js'
 // 日历
 import 'vue-event-calendar/dist/style.css' //1.1.10之后的版本，css被放在了单独的文件中，方便替换
 import vueEventCalendar from 'vue-event-calendar'
-Vue.use(vueEventCalendar, {locale: 'en'}) //可以设置语言，支持中文和英文
+Vue.use(vueEventCalendar, {locale: 'zh'}) //可以设置语言，支持中文和英文
 //import 'es6-promise'//引入axios插件
 
 // 引入全局过滤器

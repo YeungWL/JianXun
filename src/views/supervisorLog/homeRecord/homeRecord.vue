@@ -33,7 +33,7 @@
       </div>
 
       <div class="calinder">
-        <vue-event-calendar :events="logHistoryList" @day-changed="dayChange" style="width:55%"></vue-event-calendar>
+        <vue-event-calendar :events="logHistoryList" @day-changed="dayChange" @month-changed="handleMonthChanged" style="width:55%"></vue-event-calendar>
         <div style="padding-left:40%">
           <el-button type="primary" @click="handleExportFile()" class="rzbtn">导出日志</el-button>
           <el-button type="primary" @click="handleSetting()" class="setion" v-if="buttonShow">设置</el-button>
@@ -200,6 +200,8 @@ export default {
       /* 加载 */
       loading: false,
 
+      YYYY_MM: "",
+
       // 当前选择的项目
       selectProject: "",
 
@@ -218,14 +220,8 @@ export default {
       // 可供选择的监理日志列表
       logList: [],
 
-      // 什么东东来着
-      // demoEvents: [
-      // ],
-
       //监理日志历史记录
       logHistoryList: [],
-
-      demoEvents: [],
 
       //预览链接
       srcUrl: "",
@@ -365,7 +361,18 @@ export default {
 
     // 响应到处按钮处理事件
     handleExportFile() {
-      this.exportFile();
+      this.form.beginTime = "";
+      this.form.endTime = "";
+      this.form.selectLog = [];
+      if (this.selectLog === "") {
+        this.$message({
+          message: "请选择当前要操作的日志！",
+          type: "warning"
+        });
+        return false;
+      }
+
+      this.dialogExportFormVisible = true;
     },
 
     // 响应当前监理日志变动处理事件
@@ -581,34 +588,37 @@ export default {
     //获取项目列表
     getProjectList() {
       this.loading = true;
-      this.$api
-        .getMyInPro({
-          operateType: ""
-        })
-        .then(res => {
-          if (res.resultMsg !== "查询成功") return false;
-          this.projectList = res.data;
-          this.projectList.push({
-            createTime: "",
-            creator: "",
-            endTime: "",
-            isDeleted: "",
-            isTran: "",
-            proCode: "",
-            proCount: "",
-            proDesc: "",
-            proLogo: "",
-            proName: "未关联项目的组织",
-            projectId: "",
-            shortName: "",
-            startTime: "",
-            status: "",
-            tranUserId: ""
-          });
-
-          this.selectProject = "";
-          this.loading = false;
+      this.$api.getMyInPro({ operateType: "" }).then(res => {
+        if (res.errorCode !== "1") return false;
+        this.projectList = res.data;
+        this.projectList.push({
+          createTime: "",
+          creator: "",
+          endTime: "",
+          isDeleted: "",
+          isTran: "",
+          proCode: "",
+          proCount: "",
+          proDesc: "",
+          proLogo: "",
+          proName: "未关联项目的组织",
+          projectId: "",
+          shortName: "",
+          startTime: "",
+          status: "",
+          tranUserId: ""
         });
+
+        if (this.projectList.length > 1) {
+          this.selectProject = this.projectList[0].projectId;
+          this.getMyOrg();
+        } else {
+          this.selectProject = "";
+          this.getNotBindOrgs();
+        }
+
+        this.loading = false;
+      });
     },
 
     //获取自己参加的组织
@@ -617,8 +627,11 @@ export default {
         projectId: this.selectProject
       };
       this.$api.getSupervisorMyOrgs(params, {}).then(res => {
-        if (res.resultMsg !== "查询成功") return false;
+        if (res.errorCode !== "1") return false;
         this.organizationList = res.data;
+        if (this.organizationList.length > 0) {
+          this.selectOrg = this.organizationList[0].projectOrgId;
+        }
       });
     },
 
@@ -628,23 +641,38 @@ export default {
         projectId: this.selectProject
       };
       this.$api.getNotBindOrgs(params, {}).then(res => {
-        if (res.resultMsg !== "查询成功") return false;
+        if (res.errorCode !== "1") return false;
         this.organizationList = res.data;
+        if (this.organizationList.length > 0) {
+          this.selectOrg = this.organizationList[0].projectOrgId;
+        }
       });
     },
 
+    handleMonthChanged(month) {
+      var MM_YYYY = month.split("/");
+      this.YYYY_MM = MM_YYYY[1] + "-" + MM_YYYY[0];
+      console.log(this.YYYY_MM);
+      this.getSupervisionHistoryList();
+    },
+
     getSupervisionHistoryList() {
+      if (this.YYYY_MM.length === 0) {
+        var myDate = new Date();
+        this.YYYY_MM = myDate.getFullYear() + "-" + (myDate.getMonth() + 1);
+      }
+
+      console.log("getSupervisionHistoryList  " + this.YYYY_MM);
       this.logHistoryList = [];
       let params = {
         orgId: this.selectOrg,
-        logDate: "2018-09",
+        logDate: this.YYYY_MM,
         tempId: this.currentTempId,
         logId: this.currentLogId
       };
       this.$api.getSupervisionHistoryList(params, {}).then(res => {
         if (res.resultMsg !== "查询成功") return false;
         this.logHistoryList = res.data;
-        this.demoEvents = [];
         this.UpdateHistoryList();
       });
     },
@@ -709,17 +737,7 @@ export default {
       });
     },
 
-    // 导出日志
-    exportFile() {
-      this.form.beginTime = "";
-      this.form.endTime = "";
-      this.form.selectLog = 0;
-
-      this.dialogExportFormVisible = true;
-    },
-
     DateDiff(sDate1, sDate2) {
-      //sDate1和sDate2是2002-12-18格式
       var aDate, oDate1, oDate2, iDays;
       aDate = sDate1.split("-");
       oDate1 = new Date(aDate[1] + "-" + aDate[2] + "-" + aDate[0]); //转换为12-18-2002格式
