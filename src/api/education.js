@@ -54,11 +54,31 @@ export function deletedExam(data) {
 }
 
 // 三级教育考题 - 11、获取组织列表
-export function getOrgList(data) {
+export function getEduOrgList(data) {
   return service.post(OAUTH_API + '/eduExam/getOrgList.do', qs.stringify(data))
 }
 
 // 三级教育考题 - 12、设置考卷开关
 export function setExamIsDeleted(data) {
   return service.post(OAUTH_API + '/eduExam/setExamIsDeleted.do', qs.stringify(data))
+}
+
+// 三级教育考题 - 13、获取考卷试题列表
+export function getExamQastoreList(data) {
+  return service.post(OAUTH_API + '/eduExam/getExamQastoreList.do', qs.stringify(data))
+}
+
+// 三级教育考题 - 14、已选题目列表
+export function getSelectExamQastoreList(data) {
+  return service.post(OAUTH_API + '/eduExam/getSelectExamQastoreList.do', qs.stringify(data))
+}
+
+// 三级教育考题 - 15、保存考卷题目
+export function saveExamQastore(data) {
+  return service.post(OAUTH_API + '/eduExam/saveExamQastore.do', qs.stringify(data))
+}
+
+// 三级教育考题 - 16、课件列表
+export function getCourseList(data) {
+  return service.post(OAUTH_API + '/eduExam/getCourseList.do', qs.stringify(data))
 }

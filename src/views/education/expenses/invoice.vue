@@ -1,10 +1,11 @@
 <template>
-  <div class="charge">
+<div class="page-content-body">功能开发中，敬请期待！</div>
+  <!--<div class="charge">
     <el-select v-model="value" placeholder="请选择">
       <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
       </el-option>
     </el-select>
-    <!-- 标签页 -->
+   
     <div class="tabs">
       <el-tabs v-model="activeName2" type="card" @tab-click="handleClick">
         <el-tab-pane label="历史订单" name="first">
@@ -31,7 +32,7 @@
           <div class="renewal">
             <el-button type="primary" @click="show.isShow = !show.isShow">续期</el-button>
           </div>
-          <!-- 弹出框 -->
+  
           <div class="dialogs">
             <renewal :msg="show" @on-result-change="onResultChange"></renewal>
           </div>
@@ -57,9 +58,9 @@
           <div class="renewal">
             <el-button type="primary" @click="dialogFormVisible1 = true">添加发票信息</el-button>
           </div>
-
+-->
           <!-- 发票信息的dialog -->
-          <el-dialog title="添加发票信息" :visible.sync="dialogFormVisible1">
+          <!--<el-dialog title="添加发票信息" :visible.sync="dialogFormVisible1">
             <el-form :model="form">
               <el-form-item label="活动名称" :label-width="formLabelWidth">
                 <el-input v-model="form.name" auto-complete="off"></el-input>
@@ -93,7 +94,7 @@
 
         </el-tab-pane>
       </el-tabs>
-    </div>
+    </div>-->
   </div>
 </template>
 <script>

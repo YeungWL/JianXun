@@ -1,6 +1,6 @@
 <template>
   <div class="page-content-body">
-   班组管理
+   功能开发中，敬请期待！
   </div>
 </template>
 

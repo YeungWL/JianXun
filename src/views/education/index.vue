@@ -12,16 +12,19 @@
                 :key="index" 
                 :index="item.menuUrl" 
                 v-if= "item.childList == null"
+                 v-show="item.status"
                 :class="{'is-active':isActived(item.menuUrl)}">
                 {{item.menuName}}
               </el-menu-item>
               <el-submenu v-if="item.childList != null" 
-                  :index="item.menuUrl">
+                  :index="item.menuUrl"
+                   v-show="item.status">
                   <template slot="title">{{item.menuName}}</template>
                   <el-menu-item-group 
                     v-for="(child,index) in item.childList"
                      :key="index">
                     <el-menu-item  
+                     v-show="item.status"
                      :index="child.menuUrl" 
                      :class="{'is-active':isActived(child.menuUrl)}">{{child.menuName}}</el-menu-item>
                   </el-menu-item-group>

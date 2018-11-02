@@ -231,24 +231,24 @@ export default {
     },
     // 复查回复提交
     handleReview(status) {
-       console.log( this.rectifyForm.pictureJson)
-        // console.log("this.rectifyForm.pictureJson"+ this.rectifyForm.pictureJson) 
-        // console.log(this.rectifyForm) 
+      //  console.log( this.rectifyForm.pictureJson)
+        // console.log("this.rectifyForm.pictureJson"+ this.rectifyForm.pictureJson)
       this.rectifyForm.status = status // 复查是否通过[必填项，1通过，2是重整]
-      // this.$refs.rectifyForm.validate(valid => {
-      //   if(valid){
-      //     this.$api.reviewCheckupQuestion(this.rectifyForm).then(response => {
-      //       if (response.errorCode === '1') {
-      //         this.$message.success(response.resultMsg)
-      //         setTimeout(_ => {
-      //             this.goBack()
-      //         }, 1000)
-      //       } else {
-      //         this.$message.warning(response.resultMsg)
-      //       }
-      //     })
-      //   }
-      // })
+      // console.log(this.rectifyForm) 
+      this.$refs.rectifyForm.validate(valid => {
+        if(valid){
+          this.$api.reviewCheckupQuestion(this.rectifyForm).then(response => {
+            if (response.errorCode === '1') {
+              this.$message.success(response.resultMsg)
+              setTimeout(_ => {
+                  this.goBack()
+              }, 1000)
+            } else {
+              this.$message.warning(response.resultMsg)
+            }
+          })
+        }
+      })
     },                   
     // 返回
     goBack() {

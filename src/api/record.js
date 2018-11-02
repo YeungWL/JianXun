@@ -13,7 +13,8 @@ export function historyListByTime (data) {
 } 
 //获取某个组织的主要记事表
 export function organizationList (data) {
-    return service.post(OAUTH_API + '/buildLog/getBuildAttrList.do',qs.stringify(data))
+    // return service.post(OAUTH_API + '/buildLog/getBuildAttrList.do',qs.stringify(data))
+    return service.post(OAUTH_API + '/buildLog/mainBuildAttrList.do',qs.stringify(data))
 } 
 //负责人设置分项内容
 export function setBuildAttr (data) {

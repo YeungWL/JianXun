@@ -38,7 +38,7 @@
     <div class="mainThing">
       <div class="title">主要记事 : </div>
       <el-collapse v-model="activeNames" @change="handleChange">
-        <el-collapse-item :title="item.attrId + '.' +item.attrDesc" name="1" v-for="(item, index) in attrData" :key="index">
+        <el-collapse-item :title="item.attrName" name="1" v-for="(item, index) in attrData" :key="index">
           <el-input type="textarea" :autosize="{ minRows: 2, maxRows: 4}" placeholder="请输入内容" v-model="item.content">
           </el-input>
         </el-collapse-item>
@@ -84,16 +84,14 @@ export default {
     // 获取组织主要记事列表
     getBuildAttrList() {
       let params = {
-        orgId: this.orgId,
-        templateId: this.templateId
+        projectOrgId: this.orgId,
+        templateId: this.templateId,
+        orgTemplateId: this.orgTemplateId
       }
       this.$api.organizationList(params).then(res => {
-        console.log(res)
+        console.log(res.data)
         if(res.errorCode == "1") {
-          for(let i = 0; i < res.data.length; i++) {
-            res.data[i].content = ''
-          }
-          this.attrData = res.data
+          this.attrData = res.data.buildAttrList
         }
       })
     },

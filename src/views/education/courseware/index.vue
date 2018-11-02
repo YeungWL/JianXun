@@ -1,5 +1,6 @@
 <template>
-  <div class="page-content-body">
+  <div class="page-content-body">功能开发中，敬请期待！
+  <!--<div class="page-content-body">
       <div class="page-header clearfix">
         <el-form class="search-form" :inline="true" :model="listQuery" ref="form">
           <el-form-item label="组织：" >
@@ -35,12 +36,11 @@
             <el-button type="primary" icon="el-icon-plus" @click="handleChoiceCourse">选课</el-button>
           </div>                        
         </el-form>
-      </div>
-      <!--  table开始  -->
+      </div>-->
+      <!--  table开始  
       <div class="page-main customTable">
         <el-table ref="multipleTable" style="width: 100%" v-loading="loading"  element-loading-text="拼命加载中"
           :data="tableData">
-          <!--<el-table-column type="selection" min-width="57"></el-table-column>-->
           <el-table-column prop="bianma" label="课件编码" min-width="100" show-overflow-tooltip></el-table-column>
           <el-table-column prop="title" label="课件名称" min-width="180" show-overflow-tooltip></el-table-column>
           <el-table-column prop="grade" label="级别" min-width="80" show-overflow-tooltip></el-table-column>
@@ -58,9 +58,9 @@
             </template>
           </el-table-column>
         </el-table>
-      </div>
-      <!-- 分页组件 -->
-      <ui-pagination :total="total" @change="getPages" class="pb60"></ui-pagination>
+      </div>-->
+      <!-- 分页组件 
+      <ui-pagination :total="total" @change="getPages" class="pb60"></ui-pagination>-->
             
     <!-- 选课 -->
     <el-dialog title="选课"

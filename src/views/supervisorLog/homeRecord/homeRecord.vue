@@ -194,7 +194,7 @@ export default {
     return {
       pickerOptions: {
         disabledDate(time) {
-          return time > new Date();
+          return time.getTime() > new Date(new Date().getTime() - 86400000);
         }
       },
       /* 加载 */
@@ -317,18 +317,9 @@ export default {
       this.logHistoryList = [];
 
       if (this.selectProject.length === 0) {
-        this.$api.getNotBindOrgs().then(res => {
-          if (res.resultMsg !== "查询成功") return false;
-          this.organizationList = res.data;
-        });
+        this.getNotBindOrgs();
       } else {
-        let params = {
-          projectId: this.selectProject
-        };
-        this.$api.getSupervisorMyOrgs(params, {}).then(res => {
-          if (res.resultMsg !== "查询成功") return false;
-          this.organizationList = res.data;
-        });
+        this.getMyOrg();
       }
     },
 
@@ -377,10 +368,10 @@ export default {
 
     // 响应当前监理日志变动处理事件
     handleLogChange(value) {
-      this.currentProjectName = this.logList[this.selectLog].projectName;
-      this.currentProjectTime = this.logList[this.selectLog].setTime;
-      this.currentTempId = this.logList[this.selectLog].tempId;
-      this.currentLogId = this.logList[this.selectLog].id;
+      this.currentProjectName = this.logList[0].projectName;
+      this.currentProjectTime = this.logList[0].setTime;
+      this.currentTempId = this.logList[0].tempId;
+      this.currentLogId = this.logList[0].id;
       this.getSupervisionHistoryList();
       this.whetherCanEdit();
     },
@@ -501,6 +492,7 @@ export default {
             index: i
           };
           this.logList.push(listData);
+          this.selectLog = this.logList[0].extendName;
         }
       });
     },
@@ -631,6 +623,7 @@ export default {
         this.organizationList = res.data;
         if (this.organizationList.length > 0) {
           this.selectOrg = this.organizationList[0].projectOrgId;
+          this.getAddTempList();
         }
       });
     },
@@ -645,6 +638,7 @@ export default {
         this.organizationList = res.data;
         if (this.organizationList.length > 0) {
           this.selectOrg = this.organizationList[0].projectOrgId;
+          this.getAddTempList();
         }
       });
     },
@@ -652,7 +646,6 @@ export default {
     handleMonthChanged(month) {
       var MM_YYYY = month.split("/");
       this.YYYY_MM = MM_YYYY[1] + "-" + MM_YYYY[0];
-      console.log(this.YYYY_MM);
       this.getSupervisionHistoryList();
     },
 
@@ -662,7 +655,6 @@ export default {
         this.YYYY_MM = myDate.getFullYear() + "-" + (myDate.getMonth() + 1);
       }
 
-      console.log("getSupervisionHistoryList  " + this.YYYY_MM);
       this.logHistoryList = [];
       let params = {
         orgId: this.selectOrg,
@@ -821,7 +813,6 @@ export default {
   .container {
     max-width: 850px;
     min-width: 720px;
-    // width: 850px;
     margin: 20px;
 
     .calinder {

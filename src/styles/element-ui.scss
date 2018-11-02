@@ -560,6 +560,9 @@ $red:#e85657;
   font-size: inherit;
   font-family: inherit;
 }
+.__vev_calendar-wrapper .cal-wrapper .cal-body .dates .item .is-event{
+  top: 40%!important;
+}
 
 /* 全局输入框鼠标经过变绿 */
 .el-input.is-active .el-input__inner,

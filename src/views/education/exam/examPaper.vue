@@ -265,7 +265,7 @@ export default {
   methods: {
     //获取组织列表
     getOrgList() {
-      this.$api.getCkOrgList().then(res => {
+      this.$api.getEduOrgList().then(res => {
         if (res.errorCode === "1") {
           this.orgList = res.data;
           this.loading = false;
@@ -290,6 +290,7 @@ export default {
             this.currentPage = res.currentPage;
             this.total = res.totalRecords;
           } else {
+            
             this.$message.error(res.message);
           }
         });

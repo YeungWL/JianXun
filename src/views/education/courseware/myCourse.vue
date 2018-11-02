@@ -1,7 +1,8 @@
 <template>
   <div class="page-content-body">
-      <div class="page-header clearfix">
-        <el-form :inline="true" :model="listQuery" ref="form">
+    功能开发中，敬请期待！
+      <!--<div class="page-header clearfix">
+        <el-form :inline="true" :model="listQuery" ref="form">-->
           <!--<el-form-item label="组织：" >
             <el-select v-model="listQuery.orgId" placeholder="请选择" class="item-org">
               <el-option v-for="item in orgList" :key="item.orgId" :label="item.orgName" :value="item.orgId">
@@ -11,7 +12,7 @@
           <el-form-item label="课件编码：">
             <el-input v-model="listQuery.bianma" clearable></el-input>
           </el-form-item>-->
-          <el-form-item label="课件名称：">
+          <!--<el-form-item label="课件名称：">
             <el-input v-model="listQuery.title" clearable></el-input>
           </el-form-item>          
           <el-form-item>
@@ -21,13 +22,11 @@
             <el-button type="primary" icon="el-icon-plus" @click="handleCreate">添加课件</el-button>
           </div>                        
         </el-form>
-      </div>
+      </div>-->
       <!--  table开始  -->
-      <div class="page-main customTable">
+      <!--<div class="page-main customTable">
         <el-table ref="multipleTable" style="width: 100%" v-loading="loading"  element-loading-text="拼命加载中"
           :data="tableData">
-          <!--<el-table-column type="selection" min-width="57"></el-table-column>-->
-          <!--<el-table-column prop="bianma" label="课件编码" min-width="100" show-overflow-tooltip></el-table-column>-->
           <el-table-column prop="title" label="课件名称" min-width="250" show-overflow-tooltip></el-table-column>
           <el-table-column prop="time" label="上传时间" min-width="80" show-overflow-tooltip></el-table-column>
           <el-table-column prop="status" label="共享状态" min-width="100" show-overflow-tooltip>
@@ -47,9 +46,9 @@
             </template>
           </el-table-column>
         </el-table>
-      </div>
+      </div>-->
       <!-- 分页组件 -->
-      <ui-pagination :total="total" @change="getPages" class="pb60"></ui-pagination>
+      <!--<ui-pagination :total="total" @change="getPages" class="pb60"></ui-pagination>-->
             
 
   </div>

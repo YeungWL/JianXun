@@ -16,7 +16,7 @@
             </el-select>
           </el-form-item>
           <el-form-item label="模版名称">
-            <el-select v-model="orgTemplate" placeholder="请选择模版" value-key="id" style="width:200px;">
+            <el-select v-model="orgTemplate" placeholder="请选择模版" value-key="id" style="width:200px;" @change="getHistoryList(myMonth, toDay)">
               <el-option v-for="item in logList" :key="item.id" :label="item.extendName ? item.extendName : item.tempName" :value="item">
               </el-option>
             </el-select>
@@ -24,6 +24,10 @@
         </el-form>
       </div>
       <div class="calinder">
+        <div class="date-btn">
+          <span class="botton left" style="left: 61px;" @click="preMonth"></span>
+          <span class="botton right" style="right:41px;" @click="addMonth"></span>
+        </div>
         <vue-event-calendar :events="demoEvents" @day-changed="dayChange"></vue-event-calendar>
         <div class="btn">
           <el-button type="primary" @click="downloadDialog" class="rzbtn">导出日志</el-button>
@@ -334,25 +338,54 @@ export default {
       },
       pickerOptions: {
         disabledDate(time) {
-            return time.getTime() > new Date(new Date().getTime() - 86400000);
-          }
+          return time.getTime() > new Date(new Date().getTime() - 86400000);
+        }
       },
-      previewUrl: ''
+      previewUrl: '',
+      toDay: '',
+      myMonth: ''
     }
   },
-  // watch: {
-  //   test1() {
-  //     let oldNum = this.test1
-  //     let newNum = this.test1.replace(/(\d{3})\d{4}(\d{4})/, '$1****$2')
-  //     console.log(newNum)
-  //     this.test1 = newNum
-  //     console.log(oldNum)
-  //     if (this.test1.indexOf('*') === -1) {
-  //       this.test2 = this.test1
-  //     }
-  //   }
-  // },
   methods: {
+    preMonth() {
+      this.$EventCalendar.preMonth()
+      let date = new Date(this.myMonth)
+      date.setMonth(date.getMonth()-1)
+      let preDate = `${date.getFullYear()}/${date.getMonth()+1}/1`
+      this.myMonth = preDate
+      console.log(preDate)
+      this.getHistoryList(preDate, this.toDay)
+    },
+    addMonth() {
+      this.$EventCalendar.nextMonth()
+      let date = new Date(this.myMonth)
+      date.setMonth(date.getMonth()+1)
+      let addDate = `${date.getFullYear()}/${date.getMonth()+1}/1`
+      this.myMonth = addDate
+      console.log(addDate)
+      console.log(new Date(addDate) <= new Date(this.toDay))
+      if(new Date(addDate) <= new Date(this.toDay)) {
+        this.getHistoryList(addDate, this.toDay)
+      }
+    },
+    getHistoryList(startDate, endDate) {
+      this.$api.historyListByTime({
+        orgId: this.orgId,
+        orgTemplateId: this.orgTemplate.id,
+        startDate: startDate.replace(/\//g, '-'),
+        endDate: endDate.replace(/\//g, '-')
+      }).then(res => {
+        if(res.errorCode === '1') {
+          this.demoEvents = res.data.map(item => {
+            return {
+              date: item.startDate.replace(/\-/g, '/'),
+              title: item.title
+            }
+          })
+          console.log(this.demoEvents)
+        }
+      })
+    },
     dayChange(day) {
       let numDay = day.date;
       numDay = numDay.split("/");
@@ -365,7 +398,7 @@ export default {
       let year = date.getFullYear();
       if ((numDays < days && numMonth == month) || numMonth < month || years < year) {
         if (this.orgId == "" || JSON.stringify(this.orgTemplate) == '{}') {
-          this.$message("项目、组织或模版不能为空");
+          // this.$message("项目、组织或模版不能为空");
           return false;
         }
         console.log(day.date.replace(/\//g, '-'))
@@ -377,7 +410,6 @@ export default {
           startDate: day.date.replace(/\//g, '-'),
           endDate: endDate.toLocaleDateString().replace(/\//g, '-')
         }).then(res => {
-          console.log(res)
           if(res.errorCode == '1') {
             if(res.data.length > 0) {
               this.$router.push({
@@ -397,7 +429,7 @@ export default {
       }
       if (numDays == days && numMonth == month && year == years) {
         if (this.orgId == "" || JSON.stringify(this.orgTemplate) == '{}') {
-          this.$message("项目、组织或模版不能为空");
+          // this.$message("项目、组织或模版不能为空");
           return false;
         }
         this.$api.isCanEdit({
@@ -429,7 +461,6 @@ export default {
                 })
               }
             }else {
-              console.log(res)
               this.$message.warning('不可以填写日志')
             }
           }
@@ -458,6 +489,7 @@ export default {
         if(res.errorCode == '1') {
           this.organizationList = res.data
           this.selectOrg = res.data[0] ? res.data[0].projectOrgId : ''
+          this.orgChange(this.selectOrg)
           // this.selectOrg = ''
           this.orgTemplate = {}
           this.buttonShow = false
@@ -480,18 +512,18 @@ export default {
       this.orgId = value
       this.getAddTempList(1)
       this.$api.isChargeMan({
-          projectOrgId: value
-        }).then(res => {
-          if (res.errorCode == "1") {
-            if (res.data[0].isChargeMan == "0" || res.data[0].isChargeMan == "1") {
-              // 这里应该到请求回来之后再是true
-              this.buttonShow = true;
-              // this.queryBuildLog();
-            } else {
-              this.buttonShow = false;
-            }
+        projectOrgId: value
+      }).then(res => {
+        if (res.errorCode == "1") {
+          if (res.data[0].isChargeMan == "0" || res.data[0].isChargeMan == "1") {
+            // 这里应该到请求回来之后再是true
+            this.buttonShow = true;
+            // this.queryBuildLog();
+          } else {
+            this.buttonShow = false;
           }
-        })
+        }
+      })
     },
     // 查阅权限改变
     // testChange(val) {
@@ -592,12 +624,11 @@ export default {
       }).then(res => {
         if(res.errorCode === '1') {
           this.logList = res.data
+          this.orgTemplate = res.data[0]
+          this.getHistoryList(this.myMonth, this.toDay)
           if(valueItem == 0) {
             this.dialogFormVisible1 = true
           } 
-          // else {
-          //   this.$message.warning(res.resultMsg)
-          // }
         }
       })
     },
@@ -609,7 +640,6 @@ export default {
     },
     // 添加日志预览图片
     previewEvent(data) {
-      console.log(data)
       this.previewUrl = data.path
     },
     // 修改模板扩展名称
@@ -765,7 +795,6 @@ export default {
       let orgBind = {
         'orgBindJson': result
       }
-      console.log(orgBind)
       this.$api.setBuildAttr({
         orgId: this.resultData.orgId,
         orgTemplateId: this.resultData.orgTemplateId,
@@ -774,7 +803,6 @@ export default {
         cityPolicyJson: JSON.stringify(this.formData),
         orgBindJson: JSON.stringify(orgBind)
       }).then(res => {
-        console.log(res)
         if(res.errorCode == '1') {
           this.settingPropTwo = false
         }
@@ -797,7 +825,6 @@ export default {
         layerJson: this.layerJson
       }
       let result = []
-        console.log(11)
         result = this.checkList.map(item => {
           return {
             orgId: item.orgId,
@@ -811,32 +838,22 @@ export default {
         'orgBindJson': result
       }
       this.$api.setBuildAttr({
-          orgId: this.logData.orgId,
-          orgTemplateId: this.logData.orgTemplateId,
-          approveTime: this.numTime,
-          projectId: this.selectProject,
-          itemJson: JSON.stringify(item),
-          groupJson: JSON.stringify(group),
-          layerJson: JSON.stringify(layer),
-          orgBindJson: JSON.stringify(orgBind)
-        }).then(res => {
-          console.log(res)
-          if (res.errorCode == "1") {
-            this.settingProp = false
-          }
-        })
+        orgId: this.logData.orgId,
+        orgTemplateId: this.logData.orgTemplateId,
+        approveTime: this.numTime,
+        projectId: this.selectProject,
+        itemJson: JSON.stringify(item),
+        groupJson: JSON.stringify(group),
+        layerJson: JSON.stringify(layer),
+        orgBindJson: JSON.stringify(orgBind)
+      }).then(res => {
+        if (res.errorCode == "1") {
+          this.settingProp = false
+        }
+      })
     },
     // 导出施工日志
     exportLog() {
-      // this.$api.exportLog({
-      //   orgTemplateId: this.exportForm.orgTemplate.id,
-      //   projectOrgId: this.orgId,
-      //   templateId: this.exportForm.orgTemplate.templateId,
-      //   startDate: this.exportForm.beginTime,
-      //   endDate: this.exportForm.endTime
-      // }).then(res => {
-      //   console.log(res)
-      // })
       if(JSON.stringify(this.exportForm.orgTemplate) == '{}') {
         this.$message.warning('请选择模板')
         return
@@ -875,7 +892,7 @@ export default {
         this.exportForm.endTime
       }" />`
       form.innerHTML = strHtml
-      // form.submit()
+      form.submit()
       form.parentNode.removeChild(form)
     },
     // 导出日志对话框
@@ -888,9 +905,16 @@ export default {
     }
   },
   created() {
-    this.getProjectList();
+    this.getProjectList()
+    let myDate = new Date()
+    let month = myDate.getMonth() + 1
+    let days = myDate.getDate()
+    let year = myDate.getFullYear()
+    this.toDay = `${year}/${month}/${days}`
+    this.myMonth = `${year}/${month}/1`
+    this.$EventCalendar.toDate(this.toDay)
   }
-};
+}
 </script>
 
 <style lang="scss" scoped>
@@ -905,6 +929,39 @@ export default {
     padding: 20px;
     .calinder {
       height: 85%;
+      position: relative;
+      .date-btn{
+        position: absolute;
+        width: 100%;
+        height: 35px;
+        top: 30px;
+        z-index: 999;
+        .botton{
+          position: absolute;
+          width: 20px;
+          height: 30px;
+          background: #fff;
+          top: 5px;
+          cursor: pointer;
+          &:before{
+            content: "";
+            position: absolute;
+            left: 6px;
+            top: 10px;
+            width: 10px;
+            height: 10px;
+            border-top: 1px solid currentColor;
+            border-right: 1px solid currentColor;
+          }
+        }
+        .left:before{
+          transform: rotate(-135deg);
+        }
+        .right:before{
+          left: 2px;
+          transform: rotate(45deg);
+        }
+      }
       .btn {
         display: flex;
         justify-content: space-between;
