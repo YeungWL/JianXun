@@ -5,7 +5,7 @@
         <el-form :inline="true" class="listForm">
           <el-form-item label="项目名称">
             <el-select v-model="selectProject" placeholder="请选择项目" @change="projectChange" style="width:200px;">
-              <el-option v-for="item in projectList" :key="item.projectId" :label="item.proName" :value="item.projectId">
+              <el-option v-for="(item, index) in projectList" :key="index" :label="item.proName" :value="item.projectId">
               </el-option>
             </el-select>
           </el-form-item>
@@ -468,6 +468,16 @@ export default {
         
       }
     },
+    // 获取未关联的组织关联
+    getNotOrgList() {
+      this.$api.getNotOrgList({}).then(res => {
+        if(res.errorCode === '1') {
+          this.organizationList = res.data
+          this.selectOrg = res.data[0] ? res.data[0].projectOrgId : ''
+          this.orgChange(this.selectOrg)
+        }
+      })
+    },
     onResultChange(val) {
       this.show = val;
     },
@@ -477,24 +487,35 @@ export default {
         if (res.errorCode === "1") {
           this.projectList = res.data
           this.selectProject = res.data[0].projectId || ''
+          // this.getNotOrgList()
+          console.log(res.data)
+          this.projectList.push({
+            proName: '未关联的组织',
+            projectId: 'NotBindOrg'
+          })
           this.projectChange()
         }
       });
     },
     // 选择项目
-    projectChange() {
-      this.$api.getBuildOrgList({
-        projectId: this.selectProject
-      }).then(res => {
-        if(res.errorCode == '1') {
-          this.organizationList = res.data
-          this.selectOrg = res.data[0] ? res.data[0].projectOrgId : ''
-          this.orgChange(this.selectOrg)
-          // this.selectOrg = ''
-          this.orgTemplate = {}
-          this.buttonShow = false
-        }
-      })
+    projectChange(value) {
+      console.log(value)
+      if(value === 'NotBindOrg') {
+        this.getNotOrgList()
+      } else {
+        this.$api.getBuildOrgList({
+          projectId: this.selectProject
+        }).then(res => {
+          if(res.errorCode == '1') {
+            this.organizationList = res.data
+            this.selectOrg = res.data[0] ? res.data[0].projectOrgId : ''
+            this.orgChange(this.selectOrg)
+            // this.selectOrg = ''
+            this.orgTemplate = {}
+            this.buttonShow = false
+          }
+        })
+      }
     },
     // 获取自己参加的组织
     getMyOrg() {

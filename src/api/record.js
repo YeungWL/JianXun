@@ -129,3 +129,7 @@ export function getCityPolicy(data) {
 // export function exportLog(data) {
 //     return service.post(OAUTH_API + '/buildLog/buildLogEport.do', qs.stringify(data))
 // }
+// 获取未关联的组织列表
+export function getNotOrgList(data) {
+    return service.post(OAUTH_API + '/ck/getNotBindOrgs.do', qs.stringify(data))
+}
