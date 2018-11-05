@@ -189,7 +189,8 @@ export function getProjectList(data) {
   关联项目 - 获取未关联的组织列表
 */
 export function getNotBindOrgList(data) {
-  return service.post(ORGS_API + '/pj/getNotBindOrgList.do', qs.stringify(data))
+  // return service.post(ORGS_API + '/pj/getNotBindOrgList.do', qs.stringify(data))
+  return service.post(ORGS_API + '/ck/getNotBindOrgs.do', qs.stringify(data))
 }
 /* 
   关联项目 - 批量把组织绑定项目

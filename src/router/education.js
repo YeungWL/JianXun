@@ -22,6 +22,8 @@ const eduRecord = resolve => require(['@/views/education/eduRecord/index'], reso
 const expenses = resolve => require(['@/views/education/expenses/index'], resolve)
 /** 三级教育 => 资费管理 => 发票管理 */
 const invoice = resolve => require(['@/views/education/expenses/invoice'], resolve)
+/** 三级教育 =>  考卷管理 => 编辑试卷 */
+const editPaper = resolve => require(['@/views/education/exam/editPaper'], resolve)
 
 export default {
   path: '/education',
@@ -71,7 +73,7 @@ export default {
       meta: {
         requireAuth: true
       }
-    },    
+    },
     {
       path: '/education/exam/examPaper',
       component: examPaper,
@@ -111,6 +113,14 @@ export default {
       meta: {
         requireAuth: true
       }
-    }    
+    },
+    {
+      path: '/education/exam/editPaper',
+      component: editPaper,
+      name: 'editPaper',
+      meta: {
+        requireAuth: true
+      }
+    } 
   ]
 }

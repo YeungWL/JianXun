@@ -8,26 +8,29 @@
     <el-form :inline="true" >
       <ul>
         <li class="content" v-for="(contentItem, index) in buildContent" :key="index">
-          <el-form-item label="工程名称" style="margin-bottom:0;" >
-            <el-select v-model="contentItem.itemName" placeholder="请选择工程" style="width:250px">
+          <el-form-item label="分项工程" style="margin-bottom:0;display:block;" >
+            <el-select v-model="contentItem.itemName" placeholder="请选择工程" style="width:600px">
               <el-option v-for="item in projectList" :key="item.itemId" :label="item.itemName" :value="item.itemName">
               </el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="层段位置" style="margin-bottom:0;">
-            <el-input v-model="contentItem.layerNo" placeholder="请输入层段位置" style="width:250px;"></el-input>
+          <el-form-item label="栋/段" style="margin-bottom:0;">
+            <el-input v-model="contentItem.layerNo" placeholder="栋/段" style="width:120px;"></el-input>
+          </el-form-item>
+          <el-form-item label="层" style="margin-bottom:0;">
+            <el-input v-model="contentItem.layerName" placeholder="层" style="width:120px;"></el-input>
           </el-form-item>
           <el-form-item label="班组" style="margin-bottom:0;">
-            <el-select v-model="contentItem.groupName" placeholder="请选择班组" style="width:250px">
+            <el-select v-model="contentItem.groupName" placeholder="请选择班组" style="width:120px">
               <el-option v-for="item in group" :key="item.groupId" :label="item.groupName" :value="item.groupName">
               </el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="人数" style="margin-bottom:0;">
-            <el-input v-model="contentItem.workCount" placeholder="请输入人数" style="width:120px;"></el-input>
+            <el-input v-model="contentItem.workCount" placeholder="请输入人数" style="width:115px;"></el-input>
           </el-form-item>
-          <el-form-item class="progress" label="进度情况">
-            <el-input style="width:100%" type="textarea" :autosize="{ minRows: 2, maxRows: 4}" placeholder="请输入进度情况" v-model="contentItem.progress"></el-input>
+          <el-form-item class="progress" label="进度情况" style="display:block;">
+            <el-input style="width:600px;" type="textarea" :autosize="{ minRows: 2, maxRows: 4}" placeholder="请输入进度情况" v-model="contentItem.progress"></el-input>
           </el-form-item>
           <span style="display:none;">{{contentItem.orderNo = index}}</span>
           <span class="clear el-icon-circle-close-outline" title="删除" @click="deleteBuildContent(index)"></span>
@@ -193,6 +196,7 @@ export default {
   margin: 20px;
   padding: 10px;
   background: #ffffff;
+  min-width: 1000px;
   .title {
     width: 100%;
     // margin-top: 20px;
@@ -209,9 +213,9 @@ export default {
       .progress{
         display: block;
         margin-bottom: 0;
-        /deep/ .el-form-item__content{
-          width: 100%;
-        }
+        // /deep/ .el-form-item__content{
+        //   width: 78%;
+        // }
       }
     }
   
@@ -229,7 +233,7 @@ export default {
     padding: 5px;
     margin-bottom: 8px;
     position: relative;
-    width: 80%;
+    width: 800px;
     border: 1px solid #ddd;
     border-radius: 5px;
     // /deep/ .el-card__body{

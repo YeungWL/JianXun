@@ -82,3 +82,8 @@ export function saveExamQastore(data) {
 export function getCourseList(data) {
   return service.post(OAUTH_API + '/eduExam/getCourseList.do', qs.stringify(data))
 }
+
+// 三级教育考题 - 14、保存题目
+export function eduSaveQastore(data) {
+  return service.post(OAUTH_API + '/eduExam/saveQastore.do', qs.stringify(data))
+}

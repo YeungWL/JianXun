@@ -100,15 +100,19 @@ export default {
       this.$api.getNotBindOrgList({
         isMyCreate: 2
       }).then(res => {
-        let resData = []
-        for(let i = 0; i < res.data.length; i++) {
-          if(res.data[i].projectId == '') {
-            resData.push(res.data[i])
-          }
-        }
-        console.log(resData)
-        this.cities = resData
+        console.log(res.data)
+        // let resData = []
+        // for(let i = 0; i < res.data.length; i++) {
+        //   if(res.data[i].projectId == '') {
+        //     resData.push(res.data[i])
+        //   }
+        // }
+        // console.log(resData)
+        // this.cities = resData
         // console.log(this.cities)
+        if(res.errorCode === '1') {
+          this.cities = res.data
+        }
       })
     },
     doBatchBindOrg() {
@@ -117,7 +121,12 @@ export default {
         return
       }
       let param = {
-        'orgList': this.checkedCities
+        'orgList': this.checkedCities.map(value => {
+          return {
+            projectOrgId: value.projectOrgId,
+            orgName: value.orgName
+          }
+        })
       }
       this.$api.doBatchBindOrg({
         projectId: this.tableItemId,

@@ -15,7 +15,7 @@
               </el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="模版名称">
+          <el-form-item label="日志名称">
             <el-select v-model="orgTemplate" placeholder="请选择模版" value-key="id" style="width:200px;" @change="getHistoryList(myMonth, toDay)">
               <el-option v-for="item in logList" :key="item.id" :label="item.extendName ? item.extendName : item.tempName" :value="item">
               </el-option>
@@ -204,8 +204,8 @@
         </div>
         <div class="power">
           <div style="padding:10px 0;">查阅权限</div>
-          <el-checkbox-group v-model="checkList">
-            <el-checkbox :label="item" v-for="(item, index) in orgGrantJson" :key="index">{{item.orgName}}</el-checkbox>
+          <el-checkbox-group v-model="checkList" style="border: 1px solid #DCDFE6;padding: 5px;height:80px;overflow-y:scroll;">
+            <el-checkbox style="display: block;margin:0;" :label="item" v-for="(item, index) in orgGrantJson" :key="index">{{item.orgName}}</el-checkbox>
           </el-checkbox-group>
         </div>
       </div>
@@ -242,8 +242,8 @@
         </div>
         <div class="power">
           <div style="padding:10px 0;">查阅权限</div>
-          <el-checkbox-group v-model="selectList">
-            <el-checkbox :label="item" v-for="(item, index) in orgGrantJson" :key="index">{{item.orgName}}</el-checkbox>
+          <el-checkbox-group v-model="selectList" style="border: 1px solid #DCDFE6;padding: 5px;height:80px;overflow-y:scroll;">
+            <el-checkbox style="display: block;margin:0;" :label="item" v-for="(item, index) in orgGrantJson" :key="index">{{item.orgName}}</el-checkbox>
           </el-checkbox-group>
         </div>
       </div>
@@ -499,7 +499,6 @@ export default {
     },
     // 选择项目
     projectChange(value) {
-      console.log(value)
       if(value === 'NotBindOrg') {
         this.getNotOrgList()
       } else {
@@ -509,10 +508,9 @@ export default {
           if(res.errorCode == '1') {
             this.organizationList = res.data
             this.selectOrg = res.data[0] ? res.data[0].projectOrgId : ''
-            this.orgChange(this.selectOrg)
-            // this.selectOrg = ''
             this.orgTemplate = {}
             this.buttonShow = false
+            this.orgChange(this.selectOrg)
           }
         })
       }
@@ -569,7 +567,6 @@ export default {
         projectId: this.selectProject,
         orgTemplateId: tId
       }).then(res => {
-        console.log(res.data[0])
         if (res.errorCode == "1") {
           if(typeCode == '003') {
             // 房屋建设设置dialog
