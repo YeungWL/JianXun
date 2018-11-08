@@ -169,7 +169,9 @@ export default {
       ctx = {}
     await this.$api.getOrganizationList(data, ctx)
     this.project = ctx.data
+    this.orgList = ctx.data[0].orgList
     // console.log(this.project)
+    this.selectOrgList(this.orgList)
   },
   methods: {
     selectOrgList(orgList) {

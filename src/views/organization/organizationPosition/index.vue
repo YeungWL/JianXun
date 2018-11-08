@@ -8,7 +8,17 @@
       <span class="director">
         <span>组织负责人 : </span>
         <span v-if="!managePerson.length">空缺</span>
-        <span style="margin-right:10px" v-for="(item, index) in managePerson" :key="index" v-else>{{item}}</span>
+        <span style="margin-right:10px" 
+              v-for="(item, index) in managePerson" 
+              :key="index"
+              v-else-if="userOrgRole !== '0'">{{item.memberName}}</span>
+        <el-tag style="margin:0 10px 10px 0" 
+                v-show="userOrgRole === '0'"
+                v-for="(item, index) in managePerson"
+                :key="index"
+                closable
+                @close="handleClose(item)"
+                v-else-if="userOrgRole === '0'">{{item.memberName}}</el-tag>
       </span>
       <div class="btn">
         <el-button type="primary" @click="addDepartment">添加部门</el-button>
@@ -175,7 +185,8 @@ export default {
       departmentData: '',
       vocation: [
         { label: '组织负责人', value: '' }
-      ]
+      ],
+      userOrgRole: '' // 判断是否是否拥有权限删除的
     }
   },
   methods: {
@@ -243,6 +254,8 @@ export default {
         })
         .then(response => {
           this.options = response.data
+          this.selectOrgData = response.data[0]
+          this.changByGetList()
         })
     },
     // 通过改变组织列表来获取部门信息
@@ -281,19 +294,21 @@ export default {
           for(let i = 0; i < this.tableData.length; i++) {
             selectVocation.push(this.tableData[i])
           }
-          console.log(selectVocation)
+          // console.log(selectVocation)
           this.vocationList = selectVocation
           // 处理组织负责人
           let leaderList = res.data[0].orgLeaderedList.memberList
           this.managePerson = []
           for(let k = 0; k < leaderList.length; k++) {
             if(leaderList[k].headRole == '0') {
-              this.managePerson.push(leaderList[k].memberName)
+              this.managePerson.push(leaderList[k])
             }
             if(leaderList[k].headRole == '1') {
-              this.managePerson.push(leaderList[k].memberName)
+              this.managePerson.push(leaderList[k])
             }
           }
+          this.userOrgRole = res.data[0].userOrgRole
+          console.log(this.userOrgRole)
         }
       })
     },
