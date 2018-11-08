@@ -296,34 +296,6 @@ export default {
           }
         }
       })
-      // this.$api
-      //   .getDepartmentList({
-      //     orgId: orgData[0]
-      //   })
-      //   .then(response => {
-      //     let commonList = []
-      //     let manageList = []
-      //     for (let i = 0; i < response.data.length; i++) {
-      //       commonList = response.data[i].memberList.map(item => {
-      //         return item
-      //       })
-      //       for (let j = 0; j < response.data[i].memberList.length; j++) {
-      //         if (response.data[i].memberList[j].headRole !== '4') {
-      //           manageList.push(response.data[i].memberList[j])
-      //         }
-      //         // else {
-      //         //   commonList.push(response.data[i].memberList[j])
-      //         // }
-      //       }
-      //       // console.log(response.data[i])
-      //       response.data[i].commonList = commonList
-      //       response.data[i].manageList = manageList
-      //       manageList = []
-      //       // commonList = []
-      //     }
-      //     this.tableData = response.data
-      //     console.log(response)
-      //   })
     },
     // 移除成员
     handleClose(data) {
@@ -358,25 +330,23 @@ export default {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
+      }).then(_ => {
+        this.$api
+          .deleteDepartment(params)
+          .then(response => {
+            if (response.errorCode == '1') {
+              this.$message.success(response.resultMsg)
+              this.changByGetList()
+            } else {
+              this.$message.warning(response.resultMsg)
+            }
+          })
+          .catch(error => {
+            this.$message.error(error)
+          })
+      }).catch(_ => {
+        this.$message('已取消删除')
       })
-        .then(_ => {
-          this.$api
-            .deleteDepartment(params)
-            .then(response => {
-              if (response.errorCode == '1') {
-                this.$message.success(response.resultMsg)
-                this.changByGetList()
-              } else {
-                this.$message.warning(response.resultMsg)
-              }
-            })
-            .catch(error => {
-              this.$message.error(error)
-            })
-        })
-        .catch(_ => {
-          this.$message('已取消删除')
-        })
     },
     //添加成员
     addMember(data) {
@@ -665,8 +635,6 @@ export default {
   },
   created() {
     this.getManageOrgList()
-    console.log(this.getToken())
-    console.log(localStorage.getItem('accessToken'))
   }
 }
 </script>

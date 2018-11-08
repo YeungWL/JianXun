@@ -5,32 +5,32 @@
       <span class="add el-icon-edit-outline" title="添加" @click="createBuildContent"></span>
     </div>
     
-    <el-form :inline="true" >
+    <el-form :inline="true" label-width="70px">
       <ul>
         <li class="content" v-for="(contentItem, index) in buildContent" :key="index">
           <el-form-item label="分项工程" style="margin-bottom:0;display:block;" >
-            <el-select v-model="contentItem.itemName" placeholder="请选择工程" style="width:600px">
+            <el-select v-model="contentItem.itemName" placeholder="请选择工程" style="width:630px">
               <el-option v-for="item in projectList" :key="item.itemId" :label="item.itemName" :value="item.itemName">
               </el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="栋/段" style="margin-bottom:0;">
-            <el-input v-model="contentItem.layerNo" placeholder="栋/段" style="width:120px;"></el-input>
+            <el-input v-model="contentItem.layerNo" placeholder="栋/段" style="width:100px;"></el-input>
           </el-form-item>
-          <el-form-item label="层" style="margin-bottom:0;">
-            <el-input v-model="contentItem.layerName" placeholder="层" style="width:120px;"></el-input>
+          <el-form-item label="层" style="margin-bottom:0;" label-width="50px">
+            <el-input v-model="contentItem.layerName" placeholder="层" style="width:100px;"></el-input>
           </el-form-item>
-          <el-form-item label="班组" style="margin-bottom:0;">
+          <el-form-item label="班组" style="margin-bottom:0;" label-width="50px">
             <el-select v-model="contentItem.groupName" placeholder="请选择班组" style="width:120px">
               <el-option v-for="item in group" :key="item.groupId" :label="item.groupName" :value="item.groupName">
               </el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="人数" style="margin-bottom:0;">
-            <el-input v-model="contentItem.workCount" placeholder="请输入人数" style="width:115px;"></el-input>
+          <el-form-item label="人数" style="margin-bottom:0;" label-width="50px">
+            <el-input v-model="contentItem.workCount" placeholder="请输入人数" style="width:120px;"></el-input>
           </el-form-item>
           <el-form-item class="progress" label="进度情况" style="display:block;">
-            <el-input style="width:600px;" type="textarea" :autosize="{ minRows: 2, maxRows: 4}" placeholder="请输入进度情况" v-model="contentItem.progress"></el-input>
+            <el-input style="width:630px;" type="textarea" :autosize="{ minRows: 2, maxRows: 4}" placeholder="请输入进度情况" v-model="contentItem.progress"></el-input>
           </el-form-item>
           <span style="display:none;">{{contentItem.orderNo = index}}</span>
           <span class="clear el-icon-circle-close-outline" title="删除" @click="deleteBuildContent(index)"></span>
@@ -167,18 +167,26 @@ export default {
     },
     // 创建日志
     buildLog() {
-      this.$api.buildLog({
-        orgId: this.orgId,
-        orgTemplateId: this.orgTemplateId,
-        buildContent: JSON.stringify(this.buildContent),
-        mainBuildAttr: JSON.stringify(this.attrData)
-      }).then(res => {
-        console.log(res)
-        if(res.errorCode == '1') {
+      // this.$api.buildLog({
+      //   orgId: this.orgId,
+      //   orgTemplateId: this.orgTemplateId,
+      //   buildContent: JSON.stringify(this.buildContent),
+      //   mainBuildAttr: JSON.stringify(this.attrData)
+      // }).then(res => {
+      //   console.log(res)
+      //   if(res.errorCode == '1') {
           this.$message.success('提交成功')
-          this.$router.push({path: '/record'})
-        }
-      })
+          this.$router.push({
+            path: '/record',
+            query: {
+              orgId: this.$route.query.orgId,
+              orgTemplateId: this.$route.query.orgTemplateId,
+              templateId: this.$route.query.templateId,
+              projectId: this.$route.query.projectId
+            }
+          })
+      //   }
+      // })
     }
   },
   created() {

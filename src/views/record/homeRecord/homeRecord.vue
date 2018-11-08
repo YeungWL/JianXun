@@ -363,7 +363,6 @@ export default {
       let addDate = `${date.getFullYear()}/${date.getMonth()+1}/1`
       this.myMonth = addDate
       console.log(addDate)
-      console.log(new Date(addDate) <= new Date(this.toDay))
       if(new Date(addDate) <= new Date(this.toDay)) {
         this.getHistoryList(addDate, this.toDay)
       }
@@ -398,7 +397,7 @@ export default {
       let year = date.getFullYear();
       if ((numDays < days && numMonth == month) || numMonth < month || years < year) {
         if (this.orgId == "" || JSON.stringify(this.orgTemplate) == '{}') {
-          // this.$message("项目、组织或模版不能为空");
+          this.$message("项目、组织或模版不能为空");
           return false;
         }
         console.log(day.date.replace(/\//g, '-'))
@@ -418,7 +417,9 @@ export default {
                   orgId: this.orgId,
                   logDate: day.date,
                   orgTemplateId: this.orgTemplate.id,
-                  logId: res.data[0].logId
+                  logId: res.data[0].logId,
+                  templateId: this.orgTemplate.templateId, // 
+                  projectId: this.selectProject
                 }
               })
             } else {
@@ -429,7 +430,7 @@ export default {
       }
       if (numDays == days && numMonth == month && year == years) {
         if (this.orgId == "" || JSON.stringify(this.orgTemplate) == '{}') {
-          // this.$message("项目、组织或模版不能为空");
+          this.$message("项目、组织名称或日志名称不能为空");
           return false;
         }
         this.$api.isCanEdit({
@@ -442,10 +443,11 @@ export default {
                 this.$router.push({
                   name: "shiRecord",
                   query: {
-                    orgId: this.orgId,
+                    orgId: this.orgId, // 组织id
                     date: day.date,
-                    orgTemplateId: this.orgTemplate.id,
-                    templateId: this.orgTemplate.templateId
+                    orgTemplateId: this.orgTemplate.id, // 日志id
+                    templateId: this.orgTemplate.templateId, // 
+                    projectId: this.selectProject // 项目id
                   }
                 })
               }
@@ -456,7 +458,8 @@ export default {
                     orgId: this.orgId,
                     date: day.date,
                     orgTemplateId: this.orgTemplate.id,
-                    templateId: this.orgTemplate.templateId
+                    templateId: this.orgTemplate.templateId,
+                    projectId: this.selectProject
                   }
                 })
               }
@@ -486,9 +489,10 @@ export default {
       this.$api.getMyProjectList({}).then(res => {
         if (res.errorCode === "1") {
           this.projectList = res.data
-          this.selectProject = res.data[0].projectId || ''
+          this.selectProject = JSON.stringify(this.$route.query) !== '{}' ? this.$route.query.projectId : (res.data[0].projectId || '')
+          // console.log(this.selectProject)
+          // this.selectProject = res.data[0].projectId || ''
           // this.getNotOrgList()
-          console.log(res.data)
           this.projectList.push({
             proName: '未关联的组织',
             projectId: 'NotBindOrg'
@@ -507,7 +511,9 @@ export default {
         }).then(res => {
           if(res.errorCode == '1') {
             this.organizationList = res.data
-            this.selectOrg = res.data[0] ? res.data[0].projectOrgId : ''
+            // this.selectOrg = res.data[0] ? res.data[0].projectOrgId : ''
+            this.selectOrg = JSON.stringify(this.$route.query) !== '{}' ? this.$route.query.orgId : (res.data[0] ? res.data[0].projectOrgId : '')
+            console.log(this.selectOrg)
             this.orgTemplate = {}
             this.buttonShow = false
             this.orgChange(this.selectOrg)
@@ -642,7 +648,15 @@ export default {
       }).then(res => {
         if(res.errorCode === '1') {
           this.logList = res.data
-          this.orgTemplate = res.data[0]
+          let data = {}
+          if(JSON.stringify(this.$route.query) !== '{}') {
+            res.data.forEach(item => {
+              if(item.id == this.$route.query.orgTemplateId && item.templateId == this.$route.query.templateId) {
+                data = item
+              }
+            })
+          }
+          this.orgTemplate = JSON.stringify(data) == '{}' ? res.data[0] : data
           this.getHistoryList(this.myMonth, this.toDay)
           if(valueItem == 0) {
             this.dialogFormVisible1 = true
@@ -930,7 +944,8 @@ export default {
     let year = myDate.getFullYear()
     this.toDay = `${year}/${month}/${days}`
     this.myMonth = `${year}/${month}/1`
-    this.$EventCalendar.toDate(this.toDay)
+    let day = `${year}/${month}/${days + 1}`
+    this.$EventCalendar.toDate(day)
   }
 }
 </script>

@@ -20,7 +20,7 @@
       <iframe :src="srcUrl" width="100%" height="100%"></iframe>
     </div>
     <div class="btn">
-      <el-button type="primary" @click="$router.push({name:'homeRecord'})">返回</el-button>
+      <el-button type="primary" @click="goBack">返回</el-button>
     </div>
   </div>
 </template>
@@ -149,19 +149,17 @@ export default {
     getLogHtml(initData, date) {
       this.srcUrl = this.baseURL() + '/jianzhumobile/mobile/buildLog/info.html?orgId='+this.orgId+'&createDate='+date+'&orgTemplateId='+this.orgTemplateId +'&logId='+this.logId+'&initData='+initData+'&memberId='+this.memberId
     },
-    // 根据日期获取日志信息
-    // historyListByTime() {
-    //   let endDate = new Date(this.logDate)
-    //   endDate.setDate(endDate.getDate() + 1)
-    //   this.$api.historyListByTime({
-    //     orgId: this.orgId,
-    //     orgTemplateId: this.orgTemplateId,
-    //     startDate: this.countDate,
-    //     endDate: endDate.toLocaleDateString().replace(/\//g, '-')
-    //   }).then(res => {
-    //     console.log(res)
-    //   })
-    // }
+    goBack() {
+      this.$router.push({
+        path: '/record',
+        query: {
+          orgId: this.$route.query.orgId,
+          orgTemplateId: this.$route.query.orgTemplateId,
+          templateId: this.$route.query.templateId,
+          projectId: this.$route.query.projectId
+        }
+      })
+    }
   },
   created() {
     this.countDate = this.logDate.replace(/\//g, '-')

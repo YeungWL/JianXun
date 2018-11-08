@@ -1,20 +1,23 @@
 <template>
   <div class="write">
-    <el-form :inline="true" >
+    <el-form :inline="true" label-width="100px">
       <el-form-item label="工程名称" >
-        <el-input v-model="contentItem.name" placeholder="请输入工程名称" style="width:250px;"></el-input>
-      </el-form-item>
-      <el-form-item label="单位工程名称">
-        <el-input v-model="contentItem.unitName" placeholder="请输入单位工程名称" style="width:250px;"></el-input>
+        <el-input v-model="contentItem.name" placeholder="请输入工程名称" style="width:230px;"></el-input>
       </el-form-item>
       <el-form-item label="施工单位">
-        <el-input v-model="contentItem.buildName" placeholder="请输入施工单位" style="width:250px;"></el-input>
+        <el-input v-model="contentItem.buildName" placeholder="请输入施工单位" style="width:230px;"></el-input>
       </el-form-item>
       <el-form-item label="管理人员数量">
-        <el-input v-model="contentItem.managerCount" placeholder="请输入管理人员数量" style="width:250px;"></el-input>
+        <el-input v-model="contentItem.managerCount" placeholder="请输入人员数量" style="width:150px;"></el-input>
+      </el-form-item>
+      <el-form-item label="单位工程名称">
+        <el-input v-model="contentItem.unitName" placeholder="请输入单位工程名称" style="width:230px;"></el-input>
+      </el-form-item>
+      <el-form-item label="技术负责人">
+        <el-input v-model="contentItem.principalName" placeholder="请输入技术负责人" style="width:230px;"></el-input>
       </el-form-item>
       <el-form-item label="作业人员数量">
-        <el-input style="width:250px" placeholder="请输入作业人员数量" v-model="contentItem.workCount"></el-input>
+        <el-input style="width:150px" placeholder="请输入人员数量" v-model="contentItem.workCount"></el-input>
       </el-form-item>
     </el-form>
 
@@ -42,7 +45,8 @@ export default {
         unitName: '',
         buildName: '',
         managerCount: '',
-        workCount: ''
+        workCount: '',
+        principalName: ''
       },
       orgId: this.$route.query.orgId,
       date: this.$route.query.date,
@@ -74,19 +78,27 @@ export default {
     },
     // 创建日志
     buildLog() {
-      this.$api.buildLog({
-        orgId: this.orgId,
-        orgTemplateId: this.orgTemplateId,
-        managerCount: this.contentItem.managerCount,
-        workCount: this.contentItem.workCount,
-        mainBuildAttr: JSON.stringify(this.attrData)
-      }).then(res => {
-        console.log(res)
-        if(res.errorCode == '1') {
+      // this.$api.buildLog({
+      //   orgId: this.orgId,
+      //   orgTemplateId: this.orgTemplateId,
+      //   managerCount: this.contentItem.managerCount,
+      //   workCount: this.contentItem.workCount,
+      //   mainBuildAttr: JSON.stringify(this.attrData)
+      // }).then(res => {
+      //   console.log(res)
+      //   if(res.errorCode == '1') {
           this.$message.success('提交成功')
-          this.$router.push({path: '/record/homeRecord'})
-        }
-      })
+          this.$router.push({
+            path: '/record/homeRecord',
+            query: {
+              orgId: this.$route.query.orgId,
+              orgTemplateId: this.$route.query.orgTemplateId,
+              templateId: this.$route.query.templateId,
+              projectId: this.$route.query.projectId
+            }
+          })
+      //   }
+      // })
     },
     // 获取市政信息
     getCityPolicy() {
@@ -100,6 +112,7 @@ export default {
           this.contentItem.buildName = res.data[0].buildName
           this.contentItem.managerCount = res.data[0].managerCount
           this.contentItem.workCount = res.data[0].workCount
+          this.contentItem.principalName = res.data[0].principalName
         }
       })
     }
@@ -116,6 +129,7 @@ export default {
   margin: 20px;
   padding: 10px;
   background: #ffffff;
+  min-width: 1000px;
   .title {
     width: 100%;
     // margin-top: 20px;
