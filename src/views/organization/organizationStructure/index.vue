@@ -5,7 +5,7 @@
     <div class="page-header clearfix">
       <el-form :inline="true">
         <el-form-item label="项目：">
-          <el-select v-model="orgList" placeholder="请选择" @change="selectOrgList" style="width:320px;">
+          <el-select v-model="orgList" placeholder="请选择" @change="selectOrgList" style="width:320px;" value-key="orgList">
             <el-option v-for="item in project" :key="item.projectId" :label="item.proName" :value="item.orgList">
             </el-option>
           </el-select>

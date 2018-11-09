@@ -113,7 +113,7 @@ export function freezeOrRecoverOrg(data) {
 /*
   获取可以管理的组织列表
 */
-export function getManageOrgList(data) {
+export function getManageOrgListByOrg(data) {
   return service.post(ORGS_API + '/getOrgsList.do', qs.stringify(data))
 }
 /*

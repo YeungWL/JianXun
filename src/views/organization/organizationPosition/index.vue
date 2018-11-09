@@ -17,6 +17,7 @@
                 v-for="(item, index) in managePerson"
                 :key="index"
                 closable
+                :class="{'activeRed':item.headRole === '0','activeYellow':item.headRole === '1','activeBlue':item.headRole === '2','activeGreen':item.headRole === '3'}"
                 @close="handleClose(item)"
                 v-else-if="userOrgRole === '0'">{{item.memberName}}</el-tag>
       </span>
@@ -51,7 +52,11 @@
         </el-table-column>
         <el-table-column prop="commonList" label="部门成员">
           <template slot-scope="scope">
-            <el-tag style="margin:0 10px 10px 0" v-for="(item,index) in scope.row.commonList" :key="index" closable @close="handleClose(item)">{{item.memberName}}</el-tag>
+            <el-tag style="margin:0 10px 10px 0"
+                    v-for="(item,index) in scope.row.commonList"
+                    :key="index"
+                    closable
+                    @close="handleClose(item)">{{item.memberName}}</el-tag>
           </template>
         </el-table-column>
         <el-table-column prop="operate" label="操作" width="150">
@@ -249,7 +254,7 @@ export default {
     },
     // 获取可以管理的组织列表
     getManageOrgList() {
-      this.$api.getManageOrgList({
+      this.$api.getManageOrgListByOrg({
           isMyCreate: 2
         })
         .then(response => {
