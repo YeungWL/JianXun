@@ -1,7 +1,7 @@
 <template>
-  <div class="page-content-body">
-    <div class="homeRecord" v-loading="loading" element-loading-text="拼命加载中">
-      <div class="my-dialog scwj-dialog">
+  <div class="homeRecord"  >
+    <div class="container"  v-loading="loading">
+      <div class="select" >
         <el-form size="mini">
           <el-row :gutter="24">
             <el-col :span="8">
@@ -23,7 +23,7 @@
             <el-col :span="8">
               <el-form-item label="日志名称" label-width="90px">
                 <el-select v-model="selectLog" placeholder="请选择日志" @change="handleLogChange">
-                  <el-option v-for="item in logList" :key="item.id" :label="item.extendName" :value="item.index">
+                  <el-option v-for="item in logList" :key="item.id" :label="item.extendName" :value="item.id">
                   </el-option>
                 </el-select>
               </el-form-item>
@@ -33,10 +33,10 @@
       </div>
 
       <div class="calinder">
-        <vue-event-calendar :events="logHistoryList" @day-changed="dayChange" @month-changed="handleMonthChanged" style="width:55%"></vue-event-calendar>
-        <div style="padding-left:40%">
-          <el-button type="primary" @click="handleExportFile()" class="rzbtn">导出日志</el-button>
-          <el-button type="primary" @click="handleSetting()" class="setion" v-if="buttonShow">设置</el-button>
+        <vue-event-calendar :events="logHistoryList" @day-changed="dayChange"  @month-changed="handleMonthChanged"></vue-event-calendar>
+        <div class="btn">
+          <el-button type="primary" @click="handleExportFile" class="rzbtn">导出日志</el-button>
+          <el-button type="primary" @click="handleSetting()" v-if="buttonShow" class="setion">设置</el-button>
         </div>
       </div>
 
@@ -121,7 +121,6 @@
               </ul>
             </div>
           </div>
-
         </div>
         <div slot="footer" class="dialog-footer" style="text-align: center;">
           <el-button type="primary" @click="setPermission()">提 交</el-button>
@@ -180,8 +179,6 @@
           <el-button @click="dialogExportFormVisible = false">关 闭</el-button>
         </span>
       </el-dialog>
-
-
     </div>
   </div>
 </template>
@@ -386,12 +383,12 @@ export default {
     },
     // 日历处理事件
     dayChange(day) {
-      if (this.selectOrg === "") {
+      if (this.selectOrg === "" && this.loading == false) {
         this.$message("请选择一个组织");
         return false;
       }
 
-      if (this.selectLog === "") {
+      if (this.selectLog === "" && this.loading == false) {
         this.$message("请选择一个监理日志");
         return false;
       }
@@ -493,6 +490,8 @@ export default {
           };
           this.logList.push(listData);
           this.selectLog = this.logList[0].extendName;
+          this.currentLogId = this.logList[0].id;
+          this.currentTempId = this.logList[0].tempId;
         }
       });
     },
@@ -524,6 +523,8 @@ export default {
           this.getAddTempList();
           this.dialogSettingDetailVisible = false;
           this.$message.success("提交成功");
+        } else {
+          this.$message.console.error(res.resultMsg);
         }
       });
     },
@@ -644,8 +645,10 @@ export default {
     },
 
     handleMonthChanged(month) {
-      var MM_YYYY = month.split("/");
-      this.YYYY_MM = MM_YYYY[1] + "-" + MM_YYYY[0];
+     
+      console.log("month "+ month.replace(/年/g, '-').replace(/月/g, ''));
+      this.YYYY_MM = month.replace(/年/g, '-').replace(/月/g, '');
+      console.log("this.YYYY_MM "+ this.YYYY_MM);
       this.getSupervisionHistoryList();
     },
 
@@ -800,41 +803,74 @@ export default {
   },
   created() {
     this.getProjectList();
-    this.getNotBindOrgs();
     this.getlogList();
   }
 };
 </script>
 
+
+
 <style lang="scss" scoped>
 .homeRecord {
-  display: block;
-
+  // margin: 20px;
+  height: 95%;
+  background: #ffffff;
   .container {
-    max-width: 850px;
+    max-width: 940px;
     min-width: 720px;
-    margin: 20px;
-
+    height: 100%;
+    padding: 20px;
     .calinder {
+      height: 85%;
+      position: relative;
+      .date-btn{
+        position: absolute;
+        width: 100%;
+        height: 35px;
+        top: 30px;
+        z-index: 999;
+        .botton{
+          position: absolute;
+          width: 20px;
+          height: 30px;
+          background: #fff;
+          top: 5px;
+          cursor: pointer;
+          &:before{
+            content: "";
+            position: absolute;
+            left: 6px;
+            top: 10px;
+            width: 10px;
+            height: 10px;
+            border-top: 1px solid currentColor;
+            border-right: 1px solid currentColor;
+          }
+        }
+        .left:before{
+          transform: rotate(-135deg);
+        }
+        .right:before{
+          left: 2px;
+          transform: rotate(45deg);
+        }
+      }
       .btn {
         display: flex;
+        justify-content: space-between;
         margin: 0 30px;
         line-height: 32px;
-
         a {
           color: #26a2ff;
           text-decoration: underline;
           padding-left: 10px;
         }
-
         .rzbtn {
           width: 78px;
         }
-
         .setion {
           width: 50px;
         }
-
         .content {
           flex: 1;
           text-align: center;
@@ -842,25 +878,42 @@ export default {
       }
     }
   }
-
   .el-date-editor.el-input {
     width: 250px;
   }
-
-  .el-form-item {
-    margin-top: 20px;
+  .listForm{
+    .el-form-item {
+      margin-bottom: 0px;
+    }
   }
-
   .setting {
-    padding: 20px 0;
+    padding: 20px 40px;
   }
-
   .project {
     width: 482px;
     display: flex;
     justify-content: space-between;
     padding: 7px 0;
     line-height: 32px;
+  }
+  .projectList {
+    width: 482px;
+    margin-top: 10px;
+    li {
+      display: flex;
+      justify-content: space-between;
+      .el-input {
+        width: 380px;
+        margin: 0 0 10px 10px;
+      }
+      .my_button {
+        padding: 0;
+        font-size: 16px;
+        width: 30px;
+        height: 32px;
+        text-align: center;
+      }
+    }
   }
 
   .organization {

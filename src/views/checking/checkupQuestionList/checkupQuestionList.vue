@@ -293,7 +293,7 @@ export default {
         // console.log(this.listQuery.orgId)
         // this.getList()        
       }
-       this.getList()        
+      this.getList()        
     },
     // 获取未关联的组织列表
     getCkNotBindOrgs() {

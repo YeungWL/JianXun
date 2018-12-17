@@ -10,7 +10,7 @@ const worker = resolve => require(['@/views/education/worker/index'], resolve)
 const courseware = resolve => require(['@/views/education/courseware/index'], resolve)
 /** 三级教育 => 我的课件 */
 const myCourse = resolve => require(['@/views/education/courseware/myCourse'], resolve)
-/** 三级教育 => 我的课件 => 添加课件 */
+/** 三级教育 => 我的课件 => 添加或编辑课件 */
 const addCourse = resolve => require(['@/views/education/courseware/addCourse'], resolve)
 /** 三级教育 => 考题管理 */
 const examQuestions = resolve => require(['@/views/education/exam/examQuestions'], resolve)
@@ -24,6 +24,14 @@ const expenses = resolve => require(['@/views/education/expenses/index'], resolv
 const invoice = resolve => require(['@/views/education/expenses/invoice'], resolve)
 /** 三级教育 =>  考卷管理 => 编辑试卷 */
 const editPaper = resolve => require(['@/views/education/exam/editPaper'], resolve)
+/** 三级教育 =>  考卷管理 => 考场管理 */
+const examManage = resolve => require(['@/views/education/exam/examManage'], resolve)
+/** 三级教育 =>  教育记录 => 个人考试记录 */
+const examList = resolve => require(['@/views/education/eduRecord/examList'], resolve)
+/** 三级教育 =>  教育记录 => 个人学习记录 */
+const educationList = resolve => require(['@/views/education/eduRecord/educationList'], resolve)
+/** 三级教育 =>  教育记录 => 个人学习记录 */
+const perViewPaper = resolve => require(['@/views/education/exam/perViewPaper'], resolve)
 
 export default {
   path: '/education',
@@ -73,7 +81,7 @@ export default {
       meta: {
         requireAuth: true
       }
-    },
+    },    
     {
       path: '/education/exam/examPaper',
       component: examPaper,
@@ -121,6 +129,38 @@ export default {
       meta: {
         requireAuth: true
       }
-    } 
+    },
+    {
+      path: '/education/exam/examManage',
+      component: examManage,
+      name: 'examManage',
+      meta: {
+        requireAuth: true
+      }
+    },
+    {
+      path: '/education/eduRecord/examList',
+      component: examList,
+      name: 'examList',
+      meta: {
+        requireAuth: true
+      }
+    },
+    {
+      path: '/education/eduRecord/educationList',
+      component: educationList,
+      name: 'educationList',
+      meta: {
+        requireAuth: true
+      }
+    },
+    {
+      path: '/education/exam/perViewPaper',
+      component: perViewPaper,
+      name: 'perViewPaper',
+      meta: {
+        requireAuth: true
+      }
+    }
   ]
 }

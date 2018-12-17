@@ -1,6 +1,6 @@
 <template>
-  <div class="write">
-    <div class="mainThing">
+  <div class="page-content-body">
+    <div class="my-dialog scwj-dialog">
       <span style="text-align: center;display:block;font-size:20px">填写日志</span>
       <ul>
         <li v-for="item in attrData" :key="item.index" :label="item.attrName" :value="item.attrName">

@@ -173,13 +173,14 @@ export default {
   methods: {
     // 获取用户权限
     getUserRoots() {
+      
       // console.log(this.$store.getters.rootLists, 4444444)
       // this.primaryRouteMenuList = JSON.parse(this.$store.getters.rootLists)
       let navArr = JSON.parse(this.$store.getters.rootLists)// json转数组
       navArr.forEach(item => {
         this.primaryRouteMenuList.push(item)
       })
-      console.log(this.primaryRouteMenuList)
+      // console.log(this.primaryRouteMenuList)
     }, 
     // 查询当前选中菜单高亮显示**$route.fullPath** 完成解析后的 URL，包含查询参数和 hash 的完整路径。
     activeted(path){

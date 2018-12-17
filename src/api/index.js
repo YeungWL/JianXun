@@ -9,7 +9,7 @@ import * as project from './project' // 系统权限管理
 import * as personal from './personal' // 个人中心
 import * as sms from './sms' // 短信验证码
 import * as education from './education' // 三级教育接口
-
+import * as eduWorker from './eduWorker' // 三级教育--课件和工人
 
 export default {
   ...login,
@@ -22,5 +22,6 @@ export default {
   ...supervisorLog,
   ...checking,
   ...sms,
-  ...education
+  ...education,
+  ...eduWorker
 }

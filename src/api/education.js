@@ -87,3 +87,103 @@ export function getCourseList(data) {
 export function eduSaveQastore(data) {
   return service.post(OAUTH_API + '/eduExam/saveQastore.do', qs.stringify(data))
 }
+
+// 三级教育考题 - 15、取消题目
+export function eduCancelQastore(data) {
+  return service.post(OAUTH_API + '/eduExam/cancelQastore.do', qs.stringify(data))
+}
+
+// 三级教育考题 - 16、获取考卷题目数量
+export function getExamQastoreCount(data) {
+  return service.post(OAUTH_API + '/eduExam/getExamQastoreCount.do', qs.stringify(data))
+}
+
+// 三级教育考题 - 27、添加考场
+export function eduSaveAct(data) {
+  return service.post(OAUTH_API + '/eduExam/saveAct.do', qs.stringify(data))
+}
+
+// 三级教育考题 - 28、获取考卷列表
+export function getExamList(data) {
+  return service.post(OAUTH_API + '/eduExam/getExamList.do', qs.stringify(data))
+}
+
+// 三级教育考题 - 30、设置考场开关
+export function eduSetActIsDeleted(data) {
+  return service.post(OAUTH_API + '/eduExam/setActIsDeleted.do', qs.stringify(data))
+}
+
+// 三级教育考题 - 31、考场列表
+export function getActList(data) {
+  return service.post(OAUTH_API + '/eduExam/actList.do', qs.stringify(data))
+}
+
+// 三级教育考题 - 43、班组列表
+export function getExamgroupList(data) {
+  return service.post(OAUTH_API + '/eduExam/groupList.do', qs.stringify(data))
+}
+
+// 三级教育考题 - 29、一键生成考卷
+export function randomSaveExam(data) {
+  return service.post(OAUTH_API + '/eduExam/randomSaveExam.do', qs.stringify(data))
+}
+
+// 三级教育班组 - 1、新增班组
+export function eduGroupAdd(data) {
+  return service.post(OAUTH_API + '/eduClassGroup/add.do', qs.stringify(data))
+}
+
+// 三级教育班组 - 2、更新班组
+export function eduGroupUpdate(data) {
+  return service.post(OAUTH_API + '/eduClassGroup/update.do', qs.stringify(data))
+}
+
+// 三级教育班组 - 3、班组列表
+export function eduGroupGetList(data) {
+  return service.post(OAUTH_API + '/eduClassGroup/list.do', qs.stringify(data))
+}
+
+// 三级教育考题 - 34、课件学习记录
+export function courseRecord(data) {
+  return service.post(OAUTH_API + '/eduExam/courseRecord.do', qs.stringify(data))
+}
+
+// 三级教育考题 - 47、获取课件学习记录(pc)
+export function getCourseRecord(data) {
+  return service.post(OAUTH_API + '/eduExam/getCourseRecord.do', qs.stringify(data))
+}
+
+// 三级教育班组 - 4、删除班组
+export function eduGroupDelete(data) {
+  return service.post(OAUTH_API + '/eduClassGroup/delete.do', qs.stringify(data))
+}
+
+// 三级教育班组 - 8、查找所有公司
+export function companyList(data) {
+  return service.post(OAUTH_API + '/eduClassGroup/companyList.do', qs.stringify(data))
+}
+
+// 三级教育班组 - 5、关联公司
+export function bindCompany(data) {
+  return service.post(OAUTH_API + '/eduClassGroup/bindCompany.do', qs.stringify(data))
+}
+
+// 三级教育班组 - 6、查找组织关联的公司
+export function getOrgBindCompany(data) {
+  return service.post(OAUTH_API + '/eduClassGroup/getOrgBindCompany.do', qs.stringify(data))
+}
+
+// 三级教育班组 - 7、解绑公司
+export function unbindCompany(data) {
+  return service.post(OAUTH_API + '/eduClassGroup/unbindCompany.do', qs.stringify(data))
+}
+
+// 三级教育考题 - 35、考试记录
+export function examRecord(data) {
+  return service.post(OAUTH_API + '/eduExam/examRecord.do', qs.stringify(data))
+}
+
+// 三级教育考题 - 17、生成最终考卷或者可编辑考卷
+export function saveFinalOrEditExam(data) {
+  return service.post(OAUTH_API + '/eduExam/saveFinalOrEditExam.do', qs.stringify(data))
+}

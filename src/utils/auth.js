@@ -18,13 +18,13 @@ export function removeAccessToken() {
 
 //获取权限
 export function getStorageRoot() {
-		return JSON.parse(sessionStorage.getItem(Roots));
+		return JSON.parse(localStorage.getItem(Roots));
 }
 //存储权限
 export function setStorageRoot(value) {
-	return sessionStorage.setItem(Roots,JSON.stringify(value));
+	return localStorage.setItem(Roots,JSON.stringify(value));
 }
 //清除本地权限
 export function removeStorageRoot(value) {
-	return sessionStorage.removeItem(Roots);
+	return localStorage.removeItem(Roots);
 }

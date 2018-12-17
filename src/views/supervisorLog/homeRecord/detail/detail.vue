@@ -46,26 +46,7 @@ export default {
   },
   methods: {
     UpdateDataType() {
-      if (this.dataType === "原始数据") {
-        this.dataType = "终版数据";
-        this.detailUrl =
-          this.baseURL() +
-          "/jianzhumobile/mobile/supervision/supervisionInfo.do?" +
-          "accessToken=" +
-          this.accessToken +
-          "&token=" +
-          this.token +
-          "&orgId=" +
-          this.orgId +
-          "&initData=" +
-          1 +
-          "&logId=" +
-          this.logId +
-          "&tempId=" +
-          this.tempId +
-          "&createDate=" +
-          this.logDate;
-      } else {
+      if (this.dataType === "终版数据") {
         this.dataType = "原始数据";
         this.detailUrl =
           this.baseURL() +
@@ -78,6 +59,25 @@ export default {
           this.orgId +
           "&initData=" +
           2 +
+          "&logId=" +
+          this.logId +
+          "&tempId=" +
+          this.tempId +
+          "&createDate=" +
+          this.logDate;
+      } else {
+        this.dataType = "终版数据";
+        this.detailUrl =
+          this.baseURL() +
+          "/jianzhumobile/mobile/supervision/supervisionInfo.do?" +
+          "accessToken=" +
+          this.accessToken +
+          "&token=" +
+          this.token +
+          "&orgId=" +
+          this.orgId +
+          "&initData=" +
+          1 +
           "&logId=" +
           this.logId +
           "&tempId=" +
@@ -242,8 +242,10 @@ export default {
 
 <style lang="scss" scoped>
 .detail {
-  width: 80%;
+  height: 95%;
   margin: 20px;
+  padding: 10px;
+  background: #ffffff;
   .topBar {
     display: flex;
     justify-content: space-between;
@@ -253,15 +255,16 @@ export default {
   }
   .content {
     width: 100%;
-    height: 600px;
+    height: 82%;
     border: 1px solid #bbb;
     margin-top: 20px;
   }
   .btn {
-    width: 100%;
-    position: relative;
-    left: 50%;
+    text-align: center;
     margin-top: 20px;
+  }
+  .detail-select /deep/.el-input__icon{
+    line-height: 32px;
   }
 }
 </style>

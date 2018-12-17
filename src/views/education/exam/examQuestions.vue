@@ -11,8 +11,7 @@
           <el-col :span="5">
             <el-form-item label="考题类型" label-width="90px">
               <el-select v-model="queryInfo.type" placeholder="全部">
-                <el-option v-for="item in questionType" :key="item.value" :label="item.label" :value="item.value">
-                </el-option>
+                <el-option v-for="item in questionType" :key="item.value" :label="item.label" :value="item.value"></el-option>
               </el-select>
             </el-form-item>
           </el-col>
@@ -27,16 +26,18 @@
         </el-row>
       </el-form>
       <div class="page-main customTable">
-        <el-table ref="multipleTable" style="width: 100%" v-loading="loading" element-loading-text="拼命加载中" :data="tablelist"
-          key="ArcDataArr">
+        <el-table ref="multipleTable" style="width: 100%" v-loading="loading" element-loading-text="拼命加载中"
+          :data="tablelist" key="ArcDataArr">
           <el-table-column prop="title" label="考题名称" min-width="400" show-overflow-tooltip></el-table-column>
           <el-table-column label="考题类型" min-width="80">
-            <template slot-scope="scope"> {{ scope.row.type=== "1"? '单选题' : (scope.row.type=== "2"? '多选题' : '判断题') }}</template>
+            <template slot-scope="scope">{{ scope.row.type=== "1"? '单选题' : (scope.row.type=== "2"? '多选题' :
+              '判断题') }}</template>
           </el-table-column>
           <el-table-column label="操作" min-width="100">
             <template slot-scope="scope">
-              <span class="edit" @click="changeQuestionStatus(scope.row)">{{ scope.row.isDeleted=== "N"? '冻结' : '激活' }}</span>
-              <span class="edit" @click="handleEdit(scope.row)">修改</span> 
+              <span class="edit" @click="changeQuestionStatus(scope.row)">{{ scope.row.isDeleted=== "N"?
+                '冻结' : '激活' }}</span>
+              <span class="edit" @click="handleEdit(scope.row)">修改</span>
             </template>
           </el-table-column>
         </el-table>
@@ -44,24 +45,24 @@
       <!-- 分页-->
       <div class="pagination">
         <el-pagination background layout="total, prev, pager, next" @current-change="handlePageChange"
-          :current-page.sync="queryInfo.currentPage" :page-size="queryInfo.showCount" :total="total">
-        </el-pagination>
+          :current-page.sync="queryInfo.currentPage" :page-size="queryInfo.showCount" :total="total"></el-pagination>
       </div>
     </div>
 
     <!-- 录入题型选择弹框 -->
     <el-dialog title="考题类型" :visible.sync="questionTypeDialogVisible" width="30%" append-to-body center>
       <el-button style="width:100%" type="primary" @click="addQuestionDialogVisible=true;InputFrom.type=1;reSetForm();questionTypeDialogVisible=false">单选</el-button>
-      <br /><br />
+      <br>
+      <br>
       <el-button style="width:100%" type="primary" @click="addQuestionDialogVisible=true;InputFrom.type=2;reSetForm();questionTypeDialogVisible=false">多选</el-button>
-      <br /><br />
+      <br>
+      <br>
       <el-button style="width:100%" type="primary" @click="addQuestionDialogVisible=true;InputFrom.type=3;reSetForm();questionTypeDialogVisible=false">判断</el-button>
     </el-dialog>
 
-
     <!--新建题目-->
     <el-dialog :title="isEdit?'编辑题目':'新建题目'" :visible.sync="addQuestionDialogVisible" size="tiny" class="customDialog createExamDialog"
-      width='800px' append-to-body center>
+      width="800px" append-to-body center>
       <el-form ref="InputFrom" label-width="110px" :model="InputFrom" :rules="fromRules">
         <el-form-item label="题目：" prop="title">
           <el-input type="textarea" v-model="InputFrom.title"></el-input>
@@ -95,8 +96,8 @@
 
         <el-form-item label="正确答案：" v-if="InputFrom.type=='3'" prop="answer">
           <el-select placeholder="全部" v-model="InputFrom.answer">
-            <el-option label="正确" value="true"></el-option>
-            <el-option label="错误" value="false"></el-option>
+            <el-option label="正确" value="A"></el-option>
+            <el-option label="错误" value="B"></el-option>
           </el-select>
         </el-form-item>
       </el-form>
@@ -104,8 +105,6 @@
         <el-button type="primary" @click="addQuestion">确认</el-button>
       </span>
     </el-dialog>
-
-
   </div>
 </template>
 
@@ -252,6 +251,11 @@ export default {
           optName: "C",
           optContent: "",
           optId: ""
+        },
+        {
+          optName: "D",
+          optContent: "",
+          optId: ""
         }
       ];
       this.InputFrom.answer_analysis = "";
@@ -322,12 +326,16 @@ export default {
           data.answer =
             typeof data.answer === "object"
               ? data.answer.join(",")
-              : data.answer;
-          data.optionList = JSON.stringify(data.optionList);
+              : data.answer;             
+          if (data.type === 3) {
+            data.optionList =
+              '[{"optName":"A","optContent":"对","optId":""},{"optName":"B","optContent":"错","optId":""}]';
+          } else {
+            data.optionList = JSON.stringify(data.optionList);
+          }
 
           if (this.isEdit) {
             // 编辑题目提交
-            console.log("编辑题目提交");
             data.question_id = this.question_id;
             this.$api.editQuestion(data).then(res => {
               if (res.errorCode === "1") {
@@ -342,8 +350,6 @@ export default {
             // 新建题目提交
             this.$api.saveQuestion(data).then(res => {
               if (res.errorCode === "1") {
-                // this.$message.success("新建题目成功，可在题库管理中查看！");
-
                 this.$confirm("题目添加成功, 是否继续?", "提示", {
                   confirmButtonText: "确定",
                   cancelButtonText: "取消",
@@ -354,13 +360,11 @@ export default {
                     this.addQuestionDialogVisible = false;
                     this.reSetForm();
                     this.getQuestionList();
+
                   })
                   .catch(() => {
                     this.addQuestionDialogVisible = false;
-                    // this.$message({
-                    //   type: "info",
-                    //   message: "已取消删除"
-                    // });
+                    this.getQuestionList();
                   });
               } else {
                 this.$message.error("网络......");
