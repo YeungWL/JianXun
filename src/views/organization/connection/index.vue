@@ -14,10 +14,10 @@
             <el-radio :label="scope.$index" v-model="tableIndex" @change.native="handleSelection(scope.row)" class="table-radio">{{''}}</el-radio>
           </template>
         </el-table-column>
-        <el-table-column label="项目编码" align="center">
+        <el-table-column align="center">
           <template slot-scope="scope">{{ scope.row.proCode }}</template>
         </el-table-column>
-        <el-table-column prop="proName" label="项目名称" align="center">
+        <el-table-column prop="proName" align="center">
         </el-table-column>
       </el-table>
       <div class="pagination">
@@ -27,9 +27,9 @@
     </div>
     <div class="select">
       <el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAllChange">全选</el-checkbox>
-      <div style="margin: 15px 0;"></div>
+      <div style="height: 15px;"></div>
       <el-checkbox-group v-model="checkedCities" @change="handleCheckedCitiesChange">
-        <el-checkbox v-for="(item, index) in cities" :label="item" :key="index">{{item.orgName}}</el-checkbox>
+        <el-checkbox v-for="(item, index) in cities" :label="item" :key="index" style="padding: 5px 0;">{{item.orgName}}</el-checkbox>
       </el-checkbox-group>
     </div>
     <div class="btn">

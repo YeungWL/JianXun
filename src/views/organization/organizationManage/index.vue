@@ -2,9 +2,9 @@
   <div class="organizationManage page-content-body">
     <div class="organizationManage_header">
       <el-form :inline="true" :model="listQuery">
-        <el-form-item label="组织编码">
+        <!-- <el-form-item label="组织编码">
           <el-input placeholder="请输入组织编码" v-model="listQuery.orgCode" style="width: 500px;"></el-input>
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item label="组织创建人">
           <el-input placeholder="请输入组织创建人" v-model="listQuery.creator"></el-input>
         </el-form-item>
@@ -25,15 +25,21 @@
 
     <div class="organizationManage_table page-main customTable">
       <el-table :data="orgList" style="width:100%">
-        <el-table-column prop="orgCode" label="组织编码" min-width="150">
-        </el-table-column>
+        <!-- <el-table-column prop="orgCode" label="组织编码" min-width="150">
+        </el-table-column> -->
         <el-table-column prop="orgName" label="组织名称" min-width="150">
         </el-table-column>
         <el-table-column prop="creatorName" label="组织创建人" min-width="150">
         </el-table-column>
         <el-table-column prop="createTime" label="创建时间" min-width="150">
+          <template slot-scope="scope">
+            {{scope.row.createTime ? scope.row.createTime.slice(0, -3) : ''}}
+          </template>
         </el-table-column>
-        <el-table-column prop="createTime" label="修改时间" min-width="150">
+        <el-table-column prop="updateTime" label="修改时间" min-width="150">
+          <template slot-scope="scope">
+            {{scope.row.updateTime ? scope.row.updateTime.slice(0, -3) : ''}}
+          </template>
         </el-table-column>
         <el-table-column label="操作" width="150">
           <template slot-scope="scope">
@@ -181,6 +187,7 @@ export default {
     },
     // 表格修改按钮事件
     updateShow(data) {
+      console.log(data)
       this.updateForm = data
       this.updateDialog = true
     },
@@ -200,7 +207,11 @@ export default {
           this.$message.warning('组织名称或组织简称不能为空')
           return
         }
-        this.$api.updateByOrg(this.updateForm).then(response => {
+        this.$api.updateByOrg({
+          projectOrgId: this.updateForm.projectOrgId,
+          orgName: this.updateForm.orgName,
+          orgShort: this.updateForm.orgShort
+        }).then(response => {
           if(response.errorCode == '1') {
             this.$message.success(response.resultMsg)
             this.updateDialog = false

@@ -23,7 +23,7 @@
       </span>
       <div class="btn">
         <el-button type="primary" @click="addDepartment">添加部门</el-button>
-        <el-button type="primary" @click="addMember">添加人员</el-button>
+        <el-button type="primary" @click="addMember">分配岗位</el-button>
         <el-button type='primary' @click="service">维护人才库</el-button>
         <!-- <el-button type="primary">添加组织负责人</el-button> -->
       </div>

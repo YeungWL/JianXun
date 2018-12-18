@@ -234,3 +234,9 @@ export function getMyOrgList(data) {
 export function setOrgGrant(data) {
   return service.post(ORGS_API + '/pj/setOrgGrant.do', qs.stringify(data))
 }
+/*
+  获取可以管理的组织列表
+*/
+export function getManageOrgList(data) {
+  return service.post(ORGS_API + '/getOrgsList.do', qs.stringify(data))
+}
