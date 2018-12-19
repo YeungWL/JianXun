@@ -199,7 +199,8 @@ export default {
     modify(val) {
       this.$prompt('请输入部门名称', '提示', {
         confirmButtonText: '确定',
-        cancelButtonText: '取消'
+        cancelButtonText: '取消',
+        inputValue: val.departmentName
       }).then(({ value }) => {
         let params = {
           departmentId: val.departmentId,
