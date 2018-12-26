@@ -304,6 +304,7 @@ export default {
   },
   created() {
     this.getOrgList();
+
   },
   methods: {
     //获取组织列表
@@ -312,7 +313,9 @@ export default {
         if (res.errorCode === "1") {
           this.orgList = res.data;
           this.loading = false;
-          this.selectOrgID = this.orgList[0].orgId;
+
+          this.selectOrgID = JSON.stringify(this.$route.query) !== '{}' ? this.$route.query.orgId : (this.orgList[0].orgId || '')
+          this.UpdatePaperList();
         } else {
           this.$message.error(res.message);
         }
@@ -440,7 +443,11 @@ export default {
       this.$router.push({
         name: "perViewPaper",
         query: {
-          examId: data.examId
+          orgId:this.selectOrgID,
+          examId: data.examId,
+          examName: data.examName,
+          isEdit: data.isEdit,
+          source: "1"
         }
       });
     },

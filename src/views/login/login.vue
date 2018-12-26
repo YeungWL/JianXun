@@ -14,7 +14,7 @@
 						<h2>用户登录</h2>
             <el-form class="form-horizontal" :model="loginForm" :rules="loginRules" ref="loginForm">
               <el-form-item class="login-input" prop="userName">
-                <el-input name="user" placeholder="建信帐号/建信编码/手机号" class='yhm' v-model="loginForm.userName" auto-complete="off">
+                <el-input name="user" placeholder="建讯帐号/建讯编码/手机号" class='yhm' v-model="loginForm.userName" auto-complete="off">
                 </el-input>
               </el-form-item>
               <el-form-item class="login-mima"  prop="password">

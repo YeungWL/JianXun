@@ -2,19 +2,28 @@
   <div class="detail">
     <div class="topBar">
       <div class="fy">
-        <el-button type="primary" @click="getPreList">前一天</el-button>
+        <el-button type="primary" @click="getBeforeDate">前一天</el-button>
         <span>{{year}}年{{ month}}月{{ day}}日</span>
-        <el-button type="primary" @click="getNextList" :disabled="isCanClick">后一天</el-button>
+        <el-button type="primary" @click="getAfterDate">后一天</el-button>
       </div>
       <div class="dataBefore">
-        <el-button type="primary"  @click="UpdateDataType()">{{dataType}}</el-button>
+        <el-button
+          type="primary"
+          @click="getLogHtml('1', countDate), showBtn = !showBtn"
+          v-show="showBtn"
+        >原始数据</el-button>
+        <el-button
+          type="primary"
+          @click="getLogHtml('0', countDate), showBtn = !showBtn"
+          v-show="!showBtn"
+        >终版数据</el-button>
       </div>
     </div>
     <div class="content">
-      <iframe id="detailView" style="padding: 0px; width: 100%; height: 100%;" :src="detailUrl"></iframe>
+      <iframe :src="srcUrl" width="100%" height="100%"></iframe>
     </div>
-    <div class="btn" @click="close()">
-      <el-button type="primary">返回</el-button>
+    <div class="btn">
+      <el-button type="primary" @click="goBack">返回</el-button>
     </div>
   </div>
 </template>
@@ -23,106 +32,103 @@
 export default {
   data() {
     return {
-      dataType: "原始数据",
-      textarea2: "",
-      date: [],
-      startDate: "",
-      endDate: "",
       year: "",
       count: 1,
       month: "",
       day: "",
-      nowDate: "",
-      isCanClick: false,
-
-      logId: this.$route.query.logId,
+      srcUrl: "",
+      logList: [],
+      template: "",
+      showBtn: true,
       tempId: this.$route.query.tempId,
       orgId: this.$route.query.orgId,
       logDate: this.$route.query.createDate,
+      orgTemplateId: this.$route.query.orgTemplateId,
+      logId: this.$route.query.logId,
+      projectId: this.$route.query.selectProject,
+
+      countDate: "",
+      memberId: localStorage.getItem("userId"),
+
       token: this.getToken(),
-      accessToken: localStorage.getItem("accessToken"),
-      detailUrl: ""
+      accessToken: localStorage.getItem("accessToken")
     };
   },
   methods: {
-    UpdateDataType() {
-      if (this.dataType === "终版数据") {
-        this.dataType = "原始数据";
-        this.detailUrl =
-          this.baseURL() +
-          "/jianzhumobile/mobile/supervision/supervisionInfo.do?" +
-          "accessToken=" +
-          this.accessToken +
-          "&token=" +
-          this.token +
-          "&orgId=" +
-          this.orgId +
-          "&initData=" +
-          2 +
-          "&logId=" +
-          this.logId +
-          "&tempId=" +
-          this.tempId +
-          "&createDate=" +
-          this.logDate;
+    //获取当前点击的时间的数据
+    getHistoryList() {
+      this.$api
+        .historyList({
+          orgId: this.orgId,
+          logDate: this.logDate
+        })
+        .then(res => {
+          console.log(res);
+        });
+    },
+    // 获取前一天
+    getBeforeDate() {
+      let date = new Date(this.logDate);
+      date.setDate(date.getDate() - 1);
+      this.month = date.getMonth() + 1;
+      this.day = date.getDate();
+      this.year = date.getFullYear();
+      this.countDate = date.getFullYear() + "-" + this.month + "-" + this.day;
+      // 使用yyyy/m/d 浏览器兼容
+      this.logDate = date.getFullYear() + "/" + this.month + "/" + this.day;
+      // 重新获取HTML页面
+      if (this.showBtn) {
+        this.getLogHtml(0, this.countDate);
       } else {
-        this.dataType = "终版数据";
-        this.detailUrl =
-          this.baseURL() +
-          "/jianzhumobile/mobile/supervision/supervisionInfo.do?" +
-          "accessToken=" +
-          this.accessToken +
-          "&token=" +
-          this.token +
-          "&orgId=" +
-          this.orgId +
-          "&initData=" +
-          1 +
-          "&logId=" +
-          this.logId +
-          "&tempId=" +
-          this.tempId +
-          "&createDate=" +
-          this.logDate;
+        this.getLogHtml(1, this.countDate);
       }
     },
-
-    // 获取前一天数据
-    getPreList() {
-      this.isCanClick = false;
-      let big = [1, 3, 5, 7, 8, 10, 12];
-      this.day = this.day - this.count;
-      // 判断大小月
-      if (this.day < 1) {
-        this.month--;
-        for (let i = 0; i < big.length; i++) {
-          if (this.month === big[i]) {
-            this.day = 31;
-            break;
-          } else {
-            this.day = 30;
-          }
-        }
-        // 判断平年闰年
-        if (this.month === 2) {
-          if (
-            (this.year % 4 == 0 && this.year % 100 !== 0) ||
-            this.year % 400 == 0
-          ) {
-            this.day = 29;
-          } else {
-            this.day = 28;
-          }
-        }
-        // 年份减一
-        if (this.month <= 0) {
-          this.year = this.year - 1;
-          this.month = 12;
-          this.day = 31;
-        }
+    // 获取后一天
+    getAfterDate() {
+      let date = new Date(this.logDate);
+      let today = new Date();
+      today.setDate(today.getDate() - 1);
+      if (date >= new Date(today.toLocaleDateString())) {
+        this.$message.warning("不可以往后查看了");
+        return;
       }
-      this.logDate = this.year + "-" + this.month + "-" + this.day;
-      this.detailUrl =
+      date.setDate(date.getDate() + 1);
+      this.month = date.getMonth() + 1;
+      this.day = date.getDate();
+      this.year = date.getFullYear();
+      this.countDate = date.getFullYear() + "-" + this.month + "-" + this.day;
+      this.logDate = date.getFullYear() + "/" + this.month + "/" + this.day;
+      // 重新获取HTML页面
+      if (this.showBtn) {
+        this.getLogHtml(0, this.countDate);
+      } else {
+        this.getLogHtml(1, this.countDate);
+      }
+    },
+    getAddTempList() {
+      this.$api
+        .getAddTempListData({
+          orgId: this.orgId
+        })
+        .then(res => {
+          if (res.errorCode == "1") {
+            console.log(res);
+            this.logList = res.data;
+          }
+        });
+    },
+    // 改变select选择框
+    changeTemplate(value) {
+      this.templateId = value;
+      if (this.showBtn) {
+        this.getLogHtml(0, this.countDate);
+      } else {
+        this.getLogHtml(1, this.countDate);
+      }
+    },
+    // 获取日志的html页面
+    getLogHtml(initData, date) {
+      this.srcUrl =
         this.baseURL() +
         "/jianzhumobile/mobile/supervision/supervisionInfo.do?" +
         "accessToken=" +
@@ -132,110 +138,35 @@ export default {
         "&orgId=" +
         this.orgId +
         "&initData=" +
-        1 +
+        initData +
         "&logId=" +
         this.logId +
         "&tempId=" +
         this.tempId +
         "&createDate=" +
-        this.logDate;
+        date;
     },
-
-    getNextList() {
-      var date = new Date();
-      var nowDay = date.getDate();
-      let big = [1, 3, 5, 7, 8, 10, 12];
-
-      if (this.day + this.count >= nowDay) {
-        this.isCanClick = true;
-        return false;
-      }
-      this.day = this.day + this.count;
-
-      // 判断大小月
-      if (this.day < 1) {
-        this.month--;
-        for (let i = 0; i < big.length; i++) {
-          if (this.month === big[i]) {
-            this.day = 31;
-            break;
-          } else {
-            this.day = 30;
-          }
+    goBack() {
+      this.$router.push({
+        path: "/supervisorLog/homeRecord",
+        query: {
+          tempId: this.tempId,
+          orgId: this.orgId,
+          orgTemplateId: this.orgTemplateId,
+          logId: this.logId,
+          projectId: this.projectId
         }
-        // 判断平年闰年
-        if (this.month === 2) {
-          if (
-            (this.year % 4 == 0 && this.year % 100 !== 0) ||
-            this.year % 400 == 0
-          ) {
-            this.day = 29;
-          } else {
-            this.day = 28;
-          }
-        }
-        // 年份减一
-        if (this.month <= 0) {
-          this.year = this.year - 1;
-          this.month = 12;
-          this.day = 31;
-        }
-      }
-      this.logDate = this.year + "-" + this.month + "-" + this.day;
-
-      this.detailUrl =
-        this.baseURL() +
-        "/jianzhumobile/mobile/supervision/supervisionInfo.do?" +
-        "accessToken=" +
-        this.accessToken +
-        "&token=" +
-        this.token +
-        "&orgId=" +
-        this.orgId +
-        "&initData=" +
-        1 +
-        "&logId=" +
-        this.logId +
-        "&tempId=" +
-        this.tempId +
-        "&createDate=" +
-        this.logDate;
-    },
-
-    //关闭监理日志历史记录界面
-    close() {
-      //this.$router.go(-1);
-      this.$router.replace({
-        path: "/supervisorLog/homeRecord"
       });
     }
   },
   created() {
-    this.logDate = this.logDate.replace(/\//g, "-");
-    let date = this.logDate;
-    date = date.split("-");
-    this.date = date;
-    this.year = Number(this.date[0]);
-    this.month = Number(this.date[1]);
-    this.day = Number(this.date[2]);
-
-    this.detailUrl =
-      this.baseURL() +
-      "/jianzhumobile/mobile/supervision/supervisionInfo.do?" +
-      "accessToken=" +
-      this.accessToken +
-      "&token=" +
-      this.token +
-      "&orgId=" +
-      this.orgId +
-      "&initData=" +
-      1 +
-      "&logId=" +
-      this.logId +
-      "&tempId=" +
-      this.tempId +
-      "&createDate=" +
-      this.logDate;
+    this.countDate = this.logDate.replace(/\//g, "-");
+    let date = new Date(this.logDate);
+    this.month = date.getMonth() + 1;
+    this.day = date.getDate();
+    this.year = date.getFullYear();
+    this.getLogHtml("0", this.countDate);
+    this.getAddTempList();
   }
 };
 </script>
@@ -263,9 +194,8 @@ export default {
     text-align: center;
     margin-top: 20px;
   }
-  .detail-select /deep/.el-input__icon{
+  .detail-select /deep/.el-input__icon {
     line-height: 32px;
   }
 }
 </style>
-

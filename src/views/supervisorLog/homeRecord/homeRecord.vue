@@ -1,30 +1,27 @@
 <template>
-  <div class="homeRecord"  >
-    <div class="container"  v-loading="loading">
-      <div class="select" >
+  <div class="homeRecord">
+    <div class="container" v-loading="loading">
+      <div class="select">
         <el-form size="mini">
           <el-row :gutter="24">
             <el-col :span="8">
               <el-form-item label="项目名称" label-width="90px">
                 <el-select v-model="selectProject" placeholder="请选择项目" @change="handleProjectChange">
-                  <el-option v-for="item in projectList" :key="item.projectId" :label="item.proName" :value="item.projectId">
-                  </el-option>
+                  <el-option v-for="item in projectList" :key="item.projectId" :label="item.proName" :value="item.projectId"></el-option>
                 </el-select>
               </el-form-item>
             </el-col>
             <el-col :span="8">
               <el-form-item label="组织名称" label-width="90px">
                 <el-select v-model="selectOrg" placeholder="请选择组织" @change="handleOrgChange">
-                  <el-option v-for="item in organizationList" :key="item.projectOrgId" :label="item.orgName" :value="item.projectOrgId">
-                  </el-option>
+                  <el-option v-for="item in organizationList" :key="item.projectOrgId" :label="item.orgName" :value="item.projectOrgId"></el-option>
                 </el-select>
               </el-form-item>
             </el-col>
             <el-col :span="8">
               <el-form-item label="日志名称" label-width="90px">
                 <el-select v-model="selectLog" placeholder="请选择日志" @change="handleLogChange">
-                  <el-option v-for="item in logList" :key="item.id" :label="item.extendName" :value="item.id">
-                  </el-option>
+                  <el-option v-for="item in logList" :key="item.id" :label="item.extendName" :value="item.id"></el-option>
                 </el-select>
               </el-form-item>
             </el-col>
@@ -33,7 +30,7 @@
       </div>
 
       <div class="calinder">
-        <vue-event-calendar :events="logHistoryList" @day-changed="dayChange"  @month-changed="handleMonthChanged"></vue-event-calendar>
+        <vue-event-calendar :events="logHistoryList" @day-changed="dayChange" @month-changed="handleMonthChanged"></vue-event-calendar>
         <div class="btn">
           <el-button type="primary" @click="handleExportFile" class="rzbtn">导出日志</el-button>
           <el-button type="primary" @click="handleSetting()" v-if="buttonShow" class="setion">设置</el-button>
@@ -76,8 +73,7 @@
           </div>
           <div class="project">
             <el-select v-model="templateSelect" placeholder="请选择监理日志模板">
-              <el-option v-for="item in templateList" :key="item.tempId" :label="item.name" :value="item">
-              </el-option>
+              <el-option v-for="item in templateList" :key="item.tempId" :label="item.name" :value="item"></el-option>
             </el-select>
           </div>
           <div class="project">
@@ -96,10 +92,10 @@
             <span style="width: 150px;">工程名称：</span>
             <el-input placeholder="请输入工程名称" v-model="currentProjectName"></el-input>
           </div>
-          <hr />
+          <hr>
           <div class="project">
             <span>组织负责人审阅日志时间：</span>
-            <el-input style="width: 80px;" placeholder="" v-model="currentProjectTime"></el-input>
+            <el-input style="width: 80px;" placeholder v-model="currentProjectTime"></el-input>
             <span>-</span>
             <el-input style="width: 80px;" placeholder="24" :disabled="true"></el-input>
           </div>
@@ -109,7 +105,7 @@
           <div class="project">
             <span></span>
           </div>
-          <hr />
+          <hr>
 
           <div v-if="isRealChargeMan">
             <span>查阅权限</span>
@@ -156,22 +152,19 @@
       <!-- 导出dialog -->
       <el-dialog title="导出" :visible.sync="dialogExportFormVisible" center>
         <el-form :model="form">
-
           <el-form-item label="日志名称" :label-width="formLabelWidth">
             <el-select v-model="form.selectLog" placeholder="请选择日志">
-              <el-option v-for="item in logList" :key="item.id" :label="item.extendName" :value="item.index">
-              </el-option>
+              <el-option v-for="item in logList" :key="item.id" :label="item.extendName" :value="item.index"></el-option>
             </el-select>
           </el-form-item>
 
           <el-form-item label="起始日期" :label-width="formLabelWidth">
-            <el-date-picker type="date" placeholder="开始日期" v-model="form.beginTime" value-format="yyyy-MM-dd"  :picker-options="pickerOptions">
-            </el-date-picker>
-
+            <el-date-picker type="date" placeholder="开始日期" v-model="form.beginTime" value-format="yyyy-MM-dd"
+              :picker-options="pickerOptions"></el-date-picker>
           </el-form-item>
           <el-form-item label="终止日期" :label-width="formLabelWidth">
-            <el-date-picker type="date" range-separator="至" placeholder="结束日期" v-model="form.endTime" value-format="yyyy-MM-dd"  :picker-options="pickerOptions">
-            </el-date-picker>
+            <el-date-picker type="date" range-separator="至" placeholder="结束日期" v-model="form.endTime" value-format="yyyy-MM-dd"
+              :picker-options="pickerOptions"></el-date-picker>
           </el-form-item>
         </el-form>
         <span slot="footer" class="dialog-footer">
@@ -414,7 +407,8 @@ export default {
             orgId: this.selectOrg,
             createDate: day.date,
             logId: this.currentLogId,
-            tempId: this.currentTempId
+            tempId: this.currentTempId,
+            projectId: this.selectProject
           }
         });
       }
@@ -490,8 +484,12 @@ export default {
           };
           this.logList.push(listData);
           this.selectLog = this.logList[0].extendName;
-          this.currentLogId = this.logList[0].id;
-          this.currentTempId = this.logList[0].tempId;
+
+          //this.currentLogId = this.logList[0].id;
+          this.currentLogId = JSON.stringify(this.$route.query) !== '{}' ? this.$route.query.logId : (this.logList[0].id || '');
+          //this.currentTempId = this.logList[0].tempId;
+          this.currentTempId = JSON.stringify(this.$route.query) !== '{}' ? this.$route.query.currentTempId : (this.logList[0].tempId || '');         
+          this.getSupervisionHistoryList();
         }
       });
     },
@@ -603,7 +601,14 @@ export default {
         });
 
         if (this.projectList.length > 1) {
-          this.selectProject = this.projectList[0].projectId;
+
+          
+            // orgId: this.selectOrg,
+            // projectId: this.selectProject
+
+            console.log("this.$route.query.projectId" + this.$route.query.projectId);
+
+          this.selectProject = JSON.stringify(this.$route.query) !== '{}' ? this.$route.query.projectId : (this.projectList[0].projectId || '')
           this.getMyOrg();
         } else {
           this.selectProject = "";
@@ -638,17 +643,14 @@ export default {
         if (res.errorCode !== "1") return false;
         this.organizationList = res.data;
         if (this.organizationList.length > 0) {
-          this.selectOrg = this.organizationList[0].projectOrgId;
+          this.selectOrg = JSON.stringify(this.$route.query) !== '{}' ? this.$route.query.orgId : (this.projectList[0].projectOrgId || '');
           this.getAddTempList();
         }
       });
     },
 
     handleMonthChanged(month) {
-     
-      console.log("month "+ month.replace(/年/g, '-').replace(/月/g, ''));
-      this.YYYY_MM = month.replace(/年/g, '-').replace(/月/g, '');
-      console.log("this.YYYY_MM "+ this.YYYY_MM);
+      this.YYYY_MM = month.replace(/年/g, "-").replace(/月/g, "");
       this.getSupervisionHistoryList();
     },
 
@@ -657,6 +659,8 @@ export default {
         var myDate = new Date();
         this.YYYY_MM = myDate.getFullYear() + "-" + (myDate.getMonth() + 1);
       }
+      if(this.currentLogId.length == 0)
+      return
 
       this.logHistoryList = [];
       let params = {
@@ -823,20 +827,20 @@ export default {
     .calinder {
       height: 85%;
       position: relative;
-      .date-btn{
+      .date-btn {
         position: absolute;
         width: 100%;
         height: 35px;
         top: 30px;
         z-index: 999;
-        .botton{
+        .botton {
           position: absolute;
           width: 20px;
           height: 30px;
           background: #fff;
           top: 5px;
           cursor: pointer;
-          &:before{
+          &:before {
             content: "";
             position: absolute;
             left: 6px;
@@ -847,10 +851,10 @@ export default {
             border-right: 1px solid currentColor;
           }
         }
-        .left:before{
+        .left:before {
           transform: rotate(-135deg);
         }
-        .right:before{
+        .right:before {
           left: 2px;
           transform: rotate(45deg);
         }
@@ -881,7 +885,7 @@ export default {
   .el-date-editor.el-input {
     width: 250px;
   }
-  .listForm{
+  .listForm {
     .el-form-item {
       margin-bottom: 0px;
     }

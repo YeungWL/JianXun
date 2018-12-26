@@ -240,3 +240,21 @@ export function setOrgGrant(data) {
 export function getManageOrgList(data) {
   return service.post(ORGS_API + '/getOrgsList.do', qs.stringify(data))
 }
+/*
+  获取下载Excel模板的地址
+*/
+export function getDownloadUrl(data) {
+  return service.post(ORGS_API + '/org/getStorageTemp.do', qs.stringify(data))
+}
+/*
+  导入人员Excel文件数据
+*/
+export function uploadExcel(data) {
+  return service.post(ORGS_API + '/org/storageUpload.do', qs.stringify(data))
+}
+/*
+  下载失败数据
+*/
+export function getDownloadError(data) {
+  return service.post(ORGS_API + '/org/storageDownload.do', qs.stringify(data))
+}

@@ -130,22 +130,50 @@
           <el-button type="primary" @click="addPerson">添加</el-button>
         </div>
         <div slot="footer" class="dialog-footer">
-          <el-button>Excel导入</el-button>
+          <el-button @click="uploadDialog = true">Excel导入</el-button>
           <el-button type="primary" @click="dialogTableVisible = false">确 定</el-button>
         </div>
       </el-dialog>
     </div>
+
+    <!-- 导入Excel文件 -->
+    <el-dialog title="批量新增" :visible.sync="uploadDialog" class="my-dialog batchAddWorkerDialog">
+      <div class="dialog-content">
+        <p>文件大小不超过10M.</p>
+        <el-input disabled v-model="fileName"></el-input>
+        <input type="file" name="file" ref="file" @change="handleFileChange" style="display:none">
+        <el-button size="small" type="primary" @click="uploadExcel">浏览</el-button>
+        <a :href="downloadUrl" target="_blank" style="text-decoration: underline;">下载Excel模板</a>
+      </div>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="handleImport">导入</el-button>
+      </div>
+    </el-dialog>
+
+    <!-- 导入情况 -->
+    <el-dialog title="导入情况" :visible.sync="importInfoDialog" class="my-dialog batchAddWorkerDialog" center width="360px">
+      <div class="dialog-content">
+        <div>
+          <span> 成功 : </span>
+          <span style="color:#2AB452;">{{importData.succCount}}条</span>
+        </div>
+        <div>
+          <span> 失败 : </span>
+          <span style="color:#FF0000;">{{importData.errorCount}}条 </span>
+        </div>
+        <a v-if="importData.errorCount > 0 " style="text-decoration:underline;" @click="getDownloadError(importData.errorKey)">点击下载失败原因</a>
+      </div>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="importInfoDialog=false, service()">完 成</el-button>
+        <el-button type="primary" @click="importInfoDialog=false;uploadDialog=true">返 回</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
 <script>
+import axios from 'axios'
 export default {
-  filters: {
-    filterCommonList(list) {
-      console.log(123)
-      return list
-    }
-  },
   data() {
     return {
       createForm: {
@@ -158,7 +186,6 @@ export default {
       nickName: '',
       phone: '',
       radio: '',
-      radio1: [],
       radioDisabled: true,
       selectDisabled: true,
       role: '',
@@ -191,7 +218,12 @@ export default {
       vocation: [
         { label: '组织负责人', value: '' }
       ],
-      userOrgRole: '' // 判断是否是否拥有权限删除的
+      userOrgRole: '', // 判断是否是否拥有权限删除的
+      downloadUrl: '', // 下载模板url
+      uploadDialog: false, // 导入dialog
+      fileName: '', // 文件名称
+      importInfoDialog: false, // 导入详情dialog
+      importData: {} // 导入返回信息
     }
   },
   methods: {
@@ -314,7 +346,7 @@ export default {
             }
           }
           this.userOrgRole = res.data[0].userOrgRole
-          console.log(this.userOrgRole)
+          // console.log(this.userOrgRole)
         }
       })
     },
@@ -434,7 +466,7 @@ export default {
     },
     //选择人员
     personSelect(val) {
-      console.log(val)
+      // console.log(val)
       // 组织负责人
       // if (this.role.departmentId.length === 1) {
       //   console.log(123)
@@ -500,7 +532,7 @@ export default {
     // 点击确定添加
     addConirm() {
       // console.log(this.comList)
-      console.log(this.createForm)
+      // console.log(this.createForm)
       if(this.createForm.vocation.departmentId === '0') {
         // 组织管理员
         // 判断是否是单选还是多选
@@ -521,7 +553,7 @@ export default {
         })
         this.memberData.departmentId = ''
         this.memberData.orgLeaderedId = this.orgId
-        console.log('组织负责人',this.memberData)
+        // console.log('组织负责人',this.memberData)
       }else {
         // 部门添加人员
         // 判断是否是单选还是多选
@@ -539,7 +571,7 @@ export default {
         })
         this.memberData.departmentId = this.createForm.vocation.departmentId
         this.memberData.orgLeaderedId = ''
-        console.log('部门添加人员',this.memberData)
+        // console.log('部门添加人员',this.memberData)
       }
       let params = {
         memberJson: JSON.stringify(this.memberData),
@@ -559,9 +591,7 @@ export default {
         for (let i = 0; i < this.memberList.length; i++) {
           for (let j = 0; j < this.comList.length; j++) {
             if (this.comList[j] === this.memberList[i].nickName) {
-              console.log('进来了吗')
               this.memberList.splice(i, 1)
-              console.log(this.memberList)
             }
           }
         }
@@ -585,6 +615,7 @@ export default {
         return false
       }
       this.addMember(1)
+      this.downloadExcel()
       this.dialogTableVisible = true
     },
     // 添加预存成员
@@ -647,11 +678,116 @@ export default {
             message: '删除成功',
             type: 'success'
           })
-          this.addMember()
+          this.addMember(1)
         })
       }).catch(_ => {
         this.$message('已取消删除')
       })
+    },
+    // 获取下载Excel模板
+    downloadExcel() {
+      this.$api.getDownloadUrl({
+        orgId: this.orgId
+      }).then(res => {
+        if (res.errorCode === '1') {
+          this.downloadUrl = res.data[0].tempPath
+        } else {
+          this.$message.error('获取下载模板地址失败')
+        }
+      })
+    },
+    // 导入预存人员Excel文件
+    uploadExcel() {
+      this.$refs.file.value = ""
+      this.$refs.file.click()
+    },
+    handleFileChange(e) {
+      let file = e.target.files[0]
+      this.fileName = file.name
+      this.file = file
+    },
+    handleImport() {
+      if(this.fileName === '') {
+        this.$message.warning("请先选取需要导入的文件")
+        return
+      }
+      if (this.file.size < 10485760) {
+        let formData = new FormData()
+        formData.append('accessToken', localStorage.getItem('accessToken'))
+        formData.append('token', this.getToken())
+        formData.append('orgId', this.orgId)
+        formData.append('file', this.file)
+        axios({
+          url: this.baseURL() + '/jianzhumobile/mobile/org/storageUpload.do',
+          method: 'post',
+          data: formData,
+          headers: {
+            "Content-Type": "multipart/form-data"
+          }
+        }).then(res => {
+          if(res.data.errorCode === "1") {
+            this.importInfoDialog = true
+            this.uploadDialog = false
+            this.importData = res.data.data[0]
+            this.fileName = ''
+          }
+        }).catch(err => {
+          console.log(err)
+        })
+      } else {
+        this.$message.warning('上传文件不能超过10M')
+      }
+    },
+    getDownloadError(errorKey) {
+      let strUrl = `${
+                      this.baseURL()
+                    }/jianzhumobile/mobile/eduWorker/workerDownload.do?accessToken=${
+                      localStorage.getItem("accessToken")
+                    }&token=${
+                      this.getToken()
+                    }&errorKey=${
+                      errorKey
+                    }`
+
+      let xhr = new XMLHttpRequest()
+      let fileName = "添加结果.xls" // 文件名称
+      xhr.open("post", strUrl, true)
+      xhr.responseType = "arraybuffer"
+
+      xhr.onload = function() {
+        if (this.status === 200) {
+          let type = xhr.getResponseHeader("Content-Type")
+
+          let blob = new Blob([this.response], { type: type })
+          if (typeof window.navigator.msSaveBlob !== "undefined") {
+            /*
+             * IE workaround for "HTML7007: One or more blob URLs were revoked by closing
+             * the blob for which they were created. These URLs will no longer resolve as
+             * the data backing the URL has been freed."
+             */
+            window.navigator.msSaveBlob(blob, fileName)
+          } else {
+            let URL = window.URL || window.webkitURL
+            let objectUrl = URL.createObjectURL(blob)
+            if (fileName) {
+              var a = document.createElement("a")
+              // safari doesn't support this yet
+              if (typeof a.download === "undefined") {
+                window.location = objectUrl
+              } else {
+                a.href = objectUrl
+                a.download = fileName
+                document.body.appendChild(a)
+                a.click()
+                a.remove()
+              }
+            } else {
+              window.location = objectUrl
+            }
+          }
+        }
+      }
+      xhr.send()
     }
   },
   created() {

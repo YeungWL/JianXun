@@ -29,6 +29,8 @@
         </el-table-column> -->
         <el-table-column prop="orgName" label="组织名称" min-width="150">
         </el-table-column>
+        <el-table-column prop="orgShort" label="组织简称" min-width="150">
+        </el-table-column>
         <el-table-column prop="creatorName" label="组织创建人" min-width="150">
         </el-table-column>
         <el-table-column prop="createTime" label="创建时间" min-width="150">
