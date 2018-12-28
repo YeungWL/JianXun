@@ -134,7 +134,8 @@ export default {
       }
       this.$api.getBuildLogProgressList(params).then(res => {
         if (res.resultMsg !== '查询成功') return false
-        this.progress = res.data
+        // this.progress = res.data
+        this.buildContent = res.data
       })
     },
     // 获取层段位置
