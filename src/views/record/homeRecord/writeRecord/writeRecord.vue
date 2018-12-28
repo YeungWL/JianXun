@@ -15,7 +15,11 @@
             </el-select>
           </el-form-item>
           <el-form-item label="栋/段" style="margin-bottom:0;">
-            <el-input v-model="contentItem.layerNo" placeholder="栋/段" style="width:100px;"></el-input>
+            <!-- <el-input v-model="contentItem.layerNo" placeholder="栋/段" style="width:100px;"></el-input> -->
+            <el-select v-model="contentItem.layerNo" placeholder="栋/段" style="width:100px">
+              <el-option v-for="item in projectList" :key="item.itemId" :label="item.itemName" :value="item.itemName">
+              </el-option>
+            </el-select>
           </el-form-item>
           <el-form-item label="层" style="margin-bottom:0;" label-width="50px">
             <el-input v-model="contentItem.layerName" placeholder="层" style="width:100px;"></el-input>
@@ -54,6 +58,8 @@
 </template>
 
 <script>
+const RES_OK = '1'
+
 export default {
   data() {
     return {
@@ -61,7 +67,8 @@ export default {
       date: this.$route.query.date,
       orgTemplateId: this.$route.query.orgTemplateId,
       templateId: this.$route.query.templateId,
-      attrData: [],
+      layerData: {}, // 栋和层
+      attrData: [], // 主要记事
       projectList: [],
       group: [],
       progress: [],
@@ -98,14 +105,13 @@ export default {
         }
       })
     },
-    //获取用户关联的工程
+    // 获取组织分项工程
     getProjectList() {
       this.$api.getBuildLogItemList({
         projectOrgId: this.orgId,
         orgTemplateId: this.orgTemplateId
       }).then(res => {
-        // console.log(res)
-        if(res.errorCode == '1'){
+        if(res.errorCode === RES_OK){
           this.projectList = res.data
         }
       })
@@ -117,7 +123,7 @@ export default {
         orgTemplateId: this.orgTemplateId
       }
       this.$api.getBuildLogGroupList(params).then(res => {
-        if(res.errorCode == '1') {
+        if(res.errorCode == RES_OK) {
           this.group = res.data
         }else {
           this.$message.warning('网络延迟')
@@ -133,9 +139,10 @@ export default {
         orgTemplateId: this.orgTemplateId
       }
       this.$api.getBuildLogProgressList(params).then(res => {
-        if (res.resultMsg !== '查询成功') return false
-        // this.progress = res.data
-        this.buildContent = res.data
+        if (res.errorCode === RES_OK) {
+          // this.progress = res.data
+          this.buildContent = res.data
+        }
       })
     },
     // 获取层段位置
@@ -144,7 +151,9 @@ export default {
         projectOrgId: this.orgId
       }
       this.$api.getBuildLogLayer(params).then(res => {
-        // console.log(res)
+        if (res.errorCode === RES_OK) {
+          this.layerData = res.data[0]
+        }
       })
     },
     // 增加施工内容
@@ -174,8 +183,7 @@ export default {
         buildContent: JSON.stringify(this.buildContent),
         mainBuildAttr: JSON.stringify(this.attrData)
       }).then(res => {
-        console.log(res)
-        if(res.errorCode == '1') {
+        if(res.errorCode == RES_OK) {
           this.$message.success('提交成功')
           this.$router.push({
             path: '/record',
