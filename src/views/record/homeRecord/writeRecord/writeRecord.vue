@@ -167,14 +167,14 @@ export default {
     },
     // 创建日志
     buildLog() {
-      // this.$api.buildLog({
-      //   orgId: this.orgId,
-      //   orgTemplateId: this.orgTemplateId,
-      //   buildContent: JSON.stringify(this.buildContent),
-      //   mainBuildAttr: JSON.stringify(this.attrData)
-      // }).then(res => {
-      //   console.log(res)
-      //   if(res.errorCode == '1') {
+      this.$api.buildLog({
+        orgId: this.orgId,
+        orgTemplateId: this.orgTemplateId,
+        buildContent: JSON.stringify(this.buildContent),
+        mainBuildAttr: JSON.stringify(this.attrData)
+      }).then(res => {
+        console.log(res)
+        if(res.errorCode == '1') {
           this.$message.success('提交成功')
           this.$router.push({
             path: '/record',
@@ -185,8 +185,8 @@ export default {
               projectId: this.$route.query.projectId
             }
           })
-      //   }
-      // })
+        }
+      })
     }
   },
   created() {
