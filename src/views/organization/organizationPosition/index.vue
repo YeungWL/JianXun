@@ -8,11 +8,12 @@
       <span class="director">
         <span>组织负责人 : </span>
         <span v-if="!managePerson.length">空缺</span>
-        <span style="margin-right:10px" 
-              v-for="(item, index) in managePerson" 
+        <span class="role-item"
+              v-for="(item, index) in managePerson"
+              :class="{'activeRed':item.headRole === '0','activeYellow':item.headRole === '1','activeBlue':item.headRole === '2','activeGreen':item.headRole === '3'}"
               :key="index"
               v-else-if="userOrgRole !== '0'">{{item.memberName}}</span>
-        <el-tag style="margin:0 10px 10px 0" 
+        <el-tag style="margin-right: 10px;" 
                 v-show="userOrgRole === '0'"
                 v-for="(item, index) in managePerson"
                 :key="index"
@@ -711,37 +712,45 @@ export default {
         this.$message.warning("请先选取需要导入的文件")
         return
       }
-      if (this.file.size < 10485760) {
-        let formData = new FormData()
-        formData.append('accessToken', localStorage.getItem('accessToken'))
-        formData.append('token', this.getToken())
-        formData.append('orgId', this.orgId)
-        formData.append('file', this.file)
-        axios({
-          url: this.baseURL() + '/jianzhumobile/mobile/org/storageUpload.do',
-          method: 'post',
-          data: formData,
-          headers: {
-            "Content-Type": "multipart/form-data"
-          }
-        }).then(res => {
-          if(res.data.errorCode === "1") {
-            this.importInfoDialog = true
-            this.uploadDialog = false
-            this.importData = res.data.data[0]
-            this.fileName = ''
-          }
-        }).catch(err => {
-          console.log(err)
-        })
-      } else {
-        this.$message.warning('上传文件不能超过10M')
-      }
+      this.$confirm('确定要导入吗?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(_ => {
+        if (this.file.size < 10485760) {
+          let formData = new FormData()
+          formData.append('accessToken', localStorage.getItem('accessToken'))
+          formData.append('token', this.getToken())
+          formData.append('orgId', this.orgId)
+          formData.append('file', this.file)
+          axios({
+            url: this.baseURL() + '/jianzhumobile/mobile/org/storageUpload.do',
+            method: 'post',
+            data: formData,
+            headers: {
+              "Content-Type": "multipart/form-data"
+            }
+          }).then(res => {
+            if(res.data.errorCode === "1") {
+              this.importInfoDialog = true
+              this.uploadDialog = false
+              this.importData = res.data.data[0]
+              this.fileName = ''
+            }
+          }).catch(err => {
+            console.log(err)
+          })
+        } else {
+          this.$message.warning('上传文件不能超过10M')
+        }
+      }).catch(_ => {
+        this.$message('已取消导入')
+      })
     },
     getDownloadError(errorKey) {
       let strUrl = `${
                       this.baseURL()
-                    }/jianzhumobile/mobile/eduWorker/workerDownload.do?accessToken=${
+                    }/jianzhumobile/mobile/org/storageDownload.do?accessToken=${
                       localStorage.getItem("accessToken")
                     }&token=${
                       this.getToken()
@@ -849,25 +858,83 @@ export default {
     color: #26a2ff;
     font-size: 14px;
   }
+  .role-item {
+    margin-right: 10px;
+    padding: 0 10px;
+    height: 32px;
+    line-height: 30px;
+    font-size: 12px;
+    border-radius: 4px;
+    box-sizing: border-box;
+    white-space: nowrap;
+  }
   .activeRed {
+    position: relative;
     color: #F56C6C;
     border: 1px solid rgba(#F56C6C,.2);
     background-color: rgba(#F56C6C,.1);
+    &::after{
+      position: absolute;
+      content: '正';
+      bottom: -9px;
+      right: -2px;
+      padding: 0 2px;
+      color: #fff;
+      background: #F56C6C;
+      line-height: 16px;
+      height: 16px;
+    }
   }
   .activeYellow {
+    position: relative;
     color: #E6A23C;
     border: 1px solid rgba(#E6A23C,.2);
     background-color: rgba(#E6A23C,.1);
+    &::after{
+      position: absolute;
+      content: '副';
+      bottom: -9px;
+      right: -2px;
+      padding: 0 2px;
+      color: #fff;
+      background: #E6A23C;
+      line-height: 16px;
+      height: 16px;
+    }
   }
   .activeBlue {
+    position: relative;
     color: #909399;
     border: 1px solid rgba(#909399,.2);
     background-color: rgba(#909399,.1);
+    &::after{
+      position: absolute;
+      content: '正';
+      bottom: -9px;
+      right: -2px;
+      padding: 0 2px;
+      color: #fff;
+      background: #909399;
+      line-height: 16px;
+      height: 16px;
+    }
   }
   .activeGreen {
+    position: relative;
     color: #67C23A;
     border: 1px solid rgba(#67C23A,.2);
     background-color: rgba(#67C23A,.1);
+    &::after{
+      position: absolute;
+      content: '副';
+      bottom: -9px;
+      right: -2px;
+      padding: 0 2px;
+      color: #fff;
+      background: #67C23A;
+      line-height: 16px;
+      height: 16px;
+    }
   }
 }
 </style>
