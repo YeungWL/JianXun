@@ -9,20 +9,24 @@
       <ul>
         <li class="content" v-for="(contentItem, index) in buildContent" :key="index">
           <el-form-item label="分项工程" style="margin-bottom:0;display:block;" >
-            <el-select v-model="contentItem.itemName" placeholder="请选择工程" style="width:630px">
-              <el-option v-for="item in projectList" :key="item.itemId" :label="item.itemName" :value="item.itemName">
+            <el-select placeholder="请选择工程" style="width:630px" v-model="contentItem.itemName" @change="changeItem" value-key="itemId">
+              <el-option v-for="(item, index) in projectList" :key="index" :label="item.itemName" :value="item.itemName">
               </el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="栋/段" style="margin-bottom:0;">
             <!-- <el-input v-model="contentItem.layerNo" placeholder="栋/段" style="width:100px;"></el-input> -->
             <el-select v-model="contentItem.layerNo" placeholder="栋/段" style="width:100px">
-              <el-option v-for="item in projectList" :key="item.itemId" :label="item.itemName" :value="item.itemName">
+              <el-option v-for="item in floorList" :key="item" :label="item" :value="item">
               </el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="层" style="margin-bottom:0;" label-width="50px">
-            <el-input v-model="contentItem.layerName" placeholder="层" style="width:100px;"></el-input>
+            <!-- <el-input v-model="contentItem.layerName" placeholder="层" style="width:100px;"></el-input> -->
+            <el-select v-model="contentItem.layerName" placeholder="层" style="width:100px">
+              <el-option v-for="item in layerList" :key="item" :label="item" :value="item">
+              </el-option>
+            </el-select>
           </el-form-item>
           <el-form-item label="班组" style="margin-bottom:0;" label-width="50px">
             <el-select v-model="contentItem.groupName" placeholder="请选择班组" style="width:120px">
@@ -67,14 +71,17 @@ export default {
       date: this.$route.query.date,
       orgTemplateId: this.$route.query.orgTemplateId,
       templateId: this.$route.query.templateId,
-      layerData: {}, // 栋和层
+      layerList: [], // 层
+      floorList: [], // 楼层
       attrData: [], // 主要记事
       projectList: [],
       group: [],
       progress: [],
       activeNames: ['1'],
+      itemData: {}, // 分项工程
       buildContent: [
         {
+          "itemId": "",
           "itemName": "",
           "groupName": "",
           "workCount": '',
@@ -88,6 +95,10 @@ export default {
     }
   },
   methods: {
+    // 分项工程
+    changeItem(item, index) {
+      console.log(item, index)
+    },
     handleChange(val) {
       console.log(val)
     },
@@ -99,8 +110,7 @@ export default {
         orgTemplateId: this.orgTemplateId
       }
       this.$api.organizationList(params).then(res => {
-        console.log(res.data)
-        if(res.errorCode == "1") {
+        if(res.errorCode === RES_OK) {
           this.attrData = res.data.buildAttrList
         }
       })
@@ -141,7 +151,15 @@ export default {
       this.$api.getBuildLogProgressList(params).then(res => {
         if (res.errorCode === RES_OK) {
           // this.progress = res.data
-          this.buildContent = res.data
+          if (res.data.length > 0) {
+            this.buildContent = res.data.map(val => {
+              return {
+                ...val,
+                progress: val.perProgress
+              }
+            })
+          }
+          // this.buildContent = res.data.length > 0? res.data : this.buildContent
         }
       })
     },
@@ -151,8 +169,19 @@ export default {
         projectOrgId: this.orgId
       }
       this.$api.getBuildLogLayer(params).then(res => {
+        console.log(res.data)
         if (res.errorCode === RES_OK) {
-          this.layerData = res.data[0]
+          let item = res.data[0]
+          if(item) {
+            for (let i = item.layerStart; i <= item.layerEnd; i++) {
+              this.layerList.push(i)
+            }
+            for (let j = item.floorStart; j <= item.floorEnd; j++) {
+              this.floorList.push(j)
+            }
+          } else {
+            this.$message.warning('没有层/段')
+          }
         }
       })
     },
@@ -166,7 +195,7 @@ export default {
         "layerNo": '',
         "floorNo": 0,
         "layerName": "",
-        "progress": "",
+        "perProgress": "",
         "orderNo": this.orderIndex
       }
       this.buildContent.push(data)
