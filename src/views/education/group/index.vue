@@ -52,21 +52,18 @@
     <el-dialog :title="isEdit?'修改班组':'添加班组'" :visible.sync="AddGroupDialogVisible"
     width="380px" center>
       <el-form class="" :inline="true" :model="createGroup" ref="createGroup">
-
-        <el-form-item label="班组名称:" prop="groupName" label-width="85px"  v-if="isEdit === false">
+        <el-form-item label="班组名称:" prop="groupName" label-width="85px" :rules="rules.grade"  v-if="isEdit === false">
           <el-input placeholder="" v-model="createGroup.groupName" clearable>
           </el-input>
         </el-form-item>
-
         <el-form-item label="班组名称:"  prop="groupName"  label-width="85px" :rules="rules.grade"  v-if="isEdit === true">
           <span>{{createGroup.groupName}}</span>
         </el-form-item>
-
-        <el-form-item label="班组长:" label-width="85px" prop="groupLeader" :rules="rules.groupLeader">
+        <el-form-item label="班组长:" label-width="85px" prop="groupLeader" >
           <el-input placeholder="" v-model="createGroup.groupLeader" clearable>
           </el-input>
         </el-form-item>
-        <el-form-item label="组长电话:" label-width="85px" prop="leaderPhone" :rules="rules.phone">
+        <el-form-item label="组长电话:" label-width="85px" prop="leaderPhone" >
           <el-input placeholder="" v-model="createGroup.leaderPhone" clearable>
           </el-input>
         </el-form-item>
@@ -106,7 +103,6 @@ export default {
   name: "groupManage",
   data() {
     return {
-
       rules: {
         phone: [
           {
@@ -182,13 +178,14 @@ export default {
     handleRelateCompany() {
       if (this.isRelate === false) {
         this.relateCompanyDialogVisible = true;
+        this.newCompanyName ="";
+        this.companyList = {};
       } else {
         this.unbindCompany();
       }
     },
 
     remoteMethod(query) {
-
       if (query !== "") {
       this.newCompanyName = query;
         setTimeout(() => {
@@ -197,11 +194,8 @@ export default {
               companyName: query
             })
             .then(res => {
-
               if (res.errorCode === "1") {
                 this.companyList = res.data;
-
-                
               } else {
                 this.$message.error(res.message);
               }
@@ -328,12 +322,9 @@ export default {
         })
         .then(res => {
           if (res.errorCode === "1") {
-            if (res.data.length > 0) {
-
-              
+            if (res.data.length > 0) {              
               this.companyName = res.data[0].companyName;
               this.companyId = res.data[0].companyId;
-              console.log("this.companyName" + this.companyName);
               if (this.companyName.length === 0) {
                 this.companyName ="无";
                 this.isRelate = false;
@@ -345,7 +336,6 @@ export default {
             }
 
           } else {
-
             this.$message.error(res.resultMsg);
           }
         });
@@ -379,8 +369,6 @@ export default {
 
     // 创建班组响应事件
     handleCreateGroup() {
-
-
       this.$refs.createGroup.validate(valid => {
         if (valid) {
       if (this.isEdit === false) {
@@ -443,9 +431,6 @@ export default {
           return false;
         }
       });
-
-
-
     },
     // 响应组织切换事件
     UpdateOrgList() {

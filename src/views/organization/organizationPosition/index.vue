@@ -402,7 +402,7 @@ export default {
         this.$message('已取消删除')
       })
     },
-    //添加成员
+    //添加成员 -- 分配到岗
     addMember(data) {
       if (this.orgId == '') {
         this.$message('请选择一个组织')
@@ -652,7 +652,7 @@ export default {
         })
         this.phone = ''
         this.nickName = ''
-        this.addMember()
+        this.addMember(1)
         // 重新获取成员列表
         // this.$api.getOrgStorageList({ orgId: this.orgId }).then(res => {
         //   if (res.errorCode !== '1') return false

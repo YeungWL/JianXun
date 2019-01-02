@@ -21,8 +21,9 @@
         <el-table-column prop="avgScore" label="合格分数" min-width="60" show-overflow-tooltip></el-table-column>
         <el-table-column prop="isDeleted" label="考卷开关" min-width="60" show-overflow-tooltip>
           <template slot-scope="scope">
-            <span v-if="scope.row.isDeleted === 'N'" class="green" @click="setExamIsDeleted(scope.row)">开</span>
-            <span v-else class="red" @click="setExamIsDeleted(scope.row)">关</span>
+            <span>
+              <el-switch v-model="scope.row.isDeleted === 'N'" active-color="#13ce66" inactive-color="#ff4949" @change="setExamIsDeleted(scope.row)"></el-switch>
+            </span>
           </template>
         </el-table-column>
         <el-table-column label="操作" min-width="100">
@@ -121,7 +122,7 @@
               <tr>
                 <th align="left" style="width:60px;">单项题:</th>
                 <th align="left" style="width:160px;">
-                  <el-input size="mini" placeholder v-model="oneKeyCreatePaper.publicQastore[0].radioQaNum"
+                  <el-input size="mini"  placeholder v-model="oneKeyCreatePaper.publicQastore[0].radioQaNum"
                     clearable></el-input>
                 </th>
               </tr>
@@ -307,6 +308,8 @@ export default {
 
   },
   methods: {
+
+
     //获取组织列表
     getOrgList() {
       this.$api.getEduOrgList().then(res => {
@@ -343,6 +346,15 @@ export default {
     },
 
     handleOneKeyCreatePaper() {
+      this.oneKeyCreatePaper.publicQastore[0].radioQaNum  =  this.oneKeyCreatePaper.publicQastore[0].radioQaNum==''?0: this.oneKeyCreatePaper.publicQastore[0].radioQaNum;
+      this.oneKeyCreatePaper.publicQastore[0].selectQaNum =  this.oneKeyCreatePaper.publicQastore[0].selectQaNum==''?0: this.oneKeyCreatePaper.publicQastore[0].selectQaNum;
+      this.oneKeyCreatePaper.publicQastore[0].judgeQaNum =  this.oneKeyCreatePaper.publicQastore[0].judgeQaNum==''?0: this.oneKeyCreatePaper.publicQastore[0].judgeQaNum;  
+
+      this.oneKeyCreatePaper.personalQastore[0].radioQaNum  =  this.oneKeyCreatePaper.personalQastore[0].radioQaNum==''?0: this.oneKeyCreatePaper.personalQastore[0].radioQaNum;
+      this.oneKeyCreatePaper.personalQastore[0].selectQaNum =  this.oneKeyCreatePaper.personalQastore[0].selectQaNum==''?0: this.oneKeyCreatePaper.personalQastore[0].selectQaNum;
+      this.oneKeyCreatePaper.personalQastore[0].judgeQaNum =  this.oneKeyCreatePaper.personalQastore[0].judgeQaNum==''?0: this.oneKeyCreatePaper.personalQastore[0].judgeQaNum;  
+
+
       this.$api
         .randomSaveExam({
           orgId: this.oneKeyCreatePaper.orgId,
@@ -461,6 +473,7 @@ export default {
         })
         .then(res => {
           if (res.errorCode === "1") {
+             this.UpdatePaperList();
           } else {
             this.$message.error(res.resultMsg);
           }

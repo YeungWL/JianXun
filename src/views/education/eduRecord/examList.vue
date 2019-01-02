@@ -91,6 +91,7 @@
       <el-pagination background layout="total, prev, pager, next" @current-change="handlePageChange"
         :current-page.sync="currentPage" :page-size="showCount" :total="total"></el-pagination>
     </div>
+
   </div>
 </template>
 
@@ -265,7 +266,8 @@
       },
 
       //处理table列表转换
-      handlePageChange() {
+      handlePageChange(val) {
+        this.listForm.currentPage = val;
         this.examRecord();
       },
 

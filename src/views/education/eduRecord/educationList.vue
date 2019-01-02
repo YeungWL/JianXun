@@ -374,7 +374,8 @@ export default {
     },
 
     //处理table列表转换
-    handlePageChange() {
+    handlePageChange(val) {
+      this.listForm.currentPage = val;
       this.courseRecord();
     },
 

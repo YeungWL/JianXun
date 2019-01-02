@@ -12,7 +12,6 @@
           <el-button type="primary" icon="el-icon-plus" @click="importBatchDialogVisible = true">批量导入</el-button>
         </div>
       </el-form>
-
       <el-form ref="form" v-model="listQuery" size="mini">
         <el-row :gutter="24">
           <el-col :span="4">
@@ -44,7 +43,6 @@
                 :picker-options="pickerOptions0" style="width: 100%;"></el-date-picker>
             </el-form-item>
           </el-col>
-
           <el-col :span="2">
             <el-form-item>
               <el-button type="primary" class="search_btn" @click="handleSearch">搜索</el-button>
@@ -56,31 +54,32 @@
 
     <div class="page-main customTable">
       <el-table ref="multipleTable" style="width: 100%" v-loading="loading" element-loading-text="拼命加载中" :data="workerList">
-        <el-table-column prop="name" label="姓名" min-width="100" show-overflow-tooltip></el-table-column>
+        <el-table-column prop="name" label="姓名" min-width="180" show-overflow-tooltip></el-table-column>
         <el-table-column prop="tel" label="手机号码" min-width="180" show-overflow-tooltip></el-table-column>
-        <el-table-column prop="groupName" label="所在班组" min-width="80" show-overflow-tooltip></el-table-column>
+        <el-table-column prop="groupName" label="所在班组" min-width="180" show-overflow-tooltip></el-table-column>
         <el-table-column prop="startTime" label="入场时间" min-width="160" show-overflow-tooltip></el-table-column>
         <el-table-column prop="endTime" label="退场时间" min-width="160" show-overflow-tooltip></el-table-column>
         <el-table-column prop="isUsed" label="开通考学" min-width="100" show-overflow-tooltip>
           <template slot-scope="scope">
-            <span v-if="scope.row.isUsed === 'Y'" class="green">开</span>
-            <span v-else class="red">关</span>
+            <span>
+              <el-switch v-model="scope.row.isUsed === 'Y'" active-color="#13ce66" inactive-color="#ff4949" @change="switchChange(scope.row)"
+                :disabled="scope.row.endTime != null"></el-switch>
+            </span>
           </template>
         </el-table-column>
         <el-table-column label="操作" min-width="120">
           <template slot-scope="scope">
-            <span class="btn" title="修改" @click="handleUpdate(scope.row)">
+            <span v-if="scope.row.endTime === null" class="btn" title="编辑" @click="handleUpdate(scope.row)">
               <i class="iconfont icon-edit iconblue"></i>
             </span>
           </template>
         </el-table-column>
       </el-table>
     </div>
-
     <!-- 分页-->
     <div class="pagination">
-      <el-pagination background layout="total, prev, pager, next" @current-change="handlePageChange"
-        :current-page.sync="currentPage" :page-size="showCount" :total="total"></el-pagination>
+      <el-pagination background layout="total, prev, pager, next" @current-change="handlePageChange" :current-page.sync="currentPage"
+        :page-size="showCount" :total="total"></el-pagination>
     </div>
 
     <!-- 弹框 添加工人-->
@@ -96,28 +95,23 @@
             </el-form-item>
             <el-form-item label="所在班组" prop="groupId" :rules="rules.grade">
               <el-select v-model="workerForm.groupId" placeholder="请选择" :disabled="dialogStatus === 'update'">
-                <el-option v-for="item in addWorkerGroupList" :disabled="dialogStatus === 'update'"
-                  :key="item.groupId" :label="item.groupName" :value="item.groupId"></el-option>
+                <el-option v-for="item in addWorkerGroupList" :disabled="dialogStatus === 'update'" :key="item.groupId"
+                  :label="item.groupName" :value="item.groupId"></el-option>
               </el-select>
             </el-form-item>
-
             <el-form-item label="入场时间" prop="startTime" :rules="rules.startTime" v-if="dialogStatus === 'create'">
-              <el-date-picker v-model="workerForm.startTime" type="datetime" format="yyyy-MM-dd HH:mm:ss"
-                value-format="yyyy-MM-dd HH:mm:ss" placeholder="选择日期" align="right" :picker-options="pickerOptions3"></el-date-picker>
+              <el-date-picker v-model="workerForm.startTime" type="datetime" format="yyyy-MM-dd HH:mm:ss" value-format="yyyy-MM-dd HH:mm:ss"
+                placeholder="选择日期" align="right" :picker-options="pickerOptions3"></el-date-picker>
             </el-form-item>
-
             <el-form-item label="入场时间" prop="startTime" :rules="rules.startTime" v-if="dialogStatus === 'update'">
               <span>{{workerForm.startTime}}</span>
             </el-form-item>
-
-            <el-form-item label="退场时间" prop="endTime" :rules="rules.startTime" v-if="dialogStatus === 'update'">
-              <el-date-picker v-model="workerForm.endTime" type="datetime" @change="workerForm.isUsed='N'"
-                format="yyyy-MM-dd HH:mm:ss" value-format="yyyy-MM-dd HH:mm:ss" placeholder="选择日期"
-                align="right" :picker-options="pickerOptions3"></el-date-picker>
+            <el-form-item label="退场时间" prop="endTime" v-if="dialogStatus === 'update'">
+              <el-date-picker v-model="workerForm.endTime" type="datetime" @change="workerForm.isUsed='N'" format="yyyy-MM-dd HH:mm:ss"
+                value-format="yyyy-MM-dd HH:mm:ss" placeholder="选择日期" align="right" :picker-options="pickerOptions3"></el-date-picker>
             </el-form-item>
-
             <el-form-item label="开通考学" prop="isUsed">
-              <el-radio v-model="workerForm.isUsed" label="Y">开</el-radio>
+              <el-radio v-model="workerForm.isUsed" label="Y" :disabled="workerForm.endTime!=''">开</el-radio>
               <el-radio v-model="workerForm.isUsed" label="N">关</el-radio>
             </el-form-item>
           </el-form>
@@ -158,12 +152,23 @@
     <el-dialog title="导入情况" :visible.sync="importBatchResDialogVisible" width="360px" size="tiny" class="my-dialog batchAddWorkerDialog"
       center>
       <div class="dialog-content">
-        <div style="margin-left: 80px;"> <span> 成功 : </span> <span style="color:#2AB452;">{{addWorkerSuccessCount}}
-            条</span></div>
-        <div style="margin-left: 80px;"> <span> 失败 : </span> <span style="color:#FF0000;">{{addWorkerFailCount}}
-            条 </span></div>
-        <div v-if="addWorkerFailCount > 0 " style="margin-left: 80px;"> <a style="font-weight: bold;text-decoration:underline "
-            name="download" @click="failDownloadReson()">点击下载失败原因</a></div>
+        <div style="margin-left: 80px;">
+          <span>成功 :</span>
+          <span style="color:#2AB452;">
+            {{addWorkerSuccessCount}}
+            条
+          </span>
+        </div>
+        <div style="margin-left: 80px;">
+          <span>失败 :</span>
+          <span style="color:#FF0000;">
+            {{addWorkerFailCount}}
+            条
+          </span>
+        </div>
+        <div v-if="addWorkerFailCount > 0 " style="margin-left: 80px;">
+          <a style="font-weight: bold;text-decoration:underline " name="download" @click="failDownloadReson()">点击下载失败原因</a>
+        </div>
       </div>
       <span slot="footer" class="dialog-footer">
         <el-button @click="importBatchResDialogVisible=false">完 成</el-button>
@@ -293,6 +298,13 @@ export default {
 
       radio: "Y",
       rules: {
+        workername: [
+          {
+            required: true,
+            trigger: "blur",
+            message: "请输入姓名！"
+          }
+        ],
         phone: [
           {
             required: true,
@@ -360,8 +372,7 @@ export default {
         createTime: "",
         creator: "",
         updateTime: null,
-        updateBy: null,
-        isDeleted: ""
+        updateBy: null
       };
 
       this.$api
@@ -370,9 +381,14 @@ export default {
         })
         .then(res => {
           if (res.errorCode === "1") {
-            this.addWorkerGroupList = res.data;
+            var j = 0;
+
             for (var i = 0; i < res.data.length; i++) {
-              this.groupList[i + 1] = res.data[i];
+              if (res.data[i].isDeleted === "N") {
+                this.addWorkerGroupList[j] = res.data[i];
+                this.groupList[j + 1] = res.data[i];
+                j++;
+              }
             }
             this.getWorkerList();
           } else {
@@ -438,6 +454,31 @@ export default {
           return false;
         }
       });
+    },
+
+    switchChange(data) {
+      this.workerForm["orgId"] = data.orgId;
+      this.workerForm["groupId"] = data.groupId;
+      this.workerForm["name"] = data.name;
+      this.workerForm["tel"] = data.tel;
+      this.workerForm["isUsed"] = data.isUsed === "Y" ? "N" : "Y";
+      this.workerForm["groupLeader"] = data.groupLeader;
+      this.workerForm["companyId"] = data.companyId;
+      this.workerForm["workerId"] = data.workerId;
+      this.workerForm["startTime"] = data.startTime;
+
+      this.$api
+        .workerUpdate(this.workerForm)
+        .then(response => {
+          if (response.errorCode === "1") {
+            this.getWorkerList();
+          } else {
+            this.$message.warning(response.resultMsg);
+          }
+        })
+        .catch(error => {
+          this.$message.error(error);
+        });
     },
 
     // 响应搜索按钮事件
