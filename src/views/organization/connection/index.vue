@@ -4,11 +4,17 @@
       <!-- 项目编码：
       <el-input v-model="listQuery.proCodeInput" placeholder="请输入项目编码" style="width:200px;margin-right:10px" clearable @clear="getProjectList"></el-input> -->
       项目名称：
-      <el-input v-model="listQuery.proNameInput" placeholder="请输入项目名称" style="width:200px" clearable @clear="getProjectList"></el-input>
+      <el-input v-model="listQuery.proName" placeholder="请输入项目名称" style="width:200px" clearable @clear="getProjectList"></el-input>
       <el-button type="primary" style="margin-left:10px" @click="getProjectList">搜索</el-button>
     </div>
     <div class="table page-main customTable">
-      <el-table ref="multipleTable" :data="tableData" tooltip-effect="dark" style="width: 100%" :stripe="true" :current-change="true" >
+      <el-table ref="multipleTable"
+                :data="tableData"
+                tooltip-effect="dark"
+                style="width: 100%"
+                :stripe="true"
+                :current-change="true"
+                class="connection-table">
         <el-table-column width="50">
           <template slot-scope="scope">
             <el-radio :label="scope.$index" v-model="tableIndex" @change.native="handleSelection(scope.row)" class="table-radio">{{''}}</el-radio>
@@ -49,8 +55,8 @@ export default {
       tableData: [],
       total: 0,
       listQuery: {
-        proCodeInput: '',
-        proNameInput: '',
+        proCode: '',
+        proName: '',
         currentPage: 1,
         showCount: 10
       },
@@ -70,7 +76,6 @@ export default {
         checkedCount > 0 && checkedCount < this.cities.length
     },
     handleSelection(value) {
-      console.log(value)
       this.tableItemId = value.projectId
     },
     getProjectList() {
@@ -100,7 +105,6 @@ export default {
       this.$api.getNotBindOrgList({
         isMyCreate: 2
       }).then(res => {
-        console.log(res.data)
         // let resData = []
         // for(let i = 0; i < res.data.length; i++) {
         //   if(res.data[i].projectId == '') {
@@ -147,10 +151,17 @@ export default {
     // this.getProjectList()
     this.getNotBindOrgList()
   }
-};
+}
 </script>
+
 <style lang="scss" scoped>
 .connection {
+  .connection-table{
+    /deep/ .el-table__header-wrapper{
+      height: 0;
+      border-top: 1px solid #ebeef5;
+    }
+  }
   .table-radio{
     /deep/ .el-radio__label{
       padding: 0;

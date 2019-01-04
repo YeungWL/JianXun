@@ -24,7 +24,6 @@ export default {
   },
   methods: {
     changeRelative(resData, orgItem, order) {
-      console.log(resData, orgItem)
       this.$confirm('确定申请退出?', '提示', {
         type: 'warning'
       }).then(_ => {
@@ -38,7 +37,6 @@ export default {
             // this.getManageProjectList()
             this.getMyOrgBindList()
           }
-          console.log(res)
         })
       }).catch(_ => {
         this.$message.warning('已经取消操作')
@@ -56,7 +54,6 @@ export default {
       this.$api.getMyOrgBindList({
         isMyCreate: '1'
       }).then(res => {
-        console.log(res)
         if(res.errorCode == '1') {
           this.orgData = res.data
         }

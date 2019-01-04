@@ -35,7 +35,6 @@ export default {
       this.$api.getApplyOrgList().then(res => {
         if (res.errorCode !== '1') return false
         this.tablelist = res.data
-        console.log(res)
       })
     },
     // 同意申请消息

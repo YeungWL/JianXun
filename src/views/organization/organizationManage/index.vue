@@ -160,19 +160,19 @@ export default {
         return
       }
       this.$api.addOrg(this.createForm).then(response => {
-        let $this = this
+        let _this = this
         if(response.errorCode === '1') {
           this.$refs.createForm.resetFields()
           this.createDialog = false
           this.getOrgsList()
           this.$notify({
             title: '成功',
-            message: '恭喜！'+response.data[0].orgName+'项目创建成功，项目编码为'+response.data[0].orgCode+'。(点击再创建项目)',
+            message: '恭喜！'+response.data[0].orgName+'组织创建成功。(点击再创建组织)',
             type: 'success',
             duration: 0,
             offset: 80,
             onClick: function() {
-              $this.createDialog = true
+              _this.createDialog = true
             }
           })
         }else {

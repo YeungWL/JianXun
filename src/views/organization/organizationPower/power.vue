@@ -12,7 +12,7 @@
     <div class="scroll-box">
       <ul class="content">
         <li class="scroll-item">
-          <div class="pro-name">项目名称: <span>{{orgData.length > 0 ? orgData[0].projectName : ''}}</span></div>
+          <div class="pro-name">项目名称: <span>{{orgData.length > 0 ? orgData[0].projectName : oneText}}</span></div>
           <el-checkbox-group v-model="selectData">
             <el-checkbox :label="item.projectOrgId" v-for="(item, index) in checkList" :key="index" style="line-height:40px;">{{item.orgName}}</el-checkbox>
           </el-checkbox-group>
@@ -32,11 +32,12 @@ export default {
       listQuery: {
         orgData: ''
       },
-      selectData: [],
+      selectData: [], // 选择的项目
       optionList: [],
-      checkList: [],
+      checkList: [], // 查询出来的项目
       orgData: [],
-      projectId: ''
+      projectId: '',
+      oneText: ''
     }
   },
   methods: {
@@ -44,7 +45,6 @@ export default {
       this.$api.getManageOrgList({
         isMyCreate: 2
       }).then(res => {
-        console.log(res)
         if(res.errorCode == '1') {
           this.optionList = res.data
         }
@@ -66,6 +66,10 @@ export default {
                 this.selectData.push(res.data[0].grantOrgList[i].projectOrgId)
               }
             }
+          } else {
+            this.selectData = []
+            this.checkList = []
+            this.oneText = '未关联项目'
           }
           
           // if(res.data.length > 0) {

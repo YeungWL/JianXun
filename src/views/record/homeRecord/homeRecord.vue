@@ -464,7 +464,7 @@ export default {
                 })
               }
             }else {
-              this.$message.warning('不可以填写日志')
+              this.$message.warning('尚未到负责人审阅时间，请稍候')
             }
           }
         })

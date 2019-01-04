@@ -13,7 +13,7 @@
         <el-table-column label="操作" min-width="120">
           <template slot-scope="scope">
             <el-button type="primary" size="mini" @click="modifyProject(scope.row)" >修改</el-button>
-            <el-button size="mini" type="danger" @click="delOrRecoverProject(scope.row)">删除</el-button>
+            <el-button type="danger" size="mini" @click="delOrRecoverProject(scope.row)">删除</el-button>
             <!-- <el-button type="success" size="mini" @click="attorn(scope.row)" :disabled="btnDisabled">转让</el-button>
             <el-button size="mini" @click="fronze">冻结</el-button> -->
           </template>
@@ -113,24 +113,24 @@ export default {
     },
     //创建项目
     buildProject() {
+      if (this.creationForm.name === '') {
+        this.$message.warning('请输入项目名称')
+        return false
+      }
       let params = {
         proName: this.creationForm.name,
         shortName: this.creationForm.forShort
       }
       this.$api.addProject(params).then(res => {
-        if (this.creationForm.name === '') {
-          this.$message('请输入项目名称')
-          return false
+        if (res.errorCode === '1') {
+          this.creationDialog = false
+          this.getProjectList()
+          this.$message.success('项目创建成功')
+          this.creationForm.name = ''
+          this.creationForm.forShort = ''
+        } else {
+          this.$message.warning(res.resultMsg)
         }
-        if (res.errorCode !== '1') {
-          this.$message('请将信息填写完整')
-          return false
-        }
-        this.creationDialog = false
-        this.getProjectList()
-        this.$message.success('项目创建成功')
-        this.creationForm.name = ''
-        this.creationForm.forShort = ''
       })
     },
     //修改项目

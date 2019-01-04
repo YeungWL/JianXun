@@ -28,3 +28,7 @@ export function getApplyOrgList(data) {
 export function doApplyOrg(data) {
   return service.post(OAUTH_API + '/pj/doApplyOrg.do', qs.stringify(data))
 }
+// 删除项目
+export function delOrRecoverProject(data) {
+  return service.post(OAUTH_API + '/pj/delOrRecoverProject.do', qs.stringify(data))
+}

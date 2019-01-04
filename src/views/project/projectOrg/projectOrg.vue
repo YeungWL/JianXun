@@ -35,7 +35,6 @@ export default {
       this.$api.getManageProjectList(params).then(res => {
         if (res.errorCode !== '1') return false
         this.connection = res.data
-        console.log(res)
       })
     },
     //解除和恢复关联
