@@ -4,8 +4,8 @@
       <!-- 项目编码：
       <el-input v-model="listQuery.proCodeInput" placeholder="请输入项目编码" style="width:200px;margin-right:10px" clearable @clear="getProjectList"></el-input> -->
       项目名称：
-      <el-input v-model="listQuery.proName" placeholder="请输入项目名称" style="width:200px" clearable @clear="getProjectList"></el-input>
-      <el-button type="primary" style="margin-left:10px" @click="getProjectList">搜索</el-button>
+      <el-input v-model="listQuery.proName" placeholder="请输入项目名称" style="width:200px" clearable @clear="tableData = []"></el-input>
+      <el-button type="primary" style="margin-left:10px" @click="getProjectList(1)">搜索</el-button>
     </div>
     <div class="table page-main customTable">
       <el-table ref="multipleTable"
@@ -78,9 +78,16 @@ export default {
     handleSelection(value) {
       this.tableItemId = value.projectId
     },
-    getProjectList() {
+    getProjectList(val) {
+      if (val === 1 && this.listQuery.proName === '') {
+        this.$message.warning('搜索不能为空')
+        return
+      }
       this.$api.getProjectList(this.listQuery).then(res => {
         if(res.errorCode == '1') {
+          if (res.data.length === 0) {
+            this.$message.warning(res.resultMsg)
+          }
           this.tableData = res.data
           this.total = res.totalRecords
         }else {
