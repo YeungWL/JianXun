@@ -171,6 +171,9 @@ export default {
             .then(res => {
               if (res.errorCode === "1") {
                 this.$message.success("成功生成考卷");
+                this.source="1";
+                this.goBack();
+               
               } else {
                 this.$message.error(res.resultMsg);
               }
@@ -266,20 +269,29 @@ export default {
 
     goBack() {
       if (this.source === "1") {
+
         this.$router.push({
         name: "examPaper",
           query: {
-            orgId: this.$route.query.orgId,
+            orgId: this.orgId,
           }
         });
       } else {
 
-        this.$router.push({
-        name: "perViewPaper",
-          query: {
-            orgId: this.$route.query.orgId,
-          }
-        });
+          this.$router.go(-1)
+          // this.$router.push({
+          //   name: "editPaper",
+          //   query: {
+          //     radioScore: this.radioScore,
+          //     selectScore: this.selectScore,
+          //     judgeScore: this.judgeScore,
+
+          //     examName: this.examName,
+          //     orgId: this.orgId,
+          //     examId: this.examId
+          //   }
+          // });
+
 
       }
     }

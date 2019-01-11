@@ -25,14 +25,20 @@
         <el-table-column prop="groupName" label="应用对象" min-width="60" show-overflow-tooltip="">
         </el-table-column>
         <el-table-column label="操作" min-width="100">
-          <template slot-scope="scope">
+          <!-- <template slot-scope="scope">
             <span v-if='scope.row.isDeleted === "N"' class="green" @click="setEduSetActIsDeleted(scope.row)">
               开
             </span>
             <span v-else class="red" @click="setEduSetActIsDeleted(scope.row)">
               关
             </span>
+          </template> -->
+          <template slot-scope="scope">
+            <span>
+              <el-switch v-model="scope.row.isDeleted === 'N'" active-color="#13ce66" inactive-color="#ff4949" @change="setEduSetActIsDeleted(scope.row)"></el-switch>
+            </span>
           </template>
+
         </el-table-column>
       </el-table>
     </div>

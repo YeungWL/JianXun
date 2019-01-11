@@ -69,7 +69,7 @@
                 <el-input style="width: 300px" v-model="searchTitle" clearable></el-input>
               </el-form-item>
               <el-form-item>
-                <el-button type="primary" icon="el-icon-search">搜索</el-button>
+                <el-button type="primary" icon="el-icon-search" @click="titleSearch">搜索</el-button>
               </el-form-item>
               <el-form-item>
                 <el-button type="primary" @click="finalPaper">生成考卷</el-button>
@@ -85,52 +85,97 @@
                 <el-tabs v-model="currentPublicTab" @tab-click="handleMainType">
                   <el-tab-pane label="单选题" name="first">
                     <div class="customTable">
-                      <el-table ref="publicRadioQuestionTable" :data="publicRadioList" style="width: 100%"
-                        @select="selectionChange" v-loading="loading" element-loading-text="拼命加载中">
+                      <el-table
+                        ref="publicRadioQuestionTable"
+                        :data="publicRadioList"
+                        style="width: 100%"
+                        @select="selectionChange"
+                        v-loading="loading"
+                        element-loading-text="拼命加载中"
+                      >
                         <el-table-column type="selection" min-width="57"></el-table-column>
-                        <el-table-column prop="title" label="题目名称" min-width="180"
-                          show-overflow-tooltip></el-table-column>
+                        <el-table-column
+                          prop="title"
+                          label="题目名称"
+                          min-width="180"
+                          show-overflow-tooltip
+                        ></el-table-column>
                       </el-table>
                     </div>
                     <!-- 分页 -->
                     <div class="pagination">
-                      <el-pagination background layout="total, prev, pager, next" @current-change="handlePageChange"
-                        :current-page.sync="publicRadioCurrentPage" :page-size="publicRadioShowCount"
-                        :total="publicRadioTotal"></el-pagination>
+                      <el-pagination
+                        background
+                        layout="total, prev, pager, next"
+                        @current-change="handlePageChange"
+                        :current-page.sync="publicRadioCurrentPage"
+                        :page-size="publicRadioShowCount"
+                        :total="publicRadioTotal"
+                      ></el-pagination>
                     </div>
                   </el-tab-pane>
 
                   <el-tab-pane label="多选题" name="second">
                     <div class="customTable">
-                      <el-table ref="publicSelectQuestionTable" :data="publicSelectList" style="width: 100%"
-                        @select="selectionChange" v-loading="loading" element-loading-text="拼命加载中">
+                      <el-table
+                        ref="publicSelectQuestionTable"
+                        :data="publicSelectList"
+                        style="width: 100%"
+                        @select="selectionChange"
+                        v-loading="loading"
+                        element-loading-text="拼命加载中"
+                      >
                         <el-table-column type="selection" min-width="57"></el-table-column>
-                        <el-table-column prop="title" label="题目名称" min-width="180"
-                          show-overflow-tooltip></el-table-column>
+                        <el-table-column
+                          prop="title"
+                          label="题目名称"
+                          min-width="180"
+                          show-overflow-tooltip
+                        ></el-table-column>
                       </el-table>
                     </div>
                     <!-- 分页 -->
                     <div class="pagination">
-                      <el-pagination background layout="total, prev, pager, next" @current-change="handlePageChange"
-                        :current-page.sync="publicSelectCurrentPage" :page-size="publicSelectShowCount"
-                        :total="publicSelectTotal"></el-pagination>
+                      <el-pagination
+                        background
+                        layout="total, prev, pager, next"
+                        @current-change="handlePageChange"
+                        :current-page.sync="publicSelectCurrentPage"
+                        :page-size="publicSelectShowCount"
+                        :total="publicSelectTotal"
+                      ></el-pagination>
                     </div>
                   </el-tab-pane>
 
                   <el-tab-pane label="判断题" name="third">
                     <div class="customTable">
-                      <el-table ref="publicJudgeQuestionTable" :data="publicJudgeList" style="width: 100%"
-                        @select="selectionChange" v-loading="loading" element-loading-text="拼命加载中">
+                      <el-table
+                        ref="publicJudgeQuestionTable"
+                        :data="publicJudgeList"
+                        style="width: 100%"
+                        @select="selectionChange"
+                        v-loading="loading"
+                        element-loading-text="拼命加载中"
+                      >
                         <el-table-column type="selection" min-width="57"></el-table-column>
-                        <el-table-column prop="title" label="试题名称" min-width="180"
-                          show-overflow-tooltip></el-table-column>
+                        <el-table-column
+                          prop="title"
+                          label="试题名称"
+                          min-width="180"
+                          show-overflow-tooltip
+                        ></el-table-column>
                       </el-table>
                     </div>
                     <!-- 分页 -->
                     <div class="pagination">
-                      <el-pagination background layout="total, prev, pager, next" @current-change="handlePageChange"
-                        :current-page.sync="publicJudgeCurrentPage" :page-size="publicJudgeShowCount"
-                        :total="publicJudgeTotal"></el-pagination>
+                      <el-pagination
+                        background
+                        layout="total, prev, pager, next"
+                        @current-change="handlePageChange"
+                        :current-page.sync="publicJudgeCurrentPage"
+                        :page-size="publicJudgeShowCount"
+                        :total="publicJudgeTotal"
+                      ></el-pagination>
                     </div>
                   </el-tab-pane>
                 </el-tabs>
@@ -141,53 +186,97 @@
                 <el-tabs v-model="currentPersonalTab" @tab-click="handleMainType">
                   <el-tab-pane label="单选题" name="first">
                     <div class="customTable">
-                      <el-table ref="personalRadioQuestionTable" :data="personalRadioList" style="width: 100%"
-                        @select="selectionChange" v-loading="loading" element-loading-text="拼命加载中">
+                      <el-table
+                        ref="personalRadioQuestionTable"
+                        :data="personalRadioList"
+                        style="width: 100%"
+                        @select="selectionChange"
+                        v-loading="loading"
+                        element-loading-text="拼命加载中"
+                      >
                         <el-table-column type="selection" min-width="57"></el-table-column>
-                        <el-table-column prop="title" label="题目名称" min-width="180"
-                          show-overflow-tooltip></el-table-column>
+                        <el-table-column
+                          prop="title"
+                          label="题目名称"
+                          min-width="180"
+                          show-overflow-tooltip
+                        ></el-table-column>
                       </el-table>
                     </div>
                     <!-- 分页 -->
                     <div class="pagination">
-                      <el-pagination background layout="total, prev, pager, next" @current-change="handlePageChange"
-                        :current-page.sync="personalRadioCurrentPage" :page-size="personalRadioShowCount"
-                        :total="personalRadioTotal"></el-pagination>
+                      <el-pagination
+                        background
+                        layout="total, prev, pager, next"
+                        @current-change="handlePageChange"
+                        :current-page.sync="personalRadioCurrentPage"
+                        :page-size="personalRadioShowCount"
+                        :total="personalRadioTotal"
+                      ></el-pagination>
                     </div>
                   </el-tab-pane>
 
                   <el-tab-pane label="多选题" name="second">
                     <div class="customTable">
-                      <el-table ref="personalSelectQuestionTable" :data="personalSelectList"
-                        style="width: 100%" @select="selectionChange" v-loading="loading"
-                        element-loading-text="拼命加载中">
+                      <el-table
+                        ref="personalSelectQuestionTable"
+                        :data="personalSelectList"
+                        style="width: 100%"
+                        @select="selectionChange"
+                        v-loading="loading"
+                        element-loading-text="拼命加载中"
+                      >
                         <el-table-column type="selection" min-width="57"></el-table-column>
-                        <el-table-column prop="title" label="题目名称" min-width="180"
-                          show-overflow-tooltip></el-table-column>
+                        <el-table-column
+                          prop="title"
+                          label="题目名称"
+                          min-width="180"
+                          show-overflow-tooltip
+                        ></el-table-column>
                       </el-table>
                     </div>
                     <!-- 分页 -->
                     <div class="pagination">
-                      <el-pagination background layout="total, prev, pager, next" @current-change="handlePageChange"
-                        :current-page.sync="personalSelectCurrentPage" :page-size="personalSelectShowCount"
-                        :total="personalSelectTotal"></el-pagination>
+                      <el-pagination
+                        background
+                        layout="total, prev, pager, next"
+                        @current-change="handlePageChange"
+                        :current-page.sync="personalSelectCurrentPage"
+                        :page-size="personalSelectShowCount"
+                        :total="personalSelectTotal"
+                      ></el-pagination>
                     </div>
                   </el-tab-pane>
 
                   <el-tab-pane label="判断题" name="third">
                     <div class="customTable">
-                      <el-table ref="personalJudgeQuestionTable" :data="personalJudgeList" style="width: 100%"
-                        @select="selectionChange" v-loading="loading" element-loading-text="拼命加载中">
+                      <el-table
+                        ref="personalJudgeQuestionTable"
+                        :data="personalJudgeList"
+                        style="width: 100%"
+                        @select="selectionChange"
+                        v-loading="loading"
+                        element-loading-text="拼命加载中"
+                      >
                         <el-table-column type="selection" min-width="57"></el-table-column>
-                        <el-table-column prop="title" label="试题名称" min-width="180"
-                          show-overflow-tooltip></el-table-column>
+                        <el-table-column
+                          prop="title"
+                          label="试题名称"
+                          min-width="180"
+                          show-overflow-tooltip
+                        ></el-table-column>
                       </el-table>
                     </div>
                     <!-- 分页 -->
                     <div class="pagination">
-                      <el-pagination background layout="total, prev, pager, next" @current-change="handlePageChange"
-                        :current-page.sync="personalJudgeCurrentPage" :page-size="personalJudgeShowCount"
-                        :total="personalJudgeTotal"></el-pagination>
+                      <el-pagination
+                        background
+                        layout="total, prev, pager, next"
+                        @current-change="handlePageChange"
+                        :current-page.sync="personalJudgeCurrentPage"
+                        :page-size="personalJudgeShowCount"
+                        :total="personalJudgeTotal"
+                      ></el-pagination>
                     </div>
                   </el-tab-pane>
                 </el-tabs>
@@ -198,50 +287,95 @@
                 <el-tabs v-model="currentMarkTab" @tab-click="handleMainType">
                   <el-tab-pane label="单选题" name="first">
                     <div class="customTable">
-                      <el-table ref="markRadioQuestionTable" style="width: 100%" v-loading="loading"
-                        element-loading-text="拼命加载中" :data="markRadioList" @select="selectionChange">
+                      <el-table
+                        ref="markRadioQuestionTable"
+                        style="width: 100%"
+                        v-loading="loading"
+                        element-loading-text="拼命加载中"
+                        :data="markRadioList"
+                        @select="selectionChange"
+                      >
                         <el-table-column type="selection" min-width="57"></el-table-column>
-                        <el-table-column prop="title" label="试题名称" min-width="180"
-                          show-overflow-tooltip></el-table-column>
+                        <el-table-column
+                          prop="title"
+                          label="试题名称"
+                          min-width="180"
+                          show-overflow-tooltip
+                        ></el-table-column>
                       </el-table>
                     </div>
                     <!-- 分页 -->
                     <div class="pagination">
-                      <el-pagination background layout="total, prev, pager, next" @current-change="handlePageChange"
-                        :current-page.sync="markRadioCurrentPage" :page-size="markRadioShowCount"
-                        :total="markRadioTotal"></el-pagination>
+                      <el-pagination
+                        background
+                        layout="total, prev, pager, next"
+                        @current-change="handlePageChange"
+                        :current-page.sync="markRadioCurrentPage"
+                        :page-size="markRadioShowCount"
+                        :total="markRadioTotal"
+                      ></el-pagination>
                     </div>
                   </el-tab-pane>
                   <el-tab-pane label="多选题" name="second">
                     <div class="customTable">
-                      <el-table ref="markSelectQuestionTable" style="width: 100%" v-loading="loading"
-                        element-loading-text="拼命加载中" :data="markSelectList" @select="selectionChange">
+                      <el-table
+                        ref="markSelectQuestionTable"
+                        style="width: 100%"
+                        v-loading="loading"
+                        element-loading-text="拼命加载中"
+                        :data="markSelectList"
+                        @select="selectionChange"
+                      >
                         <el-table-column type="selection" min-width="57"></el-table-column>
-                        <el-table-column prop="title" label="试题名称" min-width="180"
-                          show-overflow-tooltip></el-table-column>
+                        <el-table-column
+                          prop="title"
+                          label="试题名称"
+                          min-width="180"
+                          show-overflow-tooltip
+                        ></el-table-column>
                       </el-table>
                     </div>
                     <!-- 分页 -->
                     <div class="pagination">
-                      <el-pagination background layout="total, prev, pager, next" @current-change="handlePageChange"
-                        :current-page.sync="markSelectCurrentPage" :page-size="markSelectShowCount"
-                        :total="markSelectTotal"></el-pagination>
+                      <el-pagination
+                        background
+                        layout="total, prev, pager, next"
+                        @current-change="handlePageChange"
+                        :current-page.sync="markSelectCurrentPage"
+                        :page-size="markSelectShowCount"
+                        :total="markSelectTotal"
+                      ></el-pagination>
                     </div>
                   </el-tab-pane>
                   <el-tab-pane label="判断题" name="third">
                     <div class="customTable">
-                      <el-table ref="markJudgeQuestionTable" style="width: 100%" v-loading="loading"
-                        element-loading-text="拼命加载中" :data="markJudgeList" @select="selectionChange">
+                      <el-table
+                        ref="markJudgeQuestionTable"
+                        style="width: 100%"
+                        v-loading="loading"
+                        element-loading-text="拼命加载中"
+                        :data="markJudgeList"
+                        @select="selectionChange"
+                      >
                         <el-table-column type="selection" min-width="57"></el-table-column>
-                        <el-table-column prop="title" label="试题名称" min-width="180"
-                          show-overflow-tooltip></el-table-column>
+                        <el-table-column
+                          prop="title"
+                          label="试题名称"
+                          min-width="180"
+                          show-overflow-tooltip
+                        ></el-table-column>
                       </el-table>
                     </div>
                     <!-- 分页 -->
                     <div class="pagination">
-                      <el-pagination background layout="total, prev, pager, next" @current-change="handlePageChange"
-                        :current-page.sync="markJudgeCurrentPage" :page-size="markJudgeShowCount"
-                        :total="markJudgeTotal"></el-pagination>
+                      <el-pagination
+                        background
+                        layout="total, prev, pager, next"
+                        @current-change="handlePageChange"
+                        :current-page.sync="markJudgeCurrentPage"
+                        :page-size="markJudgeShowCount"
+                        :total="markJudgeTotal"
+                      ></el-pagination>
                     </div>
                   </el-tab-pane>
                 </el-tabs>
@@ -294,6 +428,9 @@ export default {
       judgeScore: this.$route.query.judgeScore,
       //试卷ID
       examId: this.$route.query.examId,
+      examName: this.$route.query.examName,
+      orgId: this.$route.query.orgId,
+
       //搜索内容
       searchTitle: "",
 
@@ -386,38 +523,101 @@ export default {
         });
     },
 
-
-    finalPaper(){
-
-        this.$confirm('一旦生成考卷，将不允许对各项参数及考题进行编辑修改。确定要生成吗?', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning',
-          closeOnClickModal: false
-        }).then(() => {
-                this.$api
-        .saveFinalOrEditExam({
-          examId: this.examId,
-          examType: 2
-        })
-        .then(res => {
-          if (res.errorCode === "1") {
-            this.$message.success('成功生成考卷');
-          } else {
-            this.$message.error(res.resultMsg);
+    titleSearch() {
+      switch (this.currentTab) {
+        case "first":
+          switch (this.currentPublicTab) {
+            case "first":
+              this.getPaperQuestionList(1, 1, this.publicRadioCurrentPage);
+              break;
+            case "second":
+              this.getPaperQuestionList(1, 2, this.publicSelectCurrentPage);
+              break;
+            case "third":
+              this.getPaperQuestionList(1, 3, this.publicJudgeCurrentPage);
+              break;
+            default:
+              break;
           }
-        });
-          
-        })
-        .catch(() => {
-          this.$message.warning('操作取消')
-          return false
-        })
+          break;
 
+        case "second":
+          switch (this.currentPersonalTab) {
+            case "first":
+              this.getPaperQuestionList(2, 1, this.personalRadioCurrentPage);
+              break;
+            case "second":
+              this.getPaperQuestionList(2, 2, this.personalSelectCurrentPage);
+              break;
+            case "third":
+              this.getPaperQuestionList(2, 3, this.personalJudgeCurrentPage);
+              break;
+            default:
+              break;
+          }
+          break;
 
+        case "third":
+          switch (this.currentMarkTab) {
+            case "first":
+              this.getPaperQuestionList(3, 1, this.markRadioCurrentPage);
+              break;
+            case "second":
+              this.getPaperQuestionList(3, 2, this.markSelectCurrentPage);
+              break;
+            case "third":
+              this.getPaperQuestionList(3, 3, this.markJudgeCurrentPage);
+              break;
+            default:
+              break;
+          }
+          break;
 
-      
+        default:
+          break;
+      }
+    },
 
+    finalPaper() {
+      this.$router.push({
+        name: "perViewPaper",
+        query: {
+          orgId: this.orgId,
+          examId: this.examId,
+          examName: this.examName,
+          isEdit: "Y",
+          source: "2"
+        }
+      });
+
+      // this.$confirm(
+      //   "一旦生成考卷，将不允许对各项参数及考题进行编辑修改。确定要生成吗?",
+      //   "提示",
+      //   {
+      //     confirmButtonText: "确定",
+      //     cancelButtonText: "取消",
+      //     type: "warning",
+      //     closeOnClickModal: false
+      //   }
+      // )
+      //   .then(() => {
+      //     this.$api
+      //       .saveFinalOrEditExam({
+      //         examId: this.examId,
+      //         examType: 2
+      //       })
+      //       .then(res => {
+      //         if (res.errorCode === "1") {
+      //           this.$message.success("成功生成考卷");
+      //         } else {
+      //           this.$message.error(res.resultMsg);
+      //         }
+      //       });
+      //   })
+      //   .catch(() => {
+      //     this.$message.warning("操作取消");
+      //     return false;
+      //   });
     },
 
     selectionChange(rows, row) {
@@ -824,9 +1024,12 @@ export default {
 
     //关闭编辑考卷界面
     close() {
-      this.$router.replace({
-        path: "/education/exam/examPaper"
-      });
+        this.$router.push({
+        name: "examPaper",
+          query: {
+            orgId: this.orgId,
+          }
+        });
     }
   },
 

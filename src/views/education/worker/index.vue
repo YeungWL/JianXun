@@ -15,35 +15,48 @@
       <el-form ref="form" v-model="listQuery" size="mini">
         <el-row :gutter="24">
           <el-col :span="4">
-            <el-form-item label="姓名：" label-width="55px">
+            <el-form-item label="姓名：" label-width="60px">
               <el-input v-model="listQuery.name" placeholder="姓名"></el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="4">
-            <el-form-item label="手机：" label-width="55px">
+          <el-col :span="5">
+            <el-form-item label="手机：" label-width="60px">
               <el-input v-model="listQuery.tel" placeholder="电话"></el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="4">
-            <el-form-item label="班组：" prop="groupId" label-width="55px">
-              <el-select v-model="listQuery.groupId" placeholder="请选择">
+          <el-col :span="5">
+            <el-form-item label="班组：" prop="groupId" label-width="60px">
+              <el-select v-model="listQuery.groupId" placeholder="请选择" style="width: 100%;">
                 <el-option v-for="item in groupList" :key="item.groupId" :label="item.groupName" :value="item.groupId"></el-option>
               </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="5">
+            <el-form-item label="在场状态：" prop="isDeleted" label-width="90px">
+              <el-select v-model="listQuery.isDeleted" placeholder="请选择" style="width: 100%;">
+                <el-option v-for="item in statusQuery" :key="item.value" :label="item.label" :value="item.value"></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+        </el-row>
+      </el-form>
+      <el-form ref="form" v-model="listQuery" size="mini">
+        <el-row :gutter="24">
+          <el-col :span="7">
             <el-form-item label="入场时间：" prop="EnterTime" label-width="90px">
-              <el-date-picker type="date" placeholder="选择日期" value-format="yyyy-MM-dd" v-model="listQuery.startTime"
-                :picker-options="pickerOptions0" style="width: 100%;"></el-date-picker>
+              <el-date-picker v-model="startTimeRange" type="daterange" align="right" unlink-panels
+                range-separator="-" start-placeholder="开始日期" end-placeholder="结束日期" value-format="yyyy-MM-dd"
+                :picker-options="pickerOptions2" style="width: 100%;" @change="startTimeUpdate"></el-date-picker>
             </el-form-item>
           </el-col>
-          <el-col :span="5">
+          <el-col :span="7">
             <el-form-item label="退场时间：" prop="EnterTime" label-width="90px">
-              <el-date-picker type="date" placeholder="选择日期" value-format="yyyy-MM-dd" v-model="listQuery.endTime"
-                :picker-options="pickerOptions0" style="width: 100%;"></el-date-picker>
+              <el-date-picker v-model="endTimeRange" type="daterange" align="right" unlink-panels
+                range-separator="-" start-placeholder="开始日期" end-placeholder="结束日期" value-format="yyyy-MM-dd"
+                :picker-options="pickerOptions2" style="width: 100%;" @change="endTimeUpdate"></el-date-picker>
             </el-form-item>
           </el-col>
-          <el-col :span="2">
+          <el-col :span="4">
             <el-form-item>
               <el-button type="primary" class="search_btn" @click="handleSearch">搜索</el-button>
             </el-form-item>
@@ -62,14 +75,14 @@
         <el-table-column prop="isUsed" label="开通考学" min-width="100" show-overflow-tooltip>
           <template slot-scope="scope">
             <span>
-              <el-switch v-model="scope.row.isUsed === 'Y'" active-color="#13ce66" inactive-color="#ff4949" @change="switchChange(scope.row)"
-                :disabled="scope.row.endTime != null"></el-switch>
+              <el-switch v-model="scope.row.isUsed === 'Y'" active-color="#13ce66" inactive-color="#ff4949"
+                @change="switchChange(scope.row)" :disabled="scope.row.isDeleted === 'Y'"></el-switch>
             </span>
           </template>
         </el-table-column>
         <el-table-column label="操作" min-width="120">
           <template slot-scope="scope">
-            <span v-if="scope.row.endTime === null" class="btn" title="编辑" @click="handleUpdate(scope.row)">
+            <span v-if="scope.row.isDeleted === 'N'" class="btn" title="编辑" @click="handleUpdate(scope.row)">
               <i class="iconfont icon-edit iconblue"></i>
             </span>
           </template>
@@ -78,8 +91,8 @@
     </div>
     <!-- 分页-->
     <div class="pagination">
-      <el-pagination background layout="total, prev, pager, next" @current-change="handlePageChange" :current-page.sync="currentPage"
-        :page-size="showCount" :total="total"></el-pagination>
+      <el-pagination background layout="total, prev, pager, next" @current-change="handlePageChange"
+        :current-page.sync="currentPage" :page-size="showCount" :total="total"></el-pagination>
     </div>
 
     <!-- 弹框 添加工人-->
@@ -95,23 +108,24 @@
             </el-form-item>
             <el-form-item label="所在班组" prop="groupId" :rules="rules.grade">
               <el-select v-model="workerForm.groupId" placeholder="请选择" :disabled="dialogStatus === 'update'">
-                <el-option v-for="item in addWorkerGroupList" :disabled="dialogStatus === 'update'" :key="item.groupId"
-                  :label="item.groupName" :value="item.groupId"></el-option>
+                <el-option v-for="item in addWorkerGroupList" :disabled="dialogStatus === 'update'"
+                  :key="item.groupId" :label="item.groupName" :value="item.groupId"></el-option>
               </el-select>
             </el-form-item>
             <el-form-item label="入场时间" prop="startTime" :rules="rules.startTime" v-if="dialogStatus === 'create'">
-              <el-date-picker v-model="workerForm.startTime" type="datetime" format="yyyy-MM-dd HH:mm:ss" value-format="yyyy-MM-dd HH:mm:ss"
-                placeholder="选择日期" align="right" :picker-options="pickerOptions3"></el-date-picker>
+              <el-date-picker v-model="workerForm.startTime" type="datetime" format="yyyy-MM-dd HH:mm:ss"
+                value-format="yyyy-MM-dd HH:mm:ss" placeholder="选择日期" align="right" :picker-options="pickerOptions3"></el-date-picker>
             </el-form-item>
             <el-form-item label="入场时间" prop="startTime" :rules="rules.startTime" v-if="dialogStatus === 'update'">
               <span>{{workerForm.startTime}}</span>
             </el-form-item>
             <el-form-item label="退场时间" prop="endTime" v-if="dialogStatus === 'update'">
-              <el-date-picker v-model="workerForm.endTime" type="datetime" @change="workerForm.isUsed='N'" format="yyyy-MM-dd HH:mm:ss"
-                value-format="yyyy-MM-dd HH:mm:ss" placeholder="选择日期" align="right" :picker-options="pickerOptions3"></el-date-picker>
+              <el-date-picker v-model="workerForm.endTime" type="datetime" @change="workerForm.isUsed='N'"
+                format="yyyy-MM-dd HH:mm:ss" value-format="yyyy-MM-dd HH:mm:ss" placeholder="选择日期"
+                align="right" :picker-options="pickerOptions3"></el-date-picker>
             </el-form-item>
             <el-form-item label="开通考学" prop="isUsed">
-              <el-radio v-model="workerForm.isUsed" label="Y" :disabled="workerForm.endTime!=''">开</el-radio>
+              <el-radio v-model="workerForm.isUsed" label="Y">开</el-radio>
               <el-radio v-model="workerForm.isUsed" label="N">关</el-radio>
             </el-form-item>
           </el-form>
@@ -184,6 +198,24 @@ export default {
   name: "worker",
   data() {
     return {
+      statusQuery: [
+        {
+          value: "",
+          label: "全部"
+        },
+        {
+          value: "N",
+          label: "在场"
+        },
+        {
+          label: "退场",
+          value: "Y"
+        }
+      ],
+
+      endTimeRange:"",
+
+      startTimeRange:"",
       // 加载数据进度条
       loading: false,
 
@@ -219,7 +251,10 @@ export default {
         startTime: "",
         endTime: "",
         showCount: 10,
-        currentPage: 1
+        currentPage: 1,
+        isDeleted: "",
+        startLastTime:"",
+        endLastTime:"",
       },
 
       // 新建或修改工人信息表单
@@ -258,6 +293,38 @@ export default {
             );
           }
         }
+      },
+
+      pickerOptions2: {
+        shortcuts: [
+          {
+            text: "最近一周",
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
+              picker.$emit("pick", [start, end]);
+            }
+          },
+          {
+            text: "最近一个月",
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
+              picker.$emit("pick", [start, end]);
+            }
+          },
+          {
+            text: "最近三个月",
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
+              picker.$emit("pick", [start, end]);
+            }
+          }
+        ]
       },
 
       pickerOptions3: {
@@ -342,6 +409,26 @@ export default {
   },
 
   methods: {
+    startTimeUpdate() {
+      if( JSON.stringify(this.startTimeRange).length>4) {
+        this.listQuery.startLastTime=this.startTimeRange[1];
+        this.listQuery.startTime=this.startTimeRange[0];
+      } else {
+        this.listQuery.startLastTime="";
+        this.listQuery.startTime="";
+      }
+    },
+
+    endTimeUpdate() {
+       if( JSON.stringify(this.endTimeRange).length>4) {
+        this.listQuery.endLastTime=this.endTimeRange[1];
+        this.listQuery.endTime=this.endTimeRange[0];
+      }else{
+        this.listQuery.endLastTime="";
+        this.listQuery.endTime="";
+      }
+    },
+
     //获取组织列表
     getOrgList() {
       this.$api.getEduOrgList().then(res => {

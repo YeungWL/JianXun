@@ -109,7 +109,7 @@
                           <table>
                             <tr>
                               <td align="right">{{item.finished}}</td>
-                              <td align="right" style="width:80px;color:blue">{{item.studyTime}}分钟</td>
+                              <td align="right" style="width:80px;color:blue">{{item.studyMinutes}}  分钟</td>
                             </tr>
                           </table>
                         </td>
@@ -141,7 +141,7 @@
                           <table>
                             <tr>
                               <td align="right">{{item.finished}}</td>
-                              <td align="right" style="width:80px;color:blue">{{item.studyTime}}分钟</td>
+                              <td align="right" style="width:80px;color:blue">{{item.studyMinutes}}  分钟</td>
                             </tr>
                           </table>
                         </td>
@@ -173,7 +173,7 @@
                           <table>
                             <tr>
                               <td align="right">{{item.finished}}</td>
-                              <td align="right" style="width:80px;color:blue">{{item.studyTime}}分钟</td>
+                              <td align="right" style="width:80px;color:blue">{{item.studyMinutes}} 分钟</td>
                             </tr>
                           </table>
                         </td>

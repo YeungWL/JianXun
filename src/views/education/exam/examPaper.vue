@@ -331,7 +331,12 @@ export default {
     UpdatePaperList() {
       this.$api
         .examList({
-          orgId: this.selectOrgID
+          orgId: this.selectOrgID,
+          showCount: 10,
+
+
+currentPage:this.currentPage
+
         })
         .then(res => {
           if (res.errorCode === "1") {
@@ -394,6 +399,8 @@ export default {
               radioScore: this.createPaper.radioScore,
               selectScore: this.createPaper.selectScore,
               judgeScore: this.createPaper.judgeScore,
+              examName: this.createPaper.examName,
+              orgId: this.selectOrgID,
               examId: res.data.examId
             }
           });
@@ -420,7 +427,10 @@ export default {
       }
     },
 
-    handlePageChange() {},
+    handlePageChange(val) {
+      this.currentPage = val
+      this.UpdatePaperList();
+    },
 
     // 删除考卷
     handelDelete(data) {
