@@ -579,7 +579,10 @@ export default {
     //获取项目列表
     getProjectList() {
       this.loading = true;
-      this.$api.getMyInPro({ operateType: "" }).then(res => {
+      this.$api.getMyProjectList({})
+
+      //this.$api.getMyInPro({ operateType: "" })
+      .then(res => {
         if (res.errorCode !== "1") return false;
         this.projectList = res.data;
         this.projectList.push({

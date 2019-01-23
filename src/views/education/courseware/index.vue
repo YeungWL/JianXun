@@ -22,7 +22,6 @@
                 <el-option v-for="item in gradeArr" :key="item.gradeId" :label="item.name" :value="item.gradeId">
                 </el-option>                
               </el-select>
-            </el-select>
           </el-form-item>
           <!--<el-form-item label="状态：">
             <el-select v-model="listQuery.status" placeholder="请选择">

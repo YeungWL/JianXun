@@ -363,6 +363,7 @@ export default {
       }).then(_ => {
         this.$api.deleteMember(params).then(response => {
             if (response.errorCode == '1') {
+              console.log(response)
               this.$message.success(response.resultMsg)
               this.changByGetList()
             } else {

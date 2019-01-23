@@ -14,6 +14,7 @@
             'icon-sousuo':item.menuCode=='checking',
             'icon-wenjianguanli':item.menuCode=='library',
             'icon-xitongshezhi':item.menuCode=='system',
+            'icon-bangzhuzhongxin1':item.menuCode=='helpCenter',
             }"></i> <span class="menu">{{item.menuName}}</span>
           </el-menu-item>
         </el-menu>       
