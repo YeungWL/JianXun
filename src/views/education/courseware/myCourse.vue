@@ -25,7 +25,15 @@
       <el-table ref="multipleTable" style="width: 100%" v-loading="loading"  element-loading-text="拼命加载中"
         :data="tableData">
         <el-table-column prop="courseName" label="课件名称" min-width="250" show-overflow-tooltip>
-          <template slot-scope="scope"><a href="javascript:;" @click="handleView(scope.row.courseId)">{{scope.row.courseName}}</a></template>
+          <template slot-scope="scope"><a href="javascript:;" @click="handleView(scope.row.courseId,scope.row.courseType)">{{scope.row.courseName}}</a></template>
+        </el-table-column>
+        <el-table-column prop="courseType" label="课件类型" min-width="120" show-overflow-tooltip>
+          <template slot-scope="scope">
+            <span v-if="scope.row.courseType === '0'">文档</span>
+            <span v-else="scope.row.courseType === '1'">图片</span>
+            <span v-else="scope.row.courseType === '2'">视频</span>
+            <span v-else="scope.row.courseType === '3'">音频</span>
+          </template>
         </el-table-column>
         <el-table-column prop="createTime" label="上传时间" min-width="80" show-overflow-tooltip></el-table-column>
         <!--<el-table-column prop="status" label="共享状态" min-width="100" show-overflow-tooltip>
@@ -36,8 +44,8 @@
         </el-table-column> -->
         <el-table-column label="操作" min-width="120">
           <template slot-scope="scope"> 
-            <span class="btn" title="查看"  @click="handleView(scope.row.courseId)"><i class="iconfont icon-view icongreen"></i></span>
-            <span class="btn" title="修改"  @click="handleUpdate(scope.row.courseId)">
+            <span class="btn" title="查看"  @click="handleView(scope.row.courseId,scope.row.courseType)"><i class="iconfont icon-view icongreen"></i></span>
+            <span class="btn" title="修改"  @click="handleUpdate(scope.row.courseId,scope.row.courseType)">
               <i class="iconfont icon-edit iconblue"></i>
             </span>
             <span class="btn"  @click="handelDelete(scope.row)" title="删除">
@@ -106,6 +114,7 @@ export default {
         type: '2', // 课件类型[非必填项,1为公共课件,2为个人课件,默认为2]
         courseName: '',
         showCount: '',
+        courseType: '',
         currentPage: ''           
       }, 
       loading: false,      
@@ -224,9 +233,35 @@ export default {
           })
     },
     // 查看详情
-    handleView(courseId) {
-      this.viewCourseDialogVisible = true
-      this.editCoursePage(courseId)
+    handleView(courseId,courseType) {
+      // this.viewCourseDialogVisible = true
+      // this.editCoursePage(courseId,courseType)
+      switch (courseType) {
+        case '0': // 文档
+          this.$router.push({
+            path: "/education/viewDocCourse",
+            query: { id: courseId,courseType:courseType}
+          })
+              break;
+        case '1': // 图片
+          this.$router.push({
+            path: "/education/viewImgCourse",
+            query: { id: courseId,courseType:courseType}
+          })
+          break;
+        case '2': // 视频
+          this.$router.push({
+            path: "/education/viewVideoCourse",
+            query: { id: courseId,courseType:courseType}
+          })
+          break;
+        case '3': // 音频
+          this.$router.push({
+            path: "/education/viewAudioCourse",
+            query: { id: courseId,courseType:courseType}
+          })
+          break;
+      }
     },  
     // 新增课件
     handleCreate() {
@@ -236,10 +271,10 @@ export default {
       })
     },
     // 编辑课件
-    handleUpdate(courseId) {   
+    handleUpdate(courseId,courseType) {
       this.$router.push({
         path: "/education/addCourse",
-        query: { id: courseId, type:'update'}
+        query: { id: courseId, type:'update',courseType:courseType}
       })
     },
     handleSearch () {

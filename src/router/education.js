@@ -12,6 +12,14 @@ const courseware = resolve => require(['@/views/education/courseware/index'], re
 const myCourse = resolve => require(['@/views/education/courseware/myCourse'], resolve)
 /** 三级教育 => 我的课件 => 添加或编辑课件 */
 const addCourse = resolve => require(['@/views/education/courseware/addCourse'], resolve)
+/** 三级教育 => 我的课件 => 查看文本课件 */
+const viewDocCourse = resolve => require(['@/views/education/courseware/viewDocCourse'], resolve)
+/** 三级教育 => 我的课件 => 查看图片课件 */
+const viewImgCourse = resolve => require(['@/views/education/courseware/viewImgCourse'], resolve)
+/** 三级教育 => 我的课件 => 查看视频课件 */
+const viewVideoCourse = resolve => require(['@/views/education/courseware/viewVideoCourse'], resolve)
+/** 三级教育 => 我的课件 => 查看音频课件 */
+const viewAudioCourse = resolve => require(['@/views/education/courseware/viewAudioCourse'], resolve)
 /** 三级教育 => 考题管理 */
 const examQuestions = resolve => require(['@/views/education/exam/examQuestions'], resolve)
 /** 三级教育 => 考卷管理 */
@@ -64,7 +72,7 @@ export default {
       name: 'courseware',
       meta: {
         requireAuth: true
-      }
+      },
     },
     {
       path: '/education/myCourse',
@@ -81,7 +89,39 @@ export default {
       meta: {
         requireAuth: true
       }
-    },    
+    },
+    {
+      path: '/education/viewDocCourse',
+      component: viewDocCourse,
+      name: 'viewDocCourse',
+      meta: {
+        requireAuth: true
+      }
+    },
+    {
+      path: '/education/viewImgCourse',
+      component: viewImgCourse,
+      name: 'viewImgCourse',
+      meta: {
+        requireAuth: true
+      }
+    },
+    {
+      path: '/education/viewVideoCourse',
+      component: viewVideoCourse,
+      name: 'viewVideoCourse',
+      meta: {
+        requireAuth: true
+      }
+    },
+    {
+      path: '/education/viewAudioCourse',
+      component: viewAudioCourse,
+      name: 'viewAudioCourse',
+      meta: {
+        requireAuth: true
+      }
+    },
     {
       path: '/education/exam/examPaper',
       component: examPaper,

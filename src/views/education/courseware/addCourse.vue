@@ -6,7 +6,7 @@
       </div>
       <el-button type="primary"  icon="el-icon-d-arrow-left" class="float_r" @click="goBack">返回</el-button>
     </div>
-    <div class="page-main" style="width:70%">
+    <div class="page-main">
       <section  class="dialog-content">
         <div class="ui-form" >
           <el-form ref="addCourseForm" :rules="rules" label-width="100px" :model="addCourseForm" class="flex-form">
@@ -14,22 +14,26 @@
               <el-input v-model="addCourseForm.courseName" ></el-input>
             </el-form-item>
             <el-form-item label="课件类型："  class="flex-100" prop="courseType">
-              <el-radio-group v-model="addCourseForm.courseType">
-                <el-radio :label="0">文档</el-radio>
-                <el-radio :label="1">图片</el-radio>
-                <el-radio :label="2">视频</el-radio>
-                <el-radio :label="3">音频</el-radio>
-              </el-radio-group>
+              <el-radio v-model="addCourseForm.courseType" label="0" :disabled="typeDisable">文档</el-radio>
+              <el-radio v-model="addCourseForm.courseType" label="1" :disabled="typeDisable">图片</el-radio>
+              <el-radio v-model="addCourseForm.courseType" label="2" :disabled="typeDisable">视频</el-radio>
+              <el-radio v-model="addCourseForm.courseType" label="3" :disabled="typeDisable">音频</el-radio>
+              <!--<el-radio-group v-model="addCourseForm.courseType">-->
+                <!--<el-radio :label="0">文档</el-radio>-->
+                <!--<el-radio :label="1">图片</el-radio>-->
+                <!--<el-radio :label="2">视频</el-radio>-->
+                <!--<el-radio :label="3">音频</el-radio>-->
+              <!--</el-radio-group>-->
             </el-form-item>
             <div class="el-form-item flex-100" >
               <el-form-item label="课件内容："  class="flex-100" prop="content">
                 <ckeditor :height="200" :init-data="addCourseForm.content"></ckeditor>
               </el-form-item>
-              <el-form-item label="上传附件："  class="flex-100" v-show="addCourseForm.courseType === 0">
+              <el-form-item label="上传附件："  class="flex-100" v-show="addCourseForm.courseType === '0'">
                 <el-button class="gray fl"  title="上传" @click="handleUploadFile">
                   <i class="el-icon-plus"></i>
                 </el-button>
-                <span class="red pl15">提示：附件为word/excel/pdf/jpg格式，视频为mp4</span>
+                <span class="red pl15">提示：附件格式支持doc\docx\xls\xlsx\ppt\pptx\pdf\txt\png\jpg\jpeg\gif\dwg\bmp\tif\cdr\psd\fla\swf\avi\mp4\zip\rar\wav\au\mp3</span>
                 <input type="file" name="chapter_pdf[]" ref="pdf" @change="handleFileChange" style="display:none">
                 <div v-for="(item,index) in resoureUploadFile" :key="item.name">
                   {{item.name}}
@@ -37,13 +41,15 @@
                 </div>
               </el-form-item>
             </div>
-            <div class="el-form-item flex-100" v-show="addCourseForm.courseType === 1">
+            <div class="el-form-item flex-100" v-show="addCourseForm.courseType === '1'">
               <!--图片功能正在开发中，敬请期待！-->
-              <el-form-item label="图片："  class="flex-100" >
-                <div class="upload_warp_img" v-show="mediaUploadFile.length!=0">
+              <el-form-item label="图片："  class="flex-100">
+                <div class="upload_warp_img" v-show="mediaUploadFile.length != 0">
                   <div class="upload_warp_img_div" v-for="(item,index) of mediaUploadFile" >
-                    <img :src="item.fileSrc" width="100" height="100">
+                    <img :src="item.filePath" width="100" height="100" v-if="item.filePath != ''&& item.filePath != null">
+                    <img :src="item.fileSrc" width="100" height="100" v-else>
                     <textarea v-model="item.attachDesc" placeholder="图片描述:最多可输入128个字符" maxlength="128"></textarea>
+                    <input type="number" placeholder="排序号1-10整数" v-model="item.orderNum" @blur="isPositiveInteger(item.orderNum)" min="1" max="10" maxlength="2" >
                     <i class="icon el-icon-error" @click="fileDel(item.path, item.attachId, index)"></i>
                   </div>
                 </div>
@@ -51,13 +57,13 @@
                   <i class="el-icon-plus avatar-uploader-icon"></i>
                 </div>
                 <input type="file" @change="fileChange($event)"  id="upload_file" multiple style="display: none">
-                <!--<span class="upload_span">图片支持大小不超过5M的JPG,GIF,PNG图片上传</span>-->
+                <span class="upload_span">图片支持大小不超过2M的JPG,JPEG,GIF,PNG图片上传</span>
               </el-form-item>
             </div>
-            <div class="el-form-item flex-100" v-show="addCourseForm.courseType === 2">
+            <div class="el-form-item flex-100" v-show="addCourseForm.courseType === '2'">
               <!--视频功能正在开发中，敬请期待！-->
             </div>
-            <div class="el-form-item flex-100" v-show="addCourseForm.courseType === 3">
+            <div class="el-form-item flex-100" v-show="addCourseForm.courseType === '3'">
               <!--音频功能正在开发中，敬请期待！-->
             </div>
             <el-form-item>
@@ -100,12 +106,15 @@
       return {
         addCourseForm: {
           courseName: '',
-          courseType: 0,// 附件类型[必填项,0普通附件[doc,xls,pdf等word文件],1图片[png,gif,jpge等图片] 2视频[mp4,ogg]，3音频[mp3],默认是0]
+          courseType: '0',// 附件类型[必填项,0普通附件[doc,xls,pdf等word文件],1图片[png,gif,jpge等图片] 2视频[mp4,ogg]，3音频[mp3],默认是0]
           content: '',
           attachList: [],// 附件
           mediaList: [], // 媒体文件
         },
-        attachDesc: '',// 附件描述
+        typeDisable: false, // 是否禁止选择课件类型
+        courseType: '',// 课件类型
+        attachDesc: '',// 附件说明介绍,128字符内
+        orderNum: '',// 排序号
         content:'',// 课件内容
         resoureUploadFile: [], // 附件文件列表
         mediaUploadFile: [], // 媒体文件列表加入本地图片地址
@@ -121,33 +130,43 @@
       }
     },
     created() {
-
-    },
-    mounted() {
       if( this.$route.query.type === "update"){
         this.editCoursePage()
+        this.typeDisable = true; // 禁止选择课件类型
       }
 
     },
+    mounted() {
+
+    },
     computed: {
-      // type() {
-      //   return this.$route.query.type ? "update" : "create";
-      // }
+
     },
     methods: {
+      isPositiveInteger (s){
+        // 校验是否为正整数
+        let re = /^[1-100]+$/ ;
+        if(!re.test(s)){
+          this.$message.warning('排序号必须为正整数！')
+        };
+      },
       // 获取信息
       editCoursePage() {
         let params = {
           courseId: this.$route.query.id,
-          attachType: 0,
-          attachTypeMedia: 1,
+          courseType: this.$route.query.courseType,
+          attachType: 0
         }
         this.$api.editCoursePage(params).then(response => {
                   if (response.errorCode === '1') {
+                    // 页面渲染数据
                     this.addCourseForm['courseId'] = response.data.courseId;
                     this.addCourseForm.courseName = response.data.courseName;
+                    this.addCourseForm.courseType = response.data.courseType;
                     this.addCourseForm.content = response.data.content;
-                    this.resoureUploadFile = response.data.attachList;
+                    this.resoureUploadFile = response.data.attachList;// 文档类型附件
+                    this.mediaUploadFile = response.data.mediaList;// 多媒体类型附件
+                    // console.log(this.mediaUploadFile);
                     // 访问CKEditor中的iframe，获取里头body元素，直接插入数据，解决直接赋值无效问题
                     var _html = this.addCourseForm.content;
                     CKEDITOR.instances.editor.setData(_html,{
@@ -279,9 +298,9 @@
           });
           return false;
         }
-        if (file && size > 5000) {
+        if (file && size > 2000) {
           this.$message({
-            message: "附件大于5MB, 请重新上传！",
+            message: "附件大于2MB, 请重新上传！",
             type: "warning"
           });
           return false;
@@ -311,9 +330,9 @@
               name: response.data.data.name,
               path: response.data.data.path,
               fileSize: response.data.data.fileSize,
-              fileSrc: file.src,// 本地图片地址
-              orderNum: response.data.data.orderNum,
+              orderNum: response.data.data.orderNum, // 排序号
               attachDesc: this.attachDesc,// 附件说明介绍,128字符内
+              fileSrc: file.src,// 本地图片地址
             }
             this.mediaUploadFile.push(mediaItemData);// 本地显示提交后台数据
 
@@ -351,13 +370,18 @@
       },
       // 新增课件
       create() {
-        this.addCourseForm.mediaList = JSON.stringify(this.mediaUploadFile);
-        console.log(this.addCourseForm.mediaList)
+
+        // console.log(this.addCourseForm.mediaList)
         // 获取输入内容
         this.addCourseForm.content = CKEDITOR.instances.editor.getData()
         // console.log(this.addCourseForm+"addCourseForm")
         this.$refs.addCourseForm.validate(valid => {
           if (valid) {
+            for (let i = 0; i <this.mediaUploadFile.length ; i++) {
+              delete this.mediaUploadFile[i].fileSrc // 提交数据移除本地图片预览
+            }
+            this.addCourseForm.mediaList = JSON.stringify(this.mediaUploadFile);// 获取多媒体文件
+
             delete this.addCourseForm.courseId
             this.$api.savaeCourse(this.addCourseForm).then(response => {
               if (response.errorCode === '1') {
@@ -372,11 +396,18 @@
       },
       // 编辑课件
       update() {
+
         // 获取输入内容
         this.addCourseForm.content = CKEDITOR.instances.editor.getData()
+        // let params = JSON.stringify(this.addCourseForm);
         // console.log(this.addCourseForm.content+"content")
         this.$refs.addCourseForm.validate(valid => {
           if (valid) {
+            for (let i = 0; i <this.mediaUploadFile.length ; i++) {
+              delete this.mediaUploadFile[i].fileSrc // 提交数据移除本地图片预览
+            }
+            this.addCourseForm.mediaList = JSON.stringify(this.mediaUploadFile);// 获取多媒体文件
+            // console.log(this.addCourseForm.mediaList)
             this.$api.editSaveCourse(this.addCourseForm).then(response => {
               if (response.errorCode === '1') {
                 this.$message.success(response.resultMsg)
@@ -421,6 +452,7 @@
     }
   }
   .page-main{
+    width: 80%;
     section{
       padding-top:20px;
       padding-bottom:20px;
@@ -453,15 +485,12 @@
       width: 100%;
       margin-right: 10px;
       margin-bottom: 10px;
-      position: relative;
+      display: flex;
+      align-items: center;
       div {
         display: inline-block;
       }
       .icon{
-        position: absolute;
-        right: -8px;
-        top: 50%;
-        margin-top: -20px;
         color: red;
         font-size: 20px;
         background:#fff;
@@ -473,18 +502,28 @@
         display: block;
       }
       img{
+        margin-right: 10px;
         width:100px;
         display: inline-block;
         border-radius: 4px;
         border: 1px solid #dcdfe6;
       }
       textarea{
+        margin-right: 10px;
         height: 100px;
         width: 300px;
         border-radius: 4px;
         border: 1px solid #dcdfe6;
         padding: 5px;
         resize: none;
+      }
+      input {
+        width: 100px;
+        height: 30px;
+        margin-right: 10px;
+        border-radius: 4px;
+        border: 1px solid #dcdfe6;
+        padding: 5px;
       }
     }
   }

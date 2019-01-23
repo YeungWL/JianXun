@@ -35,7 +35,10 @@
       <el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAllChange">全选</el-checkbox>
       <div style="height: 15px;"></div>
       <el-checkbox-group v-model="checkedCities" @change="handleCheckedCitiesChange">
-        <el-checkbox v-for="(item, index) in cities" :label="item" :key="index" style="padding: 5px 0;">{{item.orgName}}</el-checkbox>
+        <el-checkbox v-for="(item, index) in cities" :label="item" :key="index" style="padding: 5px 0;" :disabled="item.status === '0'">
+          <span style="margin-right:50px;">{{item.orgName}}</span>
+          <el-button type="text" v-show="item.status === '0'" @click="doApplyOrg(item)">已申请</el-button>
+        </el-checkbox>
       </el-checkbox-group>
     </div>
     <div class="btn">
@@ -79,10 +82,10 @@ export default {
       this.tableItemId = value.projectId
     },
     getProjectList(val) {
-      if (val === 1 && this.listQuery.proName === '') {
-        this.$message.warning('搜索不能为空')
-        return
-      }
+      // if (val === 1 && this.listQuery.proName === '') {
+      //   this.$message.warning('搜索不能为空')
+      //   return
+      // }
       this.$api.getProjectList(this.listQuery).then(res => {
         if(res.errorCode == '1') {
           if (res.data.length === 0) {
@@ -126,18 +129,32 @@ export default {
         }
       })
     },
+    // 关联项目+组织
     doBatchBindOrg() {
       if(this.tableItemId == '' || this.checkedCities.length == 0) {
         this.$message.warning('请选择项目或组织')
         return
       }
-      let param = {
-        'orgList': this.checkedCities.map(value => {
-          return {
+      let orgListData = []
+      for (let i = 0; i < this.checkedCities.length; i++) {
+        let value = this.checkedCities[i]
+        if (value.status !== '0') {
+          orgListData.push({
             projectOrgId: value.projectOrgId,
             orgName: value.orgName
-          }
-        })
+          })
+        }
+      }
+      // let param = {
+      //   'orgList': this.checkedCities.map(value => {
+      //     return {
+      //       projectOrgId: value.projectOrgId,
+      //       orgName: value.orgName
+      //     }
+      //   })
+      // }
+      let param = {
+        orgList: orgListData
       }
       this.$api.doBatchBindOrg({
         projectId: this.tableItemId,
@@ -151,6 +168,25 @@ export default {
         }else {
           this.$message.warning(res.resultMsg)
         }
+      })
+    },
+    // 取消申请
+    doApplyOrg(data) {
+      this.$confirm('需要取消申请关联吗？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(_ => {
+        this.$api.doApplyOrg({
+          projectOrgId: data.projectOrgId,
+          projectId: data.projectId,
+          status: '6'
+        }).then(res => {
+          if (res.errorCode === '1') {
+            this.$message.success('取消申请关联成功')
+            this.getNotBindOrgList()
+          }
+        })
       })
     }
   },

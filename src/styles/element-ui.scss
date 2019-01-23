@@ -668,3 +668,9 @@ $red:#e85657;
   border-radius: 100%;
 }
 .upload_span{font-size: 14px; color: #e4e4e4; display: block; padding: 10px;line-height: 20px;}
+
+.carousel-wrap {
+  .el-carousel__indicators{
+    bottom: 100px;
+  }
+}
