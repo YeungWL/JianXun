@@ -12,7 +12,7 @@
               <p class="sub-title">创建时间：{{viewCourseForm.createTime}}</p>
           </div>
             <div class="carousel-wrap">
-                <el-carousel height="600px">
+                <el-carousel height="600px" :autoplay="false">
                     <el-carousel-item v-for="(item,index) in mediaList" :key="index">
                         <img class="carousel-img" :src="item.filePath" alt="" height="500">
                         <div class="carousel-index"><span><em>{{index+1}}</em>/{{mediaList.length}}</span></div>
@@ -20,8 +20,8 @@
                     </el-carousel-item>
                 </el-carousel>
             </div>
-          <!--<div id="txtEditMsg" disabled="disabled" v-html="viewCourseForm.content"></div>-->
-          <ckeditor :height="200" :init-data="viewCourseForm.content"></ckeditor>
+          <div class="content" v-html="viewCourseForm.content"></div>
+          <!--<ckeditor :height="200" :init-data="viewCourseForm.content"></ckeditor>-->
           
         </div>
         <!--<div class="enclosure_revise">-->
@@ -45,10 +45,10 @@
 </template>
 
 <script>
-import ckeditor from 'components/ckeditor/ckeditor'
+// import ckeditor from 'components/ckeditor/ckeditor'
 export default {
   name: 'courseware',
-  components:{ ckeditor },// ckeditor组件
+  // components:{ ckeditor },// ckeditor组件
   data() {
     return {
       viewCourseForm: {
@@ -89,20 +89,20 @@ export default {
                 this.mediaList = response.data.mediaList;// 多媒体类型附件
                 // CKEDITOR.replace('editor', { toolbarCanCollapse: false, toolbarStartupExpanded: false, toolbar: [], height: '320px', width: '552px' });
                 // 访问CKEditor中的iframe，获取里头body元素，直接插入数据，解决直接赋值无效问题
-                var _html = this.viewCourseForm.content;
-                CKEDITOR.instances.editor.setData(_html,{
-                  callback:function(){
-                   var  _input_value = CKEDITOR.instances.editor.getData();
-                    if(_input_value == "") {
-                    var  _editor = window.frames[0];//获取iframe对象
-                      if(_editor != undefined){
-                         _editor.document.body.innerHTML = _html;//访问iframe中的body，并插入html
-                        CKEDITOR.instances.editor.setReadOnly(true);//设置只读
-
-                      }
-                    }
-                  }
-                });
+                // var _html = this.viewCourseForm.content;
+                // CKEDITOR.instances.editor.setData(_html,{
+                //   callback:function(){
+                //    var  _input_value = CKEDITOR.instances.editor.getData();
+                //     if(_input_value == "") {
+                //     var  _editor = window.frames[0];//获取iframe对象
+                //       if(_editor != undefined){
+                //          _editor.document.body.innerHTML = _html;//访问iframe中的body，并插入html
+                //         CKEDITOR.instances.editor.setReadOnly(true);//设置只读
+                //
+                //       }
+                //     }
+                //   }
+                // });
             }
           })
     },
@@ -155,27 +155,32 @@ export default {
 .sub-title{
     padding-bottom: 15px;
 }
-    .carousel-wrap {
-        border: 1px solid #ddd;
-        /*background: #f1f1f1;*/
-        .el-carousel {
-            .carousel-index{
-              text-align: center;
-                em{
-                    font-size: 16px;
-                    color: #ed4040;
-                }
-            }
-          .carousel-img{
-              width: auto;
-              margin: 0 auto;
-          }
-            .carousel-desc{
-                border-top: 1px solid #ddd;
-                padding: 10px;
-                text-align: center;
-                margin: 0 auto;
+.content {
+    border: 1px solid #ddd;
+    border-top-width: 0px;
+    padding:10px;
+}
+.carousel-wrap {
+    border: 1px solid #ddd;
+    /*background: #f1f1f1;*/
+    .el-carousel {
+        .carousel-index{
+          text-align: center;
+            em{
+                font-size: 16px;
+                color: #ed4040;
             }
         }
+      .carousel-img{
+          width: auto;
+          margin: 0 auto;
+      }
+        .carousel-desc{
+            border-top: 1px solid #ddd;
+            padding: 10px;
+            text-align: center;
+            margin: 0 auto;
+        }
     }
+}
 </style>

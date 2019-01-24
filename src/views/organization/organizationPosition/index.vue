@@ -749,15 +749,25 @@ export default {
       })
     },
     getDownloadError(errorKey) {
-      let strUrl = `${
-                      this.baseURL()
-                    }/jianzhumobile/mobile/org/storageDownload.do?accessToken=${
-                      localStorage.getItem("accessToken")
-                    }&token=${
-                      this.getToken()
-                    }&errorKey=${
-                      errorKey
-                    }`
+      /* 
+        `${
+          this.baseURL()
+        }/jianzhumobile/mobile/org/storageDownload.do?accessToken=${
+          localStorage.getItem("accessToken")
+        }&token=${
+          this.getToken()
+        }&errorKey=${
+          errorKey
+        }`
+      */ 
+      let strUrl = this.baseURL() +
+        "/jianzhumobile/mobile/org/storageDownload.do?" +
+        "accessToken=" +
+        localStorage.getItem("accessToken") +
+        "&token=" +
+        this.getToken() +
+        "&errorKey=" +
+        errorKey
 
       let xhr = new XMLHttpRequest()
       let fileName = "添加结果.xls" // 文件名称

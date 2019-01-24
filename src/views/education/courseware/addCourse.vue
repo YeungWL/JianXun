@@ -62,6 +62,23 @@
             </div>
             <div class="el-form-item flex-100" v-show="addCourseForm.courseType === '2'">
               <!--视频功能正在开发中，敬请期待！-->
+              <el-form-item label="视频："  class="flex-100">
+                <div class="progress" v-show="isUploadLoading"><i class="icon el-icon-loading"></i>视频上传中...</div>
+                <div class="upload_warp_img" v-show="videoUploadFile.length != 0">
+                  <div class="upload_warp_img_div" v-for="(item,index) of videoUploadFile" >
+                    <video :src="item.filePath" width="100" height="100" v-if="item.filePath != ''&& item.filePath != null"></video>
+                    <video :src="item.fileSrc" width="100" height="100" v-else></video>
+                    <textarea v-model="item.attachDesc" placeholder="视频描述:最多可输入128个字符" maxlength="128"></textarea>
+                    <input type="number" placeholder="排序号1-10整数" v-model="item.orderNum" @blur="isPositiveInteger(item.orderNum)" min="1" max="10" maxlength="2" >
+                    <i class="icon el-icon-error" @click="videoFileDel(item.path, item.attachId, index)"></i>
+                  </div>
+                </div>
+                <div class="uploadImg" @click="videoFileClick" title="点击上传">
+                  <i class="el-icon-plus avatar-uploader-icon"></i>
+                </div>
+                <input type="file" @change="videoFileChange($event)"  id="videoUploadFile" multiple style="display: none">
+                <span class="upload_span">视频支持大小不超过10M，格式为MP4</span>
+              </el-form-item>
             </div>
             <div class="el-form-item flex-100" v-show="addCourseForm.courseType === '3'">
               <!--音频功能正在开发中，敬请期待！-->
@@ -114,11 +131,13 @@
         typeDisable: false, // 是否禁止选择课件类型
         courseType: '',// 课件类型
         attachDesc: '',// 附件说明介绍,128字符内
+        videoAttachDesc:'',
         orderNum: '',// 排序号
         content:'',// 课件内容
         resoureUploadFile: [], // 附件文件列表
-        mediaUploadFile: [], // 媒体文件列表加入本地图片地址
-        mediaAttachList: [], // 媒体附件列表
+        mediaUploadFile: [], // 图片文件列表加入本地地址
+        videoUploadFile:[],// 视频文件列表加入本地地址
+        isUploadLoading: false,// 是否正在上传文件
         fileFormatDialogVisible: false,
         imgList: [], // 本地预览图片课件列表
         size: 0, // 图片课件大小
@@ -137,7 +156,7 @@
 
     },
     mounted() {
-
+      this.courseType = this.$route.query.courseType
     },
     computed: {
 
@@ -158,35 +177,42 @@
           attachType: 0
         }
         this.$api.editCoursePage(params).then(response => {
-                  if (response.errorCode === '1') {
-                    // 页面渲染数据
-                    this.addCourseForm['courseId'] = response.data.courseId;
-                    this.addCourseForm.courseName = response.data.courseName;
-                    this.addCourseForm.courseType = response.data.courseType;
-                    this.addCourseForm.content = response.data.content;
-                    this.resoureUploadFile = response.data.attachList;// 文档类型附件
-                    this.mediaUploadFile = response.data.mediaList;// 多媒体类型附件
-                    // console.log(this.mediaUploadFile);
-                    // 访问CKEditor中的iframe，获取里头body元素，直接插入数据，解决直接赋值无效问题
-                    var _html = this.addCourseForm.content;
-                    CKEDITOR.instances.editor.setData(_html,{
-                      callback:function(){
-                        var  _input_value = CKEDITOR.instances.editor.getData();
-                        if(_input_value == "") {
-                          var  _editor = window.frames[0];//获取iframe对象
-                          if(_editor != undefined){
-                            _editor.document.body.innerHTML = _html;//访问iframe中的body，并插入html
-                            // CKEDITOR.instances.editor.setReadOnly(true);//设置只读
-                            CKEDITOR.replace('txtEditMsg', {
-                              toolbarCanCollapse: false, toolbarStartupExpanded: false, toolbar: [], height: '320px', width: '552px'
-                            });
-                          }
-                        }
-                      }
+          if (response.errorCode === '1') {
+            // 页面渲染数据
+            this.addCourseForm['courseId'] = response.data.courseId;
+            this.addCourseForm.courseName = response.data.courseName;
+            this.addCourseForm.courseType = response.data.courseType;
+            this.addCourseForm.content = response.data.content;
+            this.resoureUploadFile = response.data.attachList;// 文档类型附件
+
+            if (this.addCourseForm.courseType === '1') {
+              this.mediaUploadFile = response.data.mediaList;// 图片
+            } else if(this.addCourseForm.courseType === '2'){
+              this.videoUploadFile = response.data.mediaList;// 视频
+            }
+
+
+            // console.log(this.mediaUploadFile);
+            // 访问CKEditor中的iframe，获取里头body元素，直接插入数据，解决直接赋值无效问题
+            var _html = this.addCourseForm.content;
+            CKEDITOR.instances.editor.setData(_html,{
+              callback:function(){
+                var  _input_value = CKEDITOR.instances.editor.getData();
+                if(_input_value == "") {
+                  var  _editor = window.frames[0];//获取iframe对象
+                  if(_editor != undefined){
+                    _editor.document.body.innerHTML = _html;//访问iframe中的body，并插入html
+                    // CKEDITOR.instances.editor.setReadOnly(true);//设置只读
+                    CKEDITOR.replace('txtEditMsg', {
+                      toolbarCanCollapse: false, toolbarStartupExpanded: false, toolbar: [], height: '320px', width: '552px'
                     });
-                    // CKEDITOR.instances.editor.setData(this.addCourseForm.content)
                   }
-                })
+                }
+              }
+            });
+            // CKEDITOR.instances.editor.setData(this.addCourseForm.content)
+          }
+        })
       },
       // 点击上传附件
       handleUploadFile() {
@@ -290,7 +316,7 @@
         }
       },
       mediaFileUpload (file) {
-        var size = file.size / 1024;
+        let size = file.size / 1024;
         if (this.resoureUploadFile.length >= 10) {
           this.$message({
             message: "附件最多上传10个",
@@ -360,6 +386,104 @@
                   }
                 });
       },
+      // 上传视频
+      videoFileClick (){
+        document.getElementById('videoUploadFile').click()
+      },
+      videoFileChange(el) {
+        if (!el.target.files[0].size) return;
+        this.videoFileList(el.target.files);
+        el.target.value = ''
+      },
+      videoFileList(files){
+        for (let i = 0; i < files.length; i++) {
+          this.videoFileUpload(files[i]);// 上传后台,本地预览
+        }
+      },
+      getvideoFileURL(file) {
+        let getUrl = null;
+        if(window.createObjectURL != undefined) { // basic
+          getUrl = window.createObjectURL(file);
+        } else if(window.URL != undefined) { // mozilla(firefox)
+          getUrl = window.URL.createObjectURL(file);
+        } else if(window.webkitURL != undefined) { // webkit or chrome
+          getUrl = window.webkitURL.createObjectURL(file);
+        }
+        // console.log(getUrl);
+        return getUrl;
+      },
+      videoFileUpload (file) {
+        let size = file.size / 1024;
+        if (this.resoureUploadFile.length >= 10) {
+          this.$message({
+            message: "附件最多上传10个",
+            type: "warning"
+          });
+          return false;
+        }
+        if (size > 10000) {
+          this.$message({
+            message: "附件大于10MB, 请重新上传！",
+            type: "warning"
+          });
+          return false;
+        }
+        this.isUploadLoading = true;
+        let formData = new FormData();
+        formData.append("file", file);
+        formData.append("attachType", this.addCourseForm.courseType);
+        formData.append("attachDesc", this.addCourseForm.attachDesc);
+        formData.append("token", this.getToken());
+        formData.append("accessToken", localStorage.getItem("accessToken"));
+        // console.log(formData);
+
+        // 接口跨域问题
+        axios({
+          url: this.baseURL() + "/jianzhumobile/mobile/eduExam/uploading.do",
+          method: "post",
+          data: formData,
+          headers: {
+            "Content-Type": "multipart/form-data"
+          }
+        }).then(response => {
+          if (response.data.errorCode === "1") {
+            this.$message.success("上传媒体文件成功");
+            // let xhr = new XMLHttpRequest();
+            let mediaItemData = {
+              attachId: response.data.data.attachId,
+              name: response.data.data.name,
+              path: response.data.data.path,
+              fileSize: response.data.data.fileSize,
+              orderNum: response.data.data.orderNum, // 排序号
+              attachDesc: this.videoAttachDesc,// 附件说明介绍,128字符内
+              fileSrc: this.getvideoFileURL(file),// 本地预览地址
+            }
+            this.videoUploadFile.push(mediaItemData);// 本地显示提交后台数据
+            this.isUploadLoading = false;
+            // xhr.upload.addEventListener('progress', function (e) {
+            //   mediaItemData.uploadPercentage = Math.round((e.loaded * 100) / e.total);
+            // }, false);
+          } else {
+            this.$message.warning(response.data.resultMsg)
+          }
+        })
+        .catch(function(err) {
+          console.log(err);
+        });
+
+      },
+      videoFileDel(path, attachId, index) {
+        // 取消附件上传
+        this.$api.canCelAttach({path: path, attachId: attachId})
+          .then(response => {
+            if (response.errorCode === '1') {
+              this.$message.success(response.resultMsg);
+              this.videoUploadFile.splice(index, 1);
+            } else {
+              this.$message.error(response.resultMsg);
+            }
+          });
+      },
       // 提交
       handleSubmit() {
         if (this.$route.query.type === "update") {
@@ -370,17 +494,25 @@
       },
       // 新增课件
       create() {
-
         // console.log(this.addCourseForm.mediaList)
         // 获取输入内容
         this.addCourseForm.content = CKEDITOR.instances.editor.getData()
         // console.log(this.addCourseForm+"addCourseForm")
         this.$refs.addCourseForm.validate(valid => {
           if (valid) {
-            for (let i = 0; i <this.mediaUploadFile.length ; i++) {
-              delete this.mediaUploadFile[i].fileSrc // 提交数据移除本地图片预览
+            if (this.addCourseForm.courseType === '1') { // 图片
+              for (let i = 0; i <this.mediaUploadFile.length ; i++) {
+                delete this.mediaUploadFile[i].fileSrc // 提交数据移除本地图片预览
+              }
+              this.addCourseForm.mediaList = JSON.stringify(this.mediaUploadFile);// 获取多媒体文件
+            } else if (this.addCourseForm.courseType === '2') {// 视频
+              for (let i = 0; i <this.videoUploadFile.length ; i++) {
+                delete this.videoUploadFile[i].fileSrc // 提交数据移除本地图片预览
+              }
+              this.addCourseForm.mediaList = JSON.stringify(this.videoUploadFile);// 获取多媒体文件
+            } else {
+              this.addCourseForm.mediaList = []
             }
-            this.addCourseForm.mediaList = JSON.stringify(this.mediaUploadFile);// 获取多媒体文件
 
             delete this.addCourseForm.courseId
             this.$api.savaeCourse(this.addCourseForm).then(response => {
@@ -403,10 +535,21 @@
         // console.log(this.addCourseForm.content+"content")
         this.$refs.addCourseForm.validate(valid => {
           if (valid) {
-            for (let i = 0; i <this.mediaUploadFile.length ; i++) {
-              delete this.mediaUploadFile[i].fileSrc // 提交数据移除本地图片预览
+
+            if (this.addCourseForm.courseType === '1') { // 图片
+              for (let i = 0; i <this.mediaUploadFile.length ; i++) {
+                delete this.mediaUploadFile[i].fileSrc // 提交数据移除本地图片预览
+              }
+              this.addCourseForm.mediaList = JSON.stringify(this.mediaUploadFile);// 获取多媒体文件
+            } else if (this.addCourseForm.courseType === '2') {// 视频
+              for (let i = 0; i <this.videoUploadFile.length ; i++) {
+                delete this.videoUploadFile[i].fileSrc // 提交数据移除本地图片预览
+              }
+              this.addCourseForm.mediaList = JSON.stringify(this.videoUploadFile);// 获取多媒体文件
+            } else {
+              this.addCourseForm.mediaList = []
             }
-            this.addCourseForm.mediaList = JSON.stringify(this.mediaUploadFile);// 获取多媒体文件
+
             // console.log(this.addCourseForm.mediaList)
             this.$api.editSaveCourse(this.addCourseForm).then(response => {
               if (response.errorCode === '1') {
@@ -463,6 +606,9 @@
       margin-bottom:20px;
     }
   }
+  .progress {
+    width: 100px;
+  }
   .uploadImg{
     float: left;
     width:100px;
@@ -501,7 +647,7 @@
       &:hover .icon{
         display: block;
       }
-      img{
+      img,video,audio{
         margin-right: 10px;
         width:100px;
         display: inline-block;
@@ -527,4 +673,5 @@
       }
     }
   }
+
 </style>

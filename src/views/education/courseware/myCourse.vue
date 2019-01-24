@@ -30,12 +30,12 @@
         <el-table-column prop="courseType" label="课件类型" min-width="120" show-overflow-tooltip>
           <template slot-scope="scope">
             <span v-if="scope.row.courseType === '0'">文档</span>
-            <span v-else="scope.row.courseType === '1'">图片</span>
-            <span v-else="scope.row.courseType === '2'">视频</span>
+            <span v-else-if="scope.row.courseType === '1'">图片</span>
+            <span v-else-if="scope.row.courseType === '2'">视频</span>
             <span v-else="scope.row.courseType === '3'">音频</span>
           </template>
         </el-table-column>
-        <el-table-column prop="createTime" label="上传时间" min-width="80" show-overflow-tooltip></el-table-column>
+        <el-table-column prop="createTime" label="上传时间" min-width="80" show-overflow-tooltip sortable></el-table-column>
         <!--<el-table-column prop="status" label="共享状态" min-width="100" show-overflow-tooltip>
           <template slot-scope="scope">
             <span v-if='scope.row.status === "0"' class="green">开放</span>
