@@ -22,6 +22,9 @@ import 'vue-event-calendar/dist/style.css' //1.1.10之后的版本，css被放�
 import vueEventCalendar from 'vue-event-calendar'
 Vue.use(vueEventCalendar, {locale: 'zh'}) //可以设置语言，支持中文和英文
 //import 'es6-promise'//引入axios插件
+// 视频播放器
+import VueVideoPlayer from 'vue-video-player'
+Vue.use(VueVideoPlayer)
 
 // 引入全局过滤器
 import './filters/globalFilters'

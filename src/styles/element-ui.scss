@@ -60,11 +60,17 @@ $red:#e85657;
   .el-menu--horizontal>.el-submenu.is-active .el-submenu__title{
     border-bottom: 3px solid $yellow;
   }
+  .el-menu-item{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+  }
   .el-menu-item span {
     display: block;
     line-height: 15px;
     height: 15px;
-    margin-top: -10px;
+    margin-top: 5px;
     color: $white;
   }
   .el-menu-item i {
@@ -667,7 +673,7 @@ $red:#e85657;
   display: block;
   border-radius: 100%;
 }
-.upload_span{font-size: 14px; color: #e4e4e4; display: block; padding: 10px;line-height: 20px;}
+.upload_span{font-size: 12px; color: #999; display: block; padding: 10px;line-height: 20px;}
 
 .carousel-wrap {
   .el-carousel__indicators{

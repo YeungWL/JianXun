@@ -8,11 +8,12 @@ const checkupQuestionList = resolve => require(['@/views/checking/checkupQuestio
 const rectifyCheckupQuestion = resolve => require(['@/views/checking/checkupQuestionList/rectifyCheckupQuestion'], resolve)
 /* 现场检查 => 历史记录 */
 const history = resolve => require(['@/views/checking/checkupQuestionList/history'], resolve)
-/**现场检查 => 组织授权 */
+/*现场检查 => 组织授权 */
 const checkupOrgPermission = resolve => require(['@/views/checking/checkupQuestionList/checkupOrgPermission'], resolve)
-/**现场检查 => 添加现场检查问题 */
+/*现场检查 => 添加现场检查问题 */
 const addCheckupQuestion = resolve => require(['@/views/checking/checkupQuestionList/addCheckupQuestion'], resolve)
-
+/*现场检查 => 我的待办问题 */
+const ckToDoList = resolve => require(['@/views/checking/checkupQuestionList/ckToDoList'], resolve)
 
 export default {
   path: '/checking',
@@ -50,6 +51,13 @@ export default {
       component: addCheckupQuestion,
       name: 'addCheckupQuestion',
       meta: { requireAuth: true }
-    }       
+    },
+    {
+      path: '/checking/ckToDoList',
+      component: ckToDoList,
+      name: 'ckToDoList',
+      meta: { requireAuth: true }
+    }
+
   ]
 }

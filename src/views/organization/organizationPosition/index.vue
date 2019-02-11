@@ -115,7 +115,7 @@
     <div class="member">
       <el-dialog title="维护人才库" :visible.sync="dialogTableVisible">
         <!-- <div class="title">广州市轨道交通十五号线建设项目管理办公室</div> -->
-        <el-table :data="allMemberList" height="200" align>
+        <el-table :data="allMemberList" height="350" align>
           <el-table-column property="nickName" label="姓名" align="center"></el-table-column>
           <el-table-column property="phone" label="电话号码" align="center"></el-table-column>
           <el-table-column property="address" label="操作" align="center">

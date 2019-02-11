@@ -23,48 +23,49 @@
         </el-form>
       </div>
 
-      <!--  table开始  -->
-      <div class="customTable">
-        <el-table ref="multipleTable" style="width: 100%" v-loading="loading"  element-loading-text="拼命加载中"
-                  :data="tableData">
-          <!--<el-table-column type="selection" min-width="57"></el-table-column>-->
-          <el-table-column prop="title" label="问题名称" min-width="180" show-overflow-tooltip>
-          </el-table-column>
-          <el-table-column prop="questionAttr" label="问题属性" min-width="80" >
-            <template slot-scope="scope">
-              <span class="tag">{{scope.row.questionAttr}}</span>
-            </template>
-          </el-table-column>
-          <el-table-column prop="checkType" label="检查类别" min-width="80" show-overflow-tooltip></el-table-column>
-          <el-table-column prop="status" label="状态" min-width="100" show-overflow-tooltip>
-            <template slot-scope="scope">
-              <span v-if='scope.row.status === "0"' class="red">未整改</span>
-              <span v-else-if='scope.row.status === "1"' class="blue">已整改</span>
-              <span v-else class="green">已复查</span>
-            </template>
-          </el-table-column>
-          <el-table-column prop="createTime" label="创建时间" min-width="150" sortable></el-table-column>
-          <el-table-column prop="queDesc" label="问题描述" min-width="150"  show-overflow-tooltip></el-table-column>
-          <el-table-column label="操作" min-width="120">
-            <template slot-scope="scope">
-            <span class="btn" title="整改" v-if='scope.row.status === "0"' @click="handleUpdate(scope.row.id,scope.row.status)">
-              <i class="iconfont icon-edit iconred"></i>
+        <!--  table开始  -->
+        <div class="customTable">
+          <el-table ref="multipleTable" style="width: 100%" v-loading="loading"  element-loading-text="拼命加载中"
+                    :data="toDoTableData">
+            <!--<el-table-column type="selection" min-width="57"></el-table-column>-->
+            <el-table-column prop="title" label="问题名称" min-width="180" show-overflow-tooltip>
+            </el-table-column>
+            <el-table-column prop="questionAttr" label="问题属性" min-width="80" >
+              <template slot-scope="scope">
+                <span class="tag">{{scope.row.questionAttr}}</span>
+              </template>
+            </el-table-column>
+            <el-table-column prop="checkType" label="检查类别" min-width="80" show-overflow-tooltip></el-table-column>
+            <el-table-column prop="status" label="状态" min-width="100" show-overflow-tooltip>
+              <template slot-scope="scope">
+                <span v-if='scope.row.status === "0"' class="red">未整改</span>
+                <span v-else-if='scope.row.status === "1"' class="blue">已整改</span>
+                <span v-else class="green">已复查</span>
+              </template>
+            </el-table-column>
+            <el-table-column prop="createTime" label="创建时间" min-width="150" sortable></el-table-column>
+            <el-table-column prop="queDesc" label="问题描述" min-width="150"  show-overflow-tooltip></el-table-column>
+            <el-table-column label="操作" min-width="120">
+              <template slot-scope="scope">
+              <span class="btn" title="整改" v-if='scope.row.status === "0"' @click="handleUpdate(scope.row.id,scope.row.status)">
+                <i class="iconfont icon-edit iconred"></i>
+                </span>
+                <span class="btn" title="复查" v-else-if='scope.row.status === "1"' @click="handleUpdate(scope.row.id,scope.row.status)">
+                <i class="iconfont icon-fucha iconblue"></i>
+                </span>
+                <span class="btn" title="查看历史记录" v-else  @click="handleView(scope.row.id)">
+                <i class="iconfont icon-view icongreen"></i>
+                </span>
+                <span class="btn"  @click="handelDelete(scope.row)" title="删除" style="display:none;">
+                <i class="iconfont icon-del iconred"></i>
               </span>
-              <span class="btn" title="复查" v-else-if='scope.row.status === "1"' @click="handleUpdate(scope.row.id,scope.row.status)">
-              <i class="iconfont icon-fucha iconblue"></i>
-              </span>
-              <span class="btn" title="查看历史记录" v-else  @click="handleView(scope.row.id)">
-              <i class="iconfont icon-view icongreen"></i>
-              </span>
-              <span class="btn"  @click="handelDelete(scope.row)" title="删除" style="display:none;">
-              <i class="iconfont icon-del iconred"></i>
-            </span>
-            </template>
-          </el-table-column>
-        </el-table>
-      </div>
-      <!-- 分页组件 -->
-      <ui-pagination :total="total" @change="getPages" class="pb60"></ui-pagination>
+              </template>
+            </el-table-column>
+          </el-table>
+        </div>
+        <!-- 分页组件 -->
+        <ui-pagination :total="total" @change="getPages" class="pb60"></ui-pagination>
+
 
       <!-- 容量 -->
       <div class="progress-bar">
@@ -140,7 +141,8 @@
 <script>
 const memberTypeOptions = [{'id':'1','name':'检查人'},{ 'id':'2','name':'复查人'},{'id':'3','name':'整改人'}];
 const statusOptions = [{'id':'0','name':'未整改'},{ 'id':'1','name':'已整改'},{'id':'2','name':'已复查'}];  
-export default {
+export default { 
+  name: 'buildingDiary',
   data() {
     return {
       activeName: '1',
@@ -150,10 +152,11 @@ export default {
       orgList: [],
       org: {},            
       tableData: [],
+      toDoTableData: [],
       listQuery: { 
         projectId: '',
         orgId: '',
-        operateType: '1',//1：全部列表，2：待办列表
+        operateType: '2',//1：全部列表，2：待办列表
         questionTitle: '',  
         memberType: '', // 选中的数据，提交的时候做格式处理
         memberName: '',
@@ -168,6 +171,7 @@ export default {
       }, 
       loading: false,      
       total: 0,
+      toDoTotal: 0,
       // multipleSelection:[],
       usedCapacity: 0,// 容量-已用
       totalCapacity: 100, // 容量-总
@@ -202,7 +206,7 @@ export default {
     // this.getCkMyInPro()  
   },
   mounted() {
-    this.getCkMyInPro()  
+    this.getCkMyInPro()
     //权限设置
     this.menuAuthorityList=this.$getLastChildrenMenu('checkupList'); 
     // console.log(this.menuAuthorityList); 
@@ -232,25 +236,6 @@ export default {
     }        
   },   
   methods: {
-    handleType(tab, event) {
-        // console.log(tab, event);
-        if (tab.name === '2'){
-          this.getToDoList()
-        }
-    },
-    // 获取用户待办问题列表
-    getToDoList(){
-      this.loading = true
-      this.$api.toDoList().then(response => {
-        if (response.errorCode === '1') {
-          this.loading = false
-          this.toDoTableData = response.data
-          this.toDoTotal = response.totalRecords
-        } else {
-          this.$message.warning(response.resultMsg)
-        }
-      })
-    },
     // 选择项目
     selectOrgList(projectOrgId) {
       // 重新选择后先清除掉缓存，加载新的值，默认显示该项目下第一个组织

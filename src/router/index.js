@@ -7,7 +7,7 @@ Vue.use(Router)// Vue全局使用Router
 
 // 路由器配置
 const RouterConfig = {
-  // mode:'history',//去掉#号
+  mode:'history',//去掉#号
   routes: routers
 }
 
@@ -20,7 +20,7 @@ router.beforeEach((to, from, next) => {
   // console.log(getAccessToken())
   if (getAccessToken()) {
     if (to.path === '/' || to.path === '/login' || to.path === '/register' || to.path === '/findPwd') {
-      next('/project')
+      next('/')
     } else {
       // console.log(22222)
       next()
@@ -30,7 +30,6 @@ router.beforeEach((to, from, next) => {
       next()
     } else {
       next('/login')
-
     }
   }
 })

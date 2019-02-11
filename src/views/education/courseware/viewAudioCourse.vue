@@ -1,89 +1,106 @@
 <template>
   <div class="page-content-body">
-
-      <div class="page-main">
-        <div class="page-content">
-          <div class="meta_list">
-            <h1 class="title">{{viewCourseForm.courseName}}</h1>
-          </div>
-          <!--<div id="txtEditMsg" disabled="disabled" v-html="viewCourseForm.content"></div>-->
-          <ckeditor :height="200" :init-data="viewCourseForm.content"></ckeditor>
-          
-        </div>
-        <!--<div class="enclosure_revise">-->
-          <!--<div style="margin: 10px 10px 10px 10px;" class="pos-fix"> -->
-            <!--<div>-->
-              <!--<P>附件：</P>-->
-            <!--</div>-->
-            <!--<ul>-->
-              <!--<li v-if="resoureUploadFile.length === 0">暂无</li>-->
-              <!--<li v-else v-for="item in resoureUploadFile" :key="item.index" :label="item.name" :value="item.name">-->
-                <!--<div>-->
-                  <!--<a v-bind:href="item.filePath">{{item.name}}</a>-->
-                <!--</div>-->
-              <!--</li>-->
-            <!--</ul>-->
-          <!--</div>-->
-        <!--</div>-->
+    <div class="page-header page-navbar clearfix">
+      <div class="ui-title float_l"><span class="iconfont icon-home"></span>课件详情
       </div>
+      <el-button type="primary"  icon="el-icon-d-arrow-left" class="float_r" @click="goBack">返回</el-button>
+    </div>
+    <div class="page-main">
+      <div class="page-content">
+        <div class="meta-list">
+          <h1 class="title">{{viewCourseForm.courseName}}</h1>
+          <p class="sub-title">创建时间：{{viewCourseForm.createTime}}</p>
+        </div>
+        <div class="logoUrl"><img :src="viewCourseForm.logoUrl" alt=""></div>
+        <div class="audio-play">
+          <div class="play-bar"><audio class="audio-bar" :src="currAudio" autoplay="" controls="" @ended="nextAudio"></audio></div>
+          <ul  class="audioList-header">
+            <li><span>共<em>{{viewCourseForm.mediaList.length}}</em>个</span><span>名称</span><span>描述</span></li>
+          </ul>
+          <ul class="audioList-body">
+               <li v-for="(item,index) in viewCourseForm.mediaList" :class="{selected:indexAudio == index}" @click="play(index)">
+                  <span><i class="index">{{index+1}}</i><i class="iconfont icon-play play-btn"></i></span>
+                   <span>{{ item.name }}</span>
+                  <span>{{ item.attachDesc }}</span>
 
+               </li>
+           </ul>
+        </div>
+        <div class="block-title"><h2>课件描述</h2></div>
+        <div class="content" v-html="viewCourseForm.content"></div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
-import ckeditor from 'components/ckeditor/ckeditor'
 export default {
   name: 'courseware',
-  components:{ ckeditor },// ckeditor组件
   data() {
     return {
       viewCourseForm: {
         courseId: '',
         courseName: '',
-        courseType: 1,
+        createTime:'',
+        courseType: 3,
         content: '',
-        attachList: []
+        logoUrl: '',
+        attachList: [],
+        mediaList: [], // 媒体文件
       },
-      resoureUploadFile: [],      
+      resoureUploadFile: [],
+      indexAudio: 0,
     }   
   },
   mounted() {
-    if( this.$route.query.type === "1"){
-      this.editCoursePage(this.$route.query.courseId)
-    }
-    // this.editCoursePage(courseId)
+    this.editCoursePage()
   },
   methods: {
+    play (index){
+      this.indexAudio = index
+    },
+    nextAudio (){
+      if (this.indexAudio === this.viewCourseForm.mediaList.length-1){
+        this.indexAudio = -1
+      }
+      this.indexAudio ++
+
+    },
     // 获取信息
-    editCoursePage(courseId) {
+    editCoursePage() {
+      let params = {
+        courseId: this.$route.query.id,
+        courseType: this.$route.query.courseType,
+        attachType: 0
+      }
         this.$api
-          .editCoursePage({ courseId: courseId })
+          .editCoursePage(params)
           .then(response => {
             if (response.errorCode === '1') {
                 this.viewCourseForm.courseId = response.data.courseId;
                 this.viewCourseForm.courseName = response.data.courseName;
+                this.viewCourseForm.createTime = response.data.createTime;
                 this.viewCourseForm.content = response.data.content;
+                this.viewCourseForm.logoUrl = response.data.logoUrl;
                 this.resoureUploadFile = response.data.attachList;
-                // CKEDITOR.replace('editor', { toolbarCanCollapse: false, toolbarStartupExpanded: false, toolbar: [], height: '320px', width: '552px' });
-                // 访问CKEditor中的iframe，获取里头body元素，直接插入数据，解决直接赋值无效问题
-                var _html = this.viewCourseForm.content;
-                CKEDITOR.instances.editor.setData(_html,{
-                  callback:function(){
-                   var  _input_value = CKEDITOR.instances.editor.getData();
-                    if(_input_value == "") {
-                    var  _editor = window.frames[0];//获取iframe对象
-                      if(_editor != undefined){
-                         _editor.document.body.innerHTML = _html;//访问iframe中的body，并插入html
-                        CKEDITOR.instances.editor.setReadOnly(true);//设置只读
-     
-                      }
-                    }
-                  }
-                });                
+                this.viewCourseForm.mediaList = response.data.mediaList;// 多媒体类型附件
+
             }
           })
     },
+    // 返回
+    goBack() {
+      this.$router.go(-1);
+    }
+  },
+  computed: {
+    currAudio () {
+      if (this.viewCourseForm.mediaList.length != 0) {
+        return this.viewCourseForm.mediaList[this.indexAudio].filePath
+      }
+      // console.log(this.indexAudio);
 
+    }
   }
 }
 </script>
@@ -111,22 +128,145 @@ export default {
             }
         }
     }
-.page-main{
-  position: relative;
-}
-.page-content{
-  padding-left: 20px;
-  padding-right: 300px;
-  min-height: 200px;
-  padding-bottom: 20px;
-}
-.enclosure_revise{
-  position: absolute;
-  right: 0;
-  top: 20px;
-  width: 300px;
-}
-.title{
-  text-align: center;
-}
+    .page-main{
+      margin: 0 auto;
+      max-width: 1200px;
+    }
+    .page-content{
+
+      padding-bottom: 20px;
+    }
+    .enclosure_revise{
+      position: absolute;
+      right: 0;
+      top: 20px;
+      width: 300px;
+    }
+    .title, .sub-title{
+      text-align: center;
+    }
+    .sub-title{
+      padding-bottom: 15px;
+    }
+    .block-title{
+      display: -webkit-flex;
+      display: -ms-flexbox;
+      display: flex;
+      -webkit-align-items: center;
+      -ms-flex-align: center;
+      align-items: center;
+      height: 84px;
+      padding: 0 15px;
+      h2 {
+        font-size: 24px;
+      }
+    }
+    .content {
+      line-height: 24px;
+      padding: 8px 15px;
+      font-size: 14px;
+      border: 1px solid #d1d1d1;
+      border-radius: 2px;
+      display: block;
+      resize: none;
+      width: 100%;
+      min-height: 90px;
+      margin-bottom: 15px;
+      height: 90px;
+    }
+  .logoUrl {
+    text-align: center;
+    img {
+      margin: 0 auto;
+      width: auto;
+      height: 200px;
+    }
+  }
+    .play-bar {
+      position: relative;
+      height: 72px;
+      min-width: 850px;
+      display: -webkit-flex;
+      display: -ms-flexbox;
+      display: flex;
+      -webkit-justify-content: space-between;
+      -ms-flex-pack: justify;
+      justify-content: center;
+      align-items: center;
+      .audio-bar {
+        width: 100%;
+      }
+    }
+    .audioList-header{
+      li{
+        em {
+          color:#555;
+        }
+        background: #fff!important;
+        border-bottom: 1px solid #ededed;
+        margin-bottom: 15px;
+      }
+
+    }
+    .audioList-body,.audioList-header {
+      color: #aaa;
+      li{
+        text-align: left;
+        height: 50px;
+        line-height: 50px;
+        transition: background-color .2s linear;
+        cursor: pointer;
+        &:nth-child(odd){
+          background: #f7f7f7;
+        }
+        &:hover {
+          background-color: #e8e9ed;
+        }
+        .select-link {
+          display: inline-block;
+          font-size: 14px;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+        &.selected {
+          background-color: #e8e9ed;
+          color: #555;
+          .index {
+            display: none;
+          }
+          .play-btn {
+            display: block;
+          }
+        }
+        .index {
+          display: block;
+          font-style: normal;
+        }
+        .play-btn {
+          display: none;
+          font-size: 20px;
+          color: #3386e4;
+          line-height: 46px;
+        }
+
+        span{
+          display: inline-block;
+          vertical-align: inherit;
+          padding: 0 9px;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          &:nth-child(1){
+            width: 8%;
+          }
+          &:nth-child(2){
+            width: 22%;
+          }
+          &:nth-child(3){
+            width: 64%;
+          }
+        }
+      }
+    }
 </style>

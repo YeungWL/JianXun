@@ -33,6 +33,10 @@ export function editSaveCourse(data) {
   return service.post(OAUTH_API + '/eduExam/editSaveCourse.do', qs.stringify(data))
 }
 
+// 三级教育考题 - 59、上传封面或者缩略图
+export function uploadPic(data) {
+  return service.post(OAUTH_API + '/eduExam/uploadPic.do', qs.stringify(data))
+}
 // 三级教育考题 - 23、取消附件
 
 export function canCelAttach(data) {

@@ -30,10 +30,11 @@
                 <ckeditor :height="200" :init-data="addCourseForm.content"></ckeditor>
               </el-form-item>
               <el-form-item label="上传附件："  class="flex-100" v-show="addCourseForm.courseType === '0'">
-                <el-button class="gray fl"  title="上传" @click="handleUploadFile">
-                  <i class="el-icon-plus"></i>
-                </el-button>
-                <span class="red pl15">提示：附件格式支持doc\docx\xls\xlsx\ppt\pptx\pdf\txt\png\jpg\jpeg\gif\dwg\bmp\tif\cdr\psd\fla\swf\avi\mp4\zip\rar\wav\au\mp3</span>
+                <el-button size="small" type="primary" icon="el-icon-plus" @click="handleUploadFile" >点击上传</el-button>
+                <!--<el-button class="gray fl"  title="上传" @click="handleUploadFile">-->
+                  <!--<i class="el-icon-plus"></i>-->
+                <!--</el-button>-->
+                <span class="upload_span">提示：附件格式支持doc\docx\xls\xlsx\ppt\pptx\pdf\txt\png\jpg\jpeg\gif\dwg\bmp\tif\cdr\psd\fla\swf\avi\mp4\zip\rar\wav\au\mp3</span>
                 <input type="file" name="chapter_pdf[]" ref="pdf" @change="handleFileChange" style="display:none">
                 <div v-for="(item,index) in resoureUploadFile" :key="item.name">
                   {{item.name}}
@@ -42,10 +43,10 @@
               </el-form-item>
             </div>
             <div class="el-form-item flex-100" v-show="addCourseForm.courseType === '1'">
-              <!--图片功能正在开发中，敬请期待！-->
+              <!--上传图片-->
               <el-form-item label="图片："  class="flex-100">
-                <div class="upload_warp_img" v-show="mediaUploadFile.length != 0">
-                  <div class="upload_warp_img_div" v-for="(item,index) of mediaUploadFile" >
+                <div class="upload_warp" v-show="mediaUploadFile.length != 0">
+                  <div class="upload_warp_div" v-for="(item,index) of mediaUploadFile" >
                     <img :src="item.filePath" width="100" height="100" v-if="item.filePath != ''&& item.filePath != null">
                     <img :src="item.fileSrc" width="100" height="100" v-else>
                     <textarea v-model="item.attachDesc" placeholder="图片描述:最多可输入128个字符" maxlength="128"></textarea>
@@ -53,19 +54,18 @@
                     <i class="icon el-icon-error" @click="fileDel(item.path, item.attachId, index)"></i>
                   </div>
                 </div>
-                <div class="uploadImg" @click="fileClick">
-                  <i class="el-icon-plus avatar-uploader-icon"></i>
-                </div>
+                <el-button size="small" type="primary"  icon="el-icon-plus"  @click="fileClick" >点击上传</el-button>
                 <input type="file" @change="fileChange($event)"  id="upload_file" multiple style="display: none">
-                <span class="upload_span">图片支持大小不超过2M的JPG,JPEG,GIF,PNG图片上传</span>
+                <span class="upload_span">图片支持大小不超过2M，格式为JPG,JPEG,GIF,PNG</span>
               </el-form-item>
+              <!--//上传图片-->
             </div>
             <div class="el-form-item flex-100" v-show="addCourseForm.courseType === '2'">
-              <!--视频功能正在开发中，敬请期待！-->
+              <!--上传视频-->
               <el-form-item label="视频："  class="flex-100">
                 <div class="progress" v-show="isUploadLoading"><i class="icon el-icon-loading"></i>视频上传中...</div>
-                <div class="upload_warp_img" v-show="videoUploadFile.length != 0">
-                  <div class="upload_warp_img_div" v-for="(item,index) of videoUploadFile" >
+                <div class="upload_warp" v-show="videoUploadFile.length != 0">
+                  <div class="upload_warp_div" v-for="(item,index) of videoUploadFile" >
                     <video :src="item.filePath" width="100" height="100" v-if="item.filePath != ''&& item.filePath != null"></video>
                     <video :src="item.fileSrc" width="100" height="100" v-else></video>
                     <textarea v-model="item.attachDesc" placeholder="视频描述:最多可输入128个字符" maxlength="128"></textarea>
@@ -73,15 +73,49 @@
                     <i class="icon el-icon-error" @click="videoFileDel(item.path, item.attachId, index)"></i>
                   </div>
                 </div>
-                <div class="uploadImg" @click="videoFileClick" title="点击上传">
-                  <i class="el-icon-plus avatar-uploader-icon"></i>
-                </div>
+                <el-button size="small" type="primary"  icon="el-icon-plus"  @click="videoFileClick" >点击上传</el-button>
                 <input type="file" @change="videoFileChange($event)"  id="videoUploadFile" multiple style="display: none">
                 <span class="upload_span">视频支持大小不超过10M，格式为MP4</span>
               </el-form-item>
+              <!--//上传视频-->
             </div>
             <div class="el-form-item flex-100" v-show="addCourseForm.courseType === '3'">
-              <!--音频功能正在开发中，敬请期待！-->
+              <!--上传音频-->
+              <el-form-item label="音频："  class="flex-100">
+                <div class="progress" v-show="isAudioUploadLoading"><i class="icon el-icon-loading"></i>音频上传中...</div>
+                <div class="upload_warp" v-show="audioUploadFile.length != 0">
+                  <div class="upload_warp_div" v-for="(item,index) of audioUploadFile" >
+                    <span class="file-name">{{item.name}}</span>
+                    <textarea v-model="item.attachDesc" placeholder="音频描述:最多可输入128个字符" maxlength="128"></textarea>
+                    <input type="number" placeholder="排序号1-10整数" v-model="item.orderNum" @blur="isPositiveInteger(item.orderNum)" min="1" max="10" maxlength="2" >
+                    <i class="icon el-icon-error" @click="audioFileDel(item.path, item.attachId, index)"></i>
+                  </div>
+                </div>
+                <el-button size="small" type="primary" icon="el-icon-plus"   @click="audioFileClick" >点击上传</el-button>
+
+                <input type="file" @change="audioFileChange($event)"  id="audioUploadFile" multiple style="display: none">
+                <span class="upload_span">音频支持大小不超过10M，格式为MP3</span>
+              </el-form-item>
+              <el-form-item label="音频封面："  class="flex-100">
+                <!--<div class="uploadImg" @click="audioFileClick" title="点击上传">-->
+                  <!--<i class="el-icon-plus avatar-uploader-icon"></i>-->
+                <!--</div>-->
+                <user-upload v-if="addCourseForm.logoUrl"
+                             :imgSrc="addCourseForm.logoUrl"
+                             ref="img"
+                             accept="image/*"
+                             theme="light"
+                             size="small"
+                             @onChange="setFileChange"></user-upload>
+                <user-upload v-else
+                             ref="img"
+                             accept="image/*"
+                             theme="light"
+                             size="small"
+                             @onChange="setFileChange"></user-upload>
+                <div>点击上图提交要更换的图片</div>
+              </el-form-item>
+              <!--//上传音频-->
             </div>
             <el-form-item>
               <el-button type="primary" @click="handleSubmit">确定</el-button>
@@ -116,31 +150,37 @@
 <script>
   import ckeditor from 'components/ckeditor/ckeditor'
   import axios from "axios";
+  import userUpload from 'components/upload/userUpload.vue'
+  // import  logoImg from 'assets/images/jianxun_logo.png'
   export default {
     name: 'addCourse',
-    components:{ ckeditor },// ckeditor组件
+    components:{ ckeditor,userUpload },// ckeditor组件
     data() {
       return {
         addCourseForm: {
           courseName: '',
           courseType: '0',// 附件类型[必填项,0普通附件[doc,xls,pdf等word文件],1图片[png,gif,jpge等图片] 2视频[mp4,ogg]，3音频[mp3],默认是0]
+          logoUrl: '',//logoUrl 课件封面图或者缩略图
           content: '',
           attachList: [],// 附件
           mediaList: [], // 媒体文件
         },
+        logoUrl: '',
         typeDisable: false, // 是否禁止选择课件类型
         courseType: '',// 课件类型
         attachDesc: '',// 附件说明介绍,128字符内
         videoAttachDesc:'',
+        audioAttachDesc:'',
         orderNum: '',// 排序号
         content:'',// 课件内容
         resoureUploadFile: [], // 附件文件列表
         mediaUploadFile: [], // 图片文件列表加入本地地址
         videoUploadFile:[],// 视频文件列表加入本地地址
+        audioUploadFile:[],// 视频文件列表加入本地地址
         isUploadLoading: false,// 是否正在上传文件
+        isAudioUploadLoading: false,// 是否正在上传文件
         fileFormatDialogVisible: false,
         imgList: [], // 本地预览图片课件列表
-        size: 0, // 图片课件大小
         rules: {
           courseName: [{ required: true, message: '请输入名称', trigger: 'blur'}],
           courseType: [{ required: true, message: '请选择类型', trigger: 'blur'}],
@@ -189,8 +229,10 @@
               this.mediaUploadFile = response.data.mediaList;// 图片
             } else if(this.addCourseForm.courseType === '2'){
               this.videoUploadFile = response.data.mediaList;// 视频
+            } else if (this.addCourseForm.courseType === '3'){// 音频
+              this.addCourseForm.logoUrl = response.data.logoUrl // 获取封面图片
+              this.audioUploadFile = response.data.mediaList;// 视频
             }
-
 
             // console.log(this.mediaUploadFile);
             // 访问CKEditor中的iframe，获取里头body元素，直接插入数据，解决直接赋值无效问题
@@ -214,12 +256,12 @@
           }
         })
       },
-      // 点击上传附件
+      // 上传普通附件
       handleUploadFile() {
         this.$refs.pdf.value = "";
         this.$refs.pdf.click();
       },
-      // 附件文件改变
+      // 附件提交后台
       handleFileChange(e) {
         let file = e.target.files[0];
         var size = file.size / 1024;
@@ -273,7 +315,7 @@
         });
 
       },
-      // 删除附件文件
+      // 删除附件
       handleDeleteFile(path, attachId, index) {
         this.$api
                 .canCelAttach({path: path, attachId: attachId})
@@ -286,11 +328,11 @@
                   }
                 });
       },
-      // 选择本地媒体文件
+      // 上传图片
       fileClick(){
         document.getElementById('upload_file').click()
       },
-      // 媒体课件本地预览
+      // 图片本地预览
       fileChange(el){
         if (!el.target.files[0].size) return;
         this.fileList(el.target.files);
@@ -299,7 +341,7 @@
       fileList(files){
         for (let i = 0; i < files.length; i++) {
           this.mediaFileUpload(files[i]);// 上传后台,本地图片预览
-          // console.log(files[i]);
+          console.log(files[i]);
           this.fileAdd(files[i]);// 本地预览
         }
       },
@@ -400,7 +442,7 @@
           this.videoFileUpload(files[i]);// 上传后台,本地预览
         }
       },
-      getvideoFileURL(file) {
+      getVideoFileURL(file) {
         let getUrl = null;
         if(window.createObjectURL != undefined) { // basic
           getUrl = window.createObjectURL(file);
@@ -456,7 +498,7 @@
               fileSize: response.data.data.fileSize,
               orderNum: response.data.data.orderNum, // 排序号
               attachDesc: this.videoAttachDesc,// 附件说明介绍,128字符内
-              fileSrc: this.getvideoFileURL(file),// 本地预览地址
+              fileSrc: this.getVideoFileURL(file),// 本地预览地址
             }
             this.videoUploadFile.push(mediaItemData);// 本地显示提交后台数据
             this.isUploadLoading = false;
@@ -467,9 +509,9 @@
             this.$message.warning(response.data.resultMsg)
           }
         })
-        .catch(function(err) {
-          console.log(err);
-        });
+          .catch(function(err) {
+            console.log(err);
+          });
 
       },
       videoFileDel(path, attachId, index) {
@@ -483,6 +525,117 @@
               this.$message.error(response.resultMsg);
             }
           });
+      },
+      // 上传音频
+      audioFileClick (){
+        document.getElementById('audioUploadFile').click()
+      },
+      audioFileChange(el) {
+        if (!el.target.files[0].size) return;
+        this.audioFileList(el.target.files);
+        el.target.value = ''
+      },
+      audioFileList(files){
+        for (let i = 0; i < files.length; i++) {
+          this.audioFileUpload(files[i]);// 上传后台
+        }
+      },
+      audioFileUpload (file) {
+        let size = file.size / 1024;
+        if (this.resoureUploadFile.length >= 10) {
+          this.$message({
+            message: "附件最多上传10个",
+            type: "warning"
+          });
+          return false;
+        }
+        if (size > 10000) {
+          this.$message({
+            message: "附件大于10MB, 请重新上传！",
+            type: "warning"
+          });
+          return false;
+        }
+        this.isAudioUploadLoading = true;
+        let formData = new FormData();
+        formData.append("file", file);
+        formData.append("attachType", this.addCourseForm.courseType);
+        formData.append("attachDesc", this.addCourseForm.attachDesc);
+        formData.append("token", this.getToken());
+        formData.append("accessToken", localStorage.getItem("accessToken"));
+        // console.log(formData);
+
+        // 接口跨域问题
+        axios({
+          url: this.baseURL() + "/jianzhumobile/mobile/eduExam/uploading.do",
+          method: "post",
+          data: formData,
+          headers: {
+            "Content-Type": "multipart/form-data"
+          }
+        }).then(response => {
+          if (response.data.errorCode === "1") {
+            this.$message.success("上传媒体文件成功");
+            let mediaItemData = {
+              attachId: response.data.data.attachId,
+              name: response.data.data.name,
+              path: response.data.data.path,
+              fileSize: response.data.data.fileSize,
+              orderNum: response.data.data.orderNum, // 排序号
+              attachDesc: this.audioAttachDesc,// 附件说明介绍,128字符内
+            }
+            this.audioUploadFile.push(mediaItemData);// 本地显示提交后台数据
+            this.isAudioUploadLoading = false;
+          } else {
+            this.$message.warning(response.data.resultMsg)
+          }
+        })
+          .catch(function(err) {
+            console.log(err);
+          });
+
+      },
+      audioFileDel(path, attachId, index) {
+        // 取消附件上传
+        this.$api.canCelAttach({path: path, attachId: attachId})
+          .then(response => {
+            if (response.errorCode === '1') {
+              this.$message.success(response.resultMsg);
+              this.audioUploadFile.splice(index, 1);
+            } else {
+              this.$message.error(response.resultMsg);
+            }
+          });
+      },
+      // 上传课件封面
+      setFileChange(file, name) {
+        let _this = this
+        let imgurl = _this.$refs.img.dataUrl
+        file["src"] =  imgurl
+        // console.log(file);
+        let formData = new FormData();
+        formData.append("file", file);
+        formData.append("token", this.getToken());
+        formData.append("accessToken", localStorage.getItem("accessToken"));
+        axios({
+          url: this.baseURL() + "/jianzhumobile/mobile/eduExam/uploadPic.do",
+          method: "post",
+          data: formData,
+          headers: {
+            "Content-Type": "multipart/form-data"
+          }
+        }).then(response => {
+          if (response.data.errorCode === "1") {
+            _this.$message.success(response.data.resultMsg)
+            _this.logoUrl = response.data.data.path
+            // console.log(" _this.addCourseForm.logoUrl"+response.data.data.path);
+          } else {
+            _this.$message.warning(response.data.resultMsg)
+          }
+        }).catch(error => {
+          _this.$message.error(error)
+          return false
+        })
       },
       // 提交
       handleSubmit() {
@@ -510,6 +663,9 @@
                 delete this.videoUploadFile[i].fileSrc // 提交数据移除本地图片预览
               }
               this.addCourseForm.mediaList = JSON.stringify(this.videoUploadFile);// 获取多媒体文件
+            } else if (this.addCourseForm.courseType === '3') {// 音频
+              this.addCourseForm.logoUrl = this.logoUrl // 获取封面图片url
+              this.addCourseForm.mediaList = JSON.stringify(this.audioUploadFile);// 获取多媒体文件
             } else {
               this.addCourseForm.mediaList = []
             }
@@ -528,7 +684,6 @@
       },
       // 编辑课件
       update() {
-
         // 获取输入内容
         this.addCourseForm.content = CKEDITOR.instances.editor.getData()
         // let params = JSON.stringify(this.addCourseForm);
@@ -546,6 +701,9 @@
                 delete this.videoUploadFile[i].fileSrc // 提交数据移除本地图片预览
               }
               this.addCourseForm.mediaList = JSON.stringify(this.videoUploadFile);// 获取多媒体文件
+            } else if (this.addCourseForm.courseType === '3') {// 音频
+              this.addCourseForm.logoUrl = this.logoUrl // 获取封面图片url
+              this.addCourseForm.mediaList = JSON.stringify(this.audioUploadFile);// 获取多媒体文件
             } else {
               this.addCourseForm.mediaList = []
             }
@@ -610,7 +768,6 @@
     width: 100px;
   }
   .uploadImg{
-    float: left;
     width:100px;
     height:100px;
     border:#ccc dashed 1px;
@@ -621,13 +778,13 @@
       left: 0px;
     }
   }
-  .upload_warp_img{
+  .upload_warp{
     width: 100%;
     display: flex;
     justify-content: flex-start;
     align-items: center;
     flex-direction: column;
-    .upload_warp_img_div{
+    .upload_warp_div{
       width: 100%;
       margin-right: 10px;
       margin-bottom: 10px;
@@ -647,6 +804,12 @@
       &:hover .icon{
         display: block;
       }
+      .file-name {
+        margin-right: 10px;
+        display: inline-block;
+        width: 300px;
+        line-height: 20px;
+      }
       img,video,audio{
         margin-right: 10px;
         width:100px;
@@ -656,7 +819,8 @@
       }
       textarea{
         margin-right: 10px;
-        height: 100px;
+        height: 70px;
+        line-height: 20px;
         width: 300px;
         border-radius: 4px;
         border: 1px solid #dcdfe6;

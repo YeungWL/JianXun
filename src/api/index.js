@@ -10,6 +10,8 @@ import * as personal from './personal' // 个人中心
 import * as sms from './sms' // 短信验证码
 import * as education from './education' // 三级教育接口
 import * as eduWorker from './eduWorker' // 三级教育--课件和工人
+import * as meeting from './meeting' // 会议通知
+import * as cms from './cms' // 内容管理
 
 export default {
   ...login,
@@ -23,5 +25,7 @@ export default {
   ...checking,
   ...sms,
   ...education,
-  ...eduWorker
+  ...eduWorker,
+  ...meeting,
+  ...cms
 }

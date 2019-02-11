@@ -72,3 +72,28 @@ export function deleteQues(data) {
 export function capacity(data) {
   return service.post(OAUTH_API + '/ck/capacity.do', qs.stringify(data))
 }
+
+// 现场检查 - 18、复查指派时判断问题为内部检查还是外部检查
+export function isOrgCk(data) {
+  return service.post(OAUTH_API + '/ck/isOrgCk.do', qs.stringify(data))
+}
+// 现场检查 - 19、获取指派人员
+export function assignChecking(data) {
+  return service.post(OAUTH_API + '/ck/assign.do', qs.stringify(data))
+}
+// 现场检查 - 20、提交被指派人
+export function saveHandler(data) {
+  return service.post(OAUTH_API + '/ck/saveHandler.do', qs.stringify(data))
+}
+// 现场检查 - 21、获得检查问题的指派记录列表
+export function getHandlerList(data) {
+  return service.post(OAUTH_API + '/ck/getHandlerList.do', qs.stringify(data))
+}
+// 现场检查 - 22、复查指派时获取可以指派的组织
+export function getAssignOrgs(data) {
+  return service.post(OAUTH_API + '/ck/getAssignOrgs.do', qs.stringify(data))
+}
+// 现场检查 - 23、判断某问题是否是用户的待办问题
+export function isMyToDo(data) {
+  return service.post(OAUTH_API + '/ck/isMyToDo.do', qs.stringify(data))
+}

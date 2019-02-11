@@ -7,7 +7,6 @@
   "scripts": {
     "dev": "webpack-dev-server --inline --progress --config build/webpack.dev.conf.js",
     "start": "npm run dev",
-    "lint": "eslint --ext .js,.vue src",
     "build": "node build/build.js"
   },
   "dependencies": {
@@ -24,13 +23,13 @@
     "vue": "^2.5.2",
     "vue-event-calendar": "^1.5.2",
     "vue-router": "^3.0.1",
+    "vue-video-player": "^5.0.2",
     "vuex": "^3.0.1",
     "vux": "^2.8.0"
   },
   "devDependencies": {
     "autoprefixer": "^7.1.2",
     "babel-core": "^6.22.1",
-    "babel-eslint": "^7.1.1",
     "babel-loader": "^7.1.1",
     "babel-plugin-transform-runtime": "^6.22.0",
     "babel-polyfill": "^6.26.0",
@@ -44,14 +43,6 @@
     "copy-webpack-plugin": "^4.0.1",
     "css-loader": "^0.28.11",
     "es6-promise": "^4.1.1",
-    "eslint": "^3.19.0",
-    "eslint-config-standard": "^10.2.1",
-    "eslint-friendly-formatter": "^3.0.0",
-    "eslint-plugin-html": "^3.0.0",
-    "eslint-plugin-import": "^2.7.0",
-    "eslint-plugin-node": "^5.2.0",
-    "eslint-plugin-promise": "^3.4.0",
-    "eslint-plugin-standard": "^3.0.1",
     "eventsource-polyfill": "^0.9.6",
     "extract-text-webpack-plugin": "^3.0.0",
     "file-loader": "^1.1.4",

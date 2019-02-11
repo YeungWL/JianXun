@@ -36,7 +36,10 @@
                   :value="item.bianma">
                 </el-option>  
               </el-select>            
-            </el-form-item>            
+            </el-form-item>
+            <el-form-item label="指派给："  class="flex-50" prop="handlerId">
+              <select-organization-tree v-model="questionForm.handlerId" :treeData="treeData" @changePid="changePid"></select-organization-tree>
+            </el-form-item>
             <el-form-item label="图片："  class="flex-100" >
               <div class="upload_warp_img" v-show="imgList.length!=0">
                 <div class="upload_warp_img_div" v-for="(item,index) of imgList" >
@@ -62,8 +65,12 @@
   </div>
 </template>
 <script>
+  import selectOrganizationTree from 'components/treecomponents/selectOrganizationTree.vue' // 选择上级栏目
 export default {  
   name: 'addCheckupQuestion',
+  components: {
+    selectOrganizationTree
+  },
   data() {
     return {
       questionForm: {
@@ -74,8 +81,27 @@ export default {
         requireTime: '',
         questionAttr: '',
         checkType: '',
-        pictureJson: []
+        pictureJson: [],
+        handlerId: '',
+        orgMemberId: ''
       },
+      treeData: [{
+        label: '轨道交通十二号线工程施工1标项目经理部',
+        "memberList": [
+          {
+            "handlerId": "1a796a1a6f714dcdb9f6e33c8738495d",
+            "orgMemberId": "a389044d6cbf443d9b50a67bd4bebab6",
+            "orgRole": "2",
+            "name": "陈显增"
+          }
+        ],
+        children: [{
+          label: '敖荣',
+          children: [{
+            label: '财务部'
+          }]
+        }]
+      }],
       questionAttrOptions: [],
       checkTypeOptions: [],
       imgList: [],
@@ -91,11 +117,28 @@ export default {
   },
   mounted() {
     this.getQuestionAttr()
-    this.getCheckupType()      
+    this.getCheckupType()
+    // this.getAssignChecking()
   },  
   created() {
   },
   methods: {
+    // 获取指派人员
+    getAssignChecking() {
+      let params = {
+        assignType: '1',//1:检查时指派,2:整改时指派,3:复查时指派
+        orgId: this.$route.query.orgId
+      }
+      this.$api.assignChecking(params).then(response => {
+        this.treeData = response.data;
+      })
+    },
+    // 选中的人员
+    changePid(val) {
+      console.log("menuId："+ val.id)
+      this.questionForm.handlerId = val.id
+      this.questionForm.orgMemberId = val.id
+    },
     // 获取问题属性列表
     getQuestionAttr() {
       this.$api.questionAttr().then(response => {     

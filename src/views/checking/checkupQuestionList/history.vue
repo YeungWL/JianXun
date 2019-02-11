@@ -30,8 +30,8 @@
                <el-input v-model="questionForm.createTime" :readonly="readonly"></el-input>
             </el-form-item>
             <el-form-item label="图片："  class="flex-100">
-              <div class="imgbox" v-for="item in questionForm.replyPictures">
-                <a href="javascript:;"><img :src="item.path"></a>
+              <div class="imgbox" v-for="(item,index) in questionForm.replyPictures">
+                <a href="javascript:;" @click="handlePhotoPreview(questionForm.replyPictures)"><img :src="item.path"></a>
               </div>
             </el-form-item>                                                
           </el-form>
@@ -52,7 +52,7 @@
               </el-form-item>
               <el-form-item label="图片："  class="flex-100" v-if="item.replyPictures.length != 0">
                 <div class="imgbox" v-for="j in item.replyPictures">
-                  <a href="javascript:;"><img :src="j.path"></a>
+                  <a href="javascript:;" @click="handlePhotoPreview(item.replyPictures)"><img :src="j.path"></a>
                 </div>
               </el-form-item>                                              
             </el-form>
@@ -70,7 +70,7 @@
               </el-form-item>
               <el-form-item label="图片："  class="flex-100" v-if="item.replyPictures.length != 0">
                 <div class="imgbox" v-for="j in item.replyPictures">
-                  <a href="javascript:;"><img :src="j.path"></a>
+                  <a href="javascript:;" @click="handlePhotoPreview(item.replyPictures)"><img :src="j.path"></a>
                 </div>
               </el-form-item>                                              
             </el-form>
@@ -78,11 +78,23 @@
         </section> 
       </div>     
     </div>
+    <el-dialog title="查看图片"
+               :visible.sync="replyPicturesDialogVisible"
+               :close-on-click-modal='false'
+               width="80%" class="my-dialog">
+      <div class="dialog-content">
+        <photo-preview :photoData="photoData"></photo-preview>
+      </div>
+    </el-dialog>
   </div>
 </template>
 <script>
+  import photoPreview from  'components/media/photoPreview.vue'// 查看图片
 export default {  
   name: 'history',
+  components:{
+    photoPreview
+  },
   data() {
     return {
       questionForm: {
@@ -96,7 +108,9 @@ export default {
         replyPictures: []
       },
       replyVoListForm:[],
-      readonly: true        
+      readonly: true,
+      replyPicturesDialogVisible: false,
+      photoData: []
     }
   },
   mounted() {
@@ -107,12 +121,18 @@ export default {
     
   },
   methods: {
-    
+    handlePhotoPreview(data){
+      this.replyPicturesDialogVisible = true
+      this.photoData = data
+      // console.log(this.photoData);
+    },
     getHistoryRecord() {
       this.$api.historyRecord({questionId: this.$route.query.questionId}).then(response => {     
         if (response.errorCode === '1') {          
           this.questionForm = response.data[0].question
           this.replyVoListForm =  response.data[0].replyVoList
+          // this.replyPictures = this.questionForm.replyPictures
+          // console.log(this.questionForm.replyPictures);
         }      
       }) 
     },     
@@ -161,11 +181,13 @@ export default {
         display: inline-block;
         margin-right: 10px;
         img{
-          width: 200px;
+          width: auto;
+          height: 100px;
         }        
       }
 
     }
   }
 }
+
 </style>

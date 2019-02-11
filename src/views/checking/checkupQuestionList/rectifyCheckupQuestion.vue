@@ -34,7 +34,7 @@
             </el-form-item>
             <el-form-item label="图片："  class="flex-100">
               <div class="imgbox" v-for="item in questionForm.replyPictures">
-                <a href="javascript:;"><img :src="item.path"></a>
+                <a href="javascript:;" @click="handlePhotoPreview(questionForm.replyPictures)"><img :src="item.path"></a>
               </div>
             </el-form-item>                                                
           </el-form>
@@ -55,12 +55,12 @@
               </el-form-item>
               <el-form-item label="图片："  class="flex-100" v-if="item.replyPictures.length != 0">
                 <div class="imgbox" v-for="j in item.replyPictures">
-                  <a href="javascript:;"><img :src="j.path"></a>
+                  <a href="javascript:;" @click="handlePhotoPreview(item.replyPictures)"><img :src="j.path"></a>
                 </div>
               </el-form-item>                                              
             </el-form>
           </div>
-          <div class="ui-form" v-else>
+          <div class="ui-form form-bdnone" v-else>
             <el-form label-width="100px" class='flex-form'>
               <el-form-item label="复查描述："  class="flex-100">
                 <el-input type="textarea" v-model="item.replyDesc" :readonly="readonly"></el-input>
@@ -73,7 +73,7 @@
               </el-form-item>
               <el-form-item label="图片："  class="flex-100" v-if="item.replyPictures.length != 0">
                 <div class="imgbox" v-for="j in item.replyPictures">
-                  <a href="javascript:;"><img :src="j.path"></a>
+                  <a href="javascript:;" @click="handlePhotoPreview(item.replyPictures)"><img :src="j.path"></a>
                 </div>
               </el-form-item>                                              
             </el-form>
@@ -115,11 +115,23 @@
       </section>
 
     </div>
+    <el-dialog title="查看图片"
+               :visible.sync="replyPicturesDialogVisible"
+               :close-on-click-modal='false'
+               width="80%" class="my-dialog">
+      <div class="dialog-content">
+        <photo-preview :photoData="photoData"></photo-preview>
+      </div>
+    </el-dialog>
   </div>
 </template>
 <script>
+  import photoPreview from  'components/media/photoPreview.vue'// 查看图片
 export default {  
   name: 'rectifyCheckupQuestion',
+  components:{
+    photoPreview
+  },
   data() {
     return {
       questionForm: {
@@ -145,7 +157,9 @@ export default {
       size: 0, 
       rules: {
         replyDesc: [{ required: true, message: '请输入整改描述', trigger: 'blur'}]
-      }               
+      },
+      replyPicturesDialogVisible: false,
+      photoData: []
     }
   },
   mounted() {
@@ -156,6 +170,11 @@ export default {
     
   },
   methods: {
+    handlePhotoPreview(data){
+      this.replyPicturesDialogVisible = true
+      this.photoData = data
+      // console.log(this.photoData);
+    },
     // 获取问题的整改页面数据
     getReplyQuestionPage() {
       this.$api.replyQuestionPage({questionId: this.$route.query.questionId}).then(response => {     

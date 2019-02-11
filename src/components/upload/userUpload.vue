@@ -232,7 +232,6 @@
           this.errText = `文件大小不能超过${this.sizeHumanRead}`;
           return false
         }
-
         // 双向绑定
         this.$emit('input', this.file);
 

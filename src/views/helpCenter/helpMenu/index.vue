@@ -1,15 +1,15 @@
 <template>
   <div class="page-content-body clealfix">
    <!-- 树组件 -->
-    <menu-tree @change="getChannelId"  :copy="true" ></menu-tree>
+    <column-tree @change="getChannelId"  :copy="true" ></column-tree>
     <div class="content-right">
       <div class="page-header clearfix">
         <el-form class="search-form" :inline="true" :model="listQuery" ref="form" >
             <el-form-item label="栏目名称：">
-              <el-input v-model="listQuery.menuName" placeholder="请输入栏目名称" clearable @change="handleSearch"></el-input>
+              <el-input v-model="listQuery.name" placeholder="请输入栏目名称" clearable @change="handleSearch"></el-input>
             </el-form-item>
             <el-form-item label="栏目编码：">
-              <el-input v-model="listQuery.menuCode" placeholder="请输入栏目编码" clearable @change="handleSearch"></el-input>
+              <el-input v-model="listQuery.code" placeholder="请输入栏目编码" clearable @change="handleSearch"></el-input>
             </el-form-item>            
             <el-form-item>
               <el-button type="primary" icon="el-icon-search" @click="handleSearch">搜索</el-button>
@@ -30,18 +30,18 @@
             <el-table-column label="栏目名称"
                             min-width="100"
                             show-overflow-tooltip>
-              <template slot-scope="scope">{{scope.row.menuName}}</template>
+              <template slot-scope="scope">{{scope.row.name}}</template>
             </el-table-column>
             <el-table-column label="父级名称"
                             min-width="100"
                             show-overflow-tooltip>
-              <template slot-scope="scope">{{scope.row.menuName}}</template>
+              <template slot-scope="scope">{{scope.row.parentName}}</template>
             </el-table-column>
             <el-table-column label="所属层级"
                             min-width='80'
                             show-overflow-tooltip>
             <template slot-scope="scope">
-              <span>{{scope.row.menuType}}</span>
+              <span>{{scope.row.level}}</span>
             </template>
             </el-table-column>
 
@@ -49,13 +49,13 @@
                             min-width="120"
                             show-overflow-tooltip>
             <template slot-scope="scope">
-               <span>{{scope.row.menuCode== null?'null':scope.row.menuCode}}</span>       
+               <span>{{scope.row.code== null?'null':scope.row.code}}</span>
             </template>
             </el-table-column>
             <el-table-column label="排序"
                             min-width="80"
-                            show-overflow-tooltip prop="menuOrder" sortable>
-            <template slot-scope="scope">{{scope.row.menuOrder== null?'null':scope.row.menuOrder}}</template>
+                            show-overflow-tooltip prop="orderNo" sortable>
+            <template slot-scope="scope">{{scope.row.orderNo== null?'null':scope.row.orderNo}}</template>
             </el-table-column>           
             <el-table-column label="操作" min-width="120" style="">
             <template slot-scope="scope">
@@ -93,17 +93,17 @@
         <div class="ui-form">
           <el-form ref="menuForm" :rules="rules" label-width="100px" :model="menuForm" class='my-form'>
             <el-form-item label="栏目名称：" prop="menuName">
-              <el-input v-model="menuForm.menuName"></el-input>
+              <el-input v-model="menuForm.name"></el-input>
             </el-form-item>
             <el-form-item label="归属上级" prop="parentId">
-              <root-tree v-model="menuForm.parentId" :treeData="treeData" @changePid="changePid"></root-tree>
+              <select-column-tree v-model="menuForm.parentId" :treeData="treeData" @changePid="changePid"></select-column-tree>
               <span class="gray">若不选，则是一级栏目</span>
             </el-form-item>            
             <el-form-item label="编码：" prop="menuCode">
-              <el-input v-model="menuForm.menuCode" @change="validateCheckMenuCode(false)" @blur="validateCheckMenuCode(true)"></el-input>
+              <el-input v-model="menuForm.code" placeholder="小于64位英文字母与数字组合" @change="validateCheckMenuCode(false)" @blur="validateCheckMenuCode(true)"></el-input>
             </el-form-item>
             <el-form-item label="排序：" prop="menuOrder">
-              <el-input v-model="menuForm.menuOrder" placeholder="排序号[非必填项,默认为1]"></el-input>
+              <el-input v-model="menuForm.orderNo" placeholder="排序号[非必填项,默认为1]"></el-input>
             </el-form-item>                       
           </el-form>
         </div>
@@ -118,38 +118,34 @@
   </div>
 </template>
 <script>
-import menuTree from 'components/treecomponents/menuTree.vue'// 栏目列表
-import rootTree from 'components/treecomponents/rootTree.vue'// 选择上级栏目
+import columnTree from 'components/treecomponents/columnTree.vue'// 栏目列表
+import selectColumnTree from 'components/treecomponents/selectColumnTree.vue'// 选择上级栏目
 export default {
   components: {
-    menuTree,
-    rootTree
+    columnTree,
+    selectColumnTree
   },  
   data() {
     return {
       tableData: [], // 表格数据          
       listQuery: { 
-        menuName: '',
-        menuCode:'',
+        name: '',
+        code:'',
         parentId:'',
-        isLeaf:'',   
         currentPage: 1,
         pageSize: 10,
       },    
       menuForm: {
-        menuId: '',
-        menuName: '',
-        menuCode: '',
+        id: '',
+        name: '',
+        code: '',
         parentId: '0',
-        menuUrl: '',
-        menuType: '1',
-        menuOrder: '1', 
-        isLeaf: '2'       
+        orderNo: '',
       },
       total: 0, // 列表总数   
       titleMap: {
-        update: '修改信息',
-        create: '添加'
+        update: '修改栏目',
+        create: '添加栏目'
       },
       dialogStatus: '',      
       menuDialogVisible: false,               
@@ -157,28 +153,25 @@ export default {
       treeData: [], // 全部栏目
       isMenu: true, // 类型是否为栏目
       rules: {
-        menuName: [{ required: true, message: '请输入栏目名称', trigger: 'blur' }],
-        menuCode: [{ required: true, message: '请输入栏目编码', trigger: 'blur' }],
-        menuUrl: [{ required: true, message: '请输入请求地址', trigger: 'blur' }],
-        menuType: [{ required: true, message: '请选择栏目类型', trigger: 'blur' }]             
+        name: [{ required: true, message: '请输入栏目名称', trigger: 'blur' }],
+        code: [{ required: true, message: '请输入栏目编码', trigger: 'blur' }]
       },
     }
   },
   created() {
     this.getList();
      // 初始获取数据
-    this.menuForm.parentId = [this.listQuery.parentId];   
+    // this.menuForm.parentId = [this.listQuery.parentId];
     // console.log("parentId："+this.menuForm.parentId)  
  
   },
   mounted() {
- 
 
   },
   methods: {
     // 获取表格的数据
     getList() {
-      this.$api.menuList(this.listQuery).then(response => {
+      this.$api.columnChildList(this.listQuery).then(response => {
         if (response.errorCode === '1') {
           this.tableData = response.data
           this.total = response.totalRecords
@@ -206,22 +199,16 @@ export default {
       // }
       this.getList()
     },
-    // 获取所有权限
+    // 获取所有栏目数据
     getMenuList() {
-      let params = {   
-        menuName: '',
-        menuCode:'',
-        parentId: '',
-        isLeaf: '2' 
-      }
-      this.$api.menuList(params).then(response => {
+      this.$api.columnListAll().then(response => {
         this.treeData = response.data;
       })
     },
     // 获取选中栏目的数据
     changePid(val) {
-      // console.log("menuId："+ val.menuId)
-      this.menuForm.parentId = val.menuId
+      console.log("menuId："+ val.id)
+      this.menuForm.parentId = val.id
     },
     // 获取点击的栏目父级id，更新右侧列表数据  
     getChannelId(data, node) { 
@@ -231,11 +218,10 @@ export default {
     },
     // 验证验证栏目或按钮编码是否存在
     validateCheckMenuCode(isChange) {
-      if (this.menuForm.menuCode) {
+      if (this.menuForm.code) {
         if (!isChange) return
-        this.$api.checkMenuCode({
-          menuCode: this.menuForm.menuCode,
-          menuId: ''
+        this.$api.columnCheckCode({
+          code: this.menuForm.code,
         }).then(response => {
           if (response.errorCode === '1') {
             this.$message.success('该栏目编码可以使用！')
@@ -258,16 +244,11 @@ export default {
       this.getMenuList()
       this.$nextTick(_ => {
         this.$refs.menuForm.resetFields()
-        this.menuForm['menuName'] = ''
-        this.menuForm['menuCode'] = ''
-        this.menuForm['menuOrder'] = '1'  
+        this.menuForm['name'] = ''
+        this.menuForm['code'] = ''
+        this.menuForm['orderNo'] = '1'
         // this.menuForm['parentId'] = this.menuForm.parentId
         this.menuForm['parentId'] ==='0'?'0':this.menuForm.parentId
-        if ( menuType === '3') {
-          this.menuForm['isLeaf'] = '1' 
-        } else {
-          this.menuForm['isLeaf'] = '2'    
-        }
         console.log(this.menuForm.parentId)      
       })
     },    
@@ -278,30 +259,20 @@ export default {
       this.getMenuList()
       this.$nextTick(_ => {
         this.$refs.menuForm.resetFields()
-        this.menuForm.menuId = data.menuId
-        this.menuForm.menuName = data.menuName
-        this.menuForm.menuCode = data.menuCode
+        this.menuForm.id = data.id
+        this.menuForm.name = data.name
+        this.menuForm.code = data.code
         this.menuForm.parentId = data.parentId
-        this.menuForm.menuUrl = data.menuUrl
-        this.menuForm.menuOrder = data.menuOrder 
-        this.menuForm.isLeaf = data.isLeaf
+        this.menuForm.orderNo = data.orderNo
         console.log(this.menuForm.parentId)
-        // 栏目类型直接赋值没选中效果需加判断  
-        if (data.menuType === '1') {
-          this.menuForm.menuType = 1
-        } else if (data.menuType === '2') {
-          this.menuForm.menuType = 2
-        } else {
-          this.menuForm.menuType = 3
-        }
       })
     },
     // 新增提交
     create() {
       this.$refs.menuForm.validate(valid => {
         if (valid) {
-          delete this.menuForm.menuId
-          this.$api.addMenu(this.menuForm).then(response => {
+          delete this.menuForm.id
+          this.$api.columnSubmit(this.menuForm).then(response => {
             if (response.errorCode === '1') {
               this.getList()
               this.$message.success("新建成功！")
@@ -319,7 +290,7 @@ export default {
     update(data) {
       this.$refs.menuForm.validate(valid => {
         if (valid) {
-          this.$api.updateMenu(this.menuForm).then(response => {
+          this.$api.columnSubmit(this.menuForm).then(response => {
             if (response.errorCode === '1') {
               this.getList()
               this.$message.success('修改成功！')
@@ -337,8 +308,8 @@ export default {
     },
     // 停用/启用提交
     deletemenu(data,val) {                 
-        this.$api.delMenu({   
-          menuId: data.menuId,
+        this.$api.columnDisableOrEnable({
+          id: data.id,
           isDeleted: val
         }).then(response => {
           if (response.errorCode === '1') {
