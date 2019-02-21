@@ -5,7 +5,7 @@
                   <div @click="reflashClick"><span class="el-icon-refresh" :class="[rotating?'rotating':'']"> </span> 刷新 </div>
                    <!--<div v-if="copy" @click.self="clickEvent" class="copy-channel">复制栏目</div>-->
                 </div>
-                <el-tree :props="props" :load="ansyTree" lazy :indent='16' node-key="id" 
+                <el-tree :props="props" :load="ansyTree" lazy :indent='16' node-key="id"  :highlight-current="true"
                 :default-expanded-keys="['']"
                 @node-click="getNodes"
                 v-if="refash"

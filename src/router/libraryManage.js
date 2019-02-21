@@ -28,9 +28,9 @@ export default {
       }
     },
     {
-      path: '/library/projectLibrary',
+      path: '/library/pjLibrary',
       component: projectLibrary,
-      name: 'projectLibrary',
+      name: 'pjLibrary',
       meta: {
         requireAuth: true
       }

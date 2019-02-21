@@ -37,10 +37,13 @@
                 </el-option>  
               </el-select>            
             </el-form-item>
-            <el-form-item label="指派给："  class="flex-50" prop="handlerId">
-              <select-organization-tree v-model="questionForm.handlerId" :treeData="treeData" @changePid="changePid"></select-organization-tree>
+            <el-form-item label="指派给："  class="flex-50" prop="handlerName">
+              <el-input v-model="questionForm.handlerName" readonly></el-input>
             </el-form-item>
-            <el-form-item label="图片："  class="flex-100" >
+            <el-form-item >
+              <el-button type="primary" @click="handleShowHandler">指派</el-button>
+            </el-form-item>
+            <el-form-item label="现场照片："  class="flex-100" >
               <div class="upload_warp_img" v-show="imgList.length!=0">
                 <div class="upload_warp_img_div" v-for="(item,index) of imgList" >
                     <i class="icon el-icon-error" @click="fileDel(index)"></i>
@@ -60,12 +63,26 @@
           </el-form>
         </div>      
       </section>
-
     </div>
+    <!-- 指派 -->
+    <el-dialog title="指派："
+               :visible.sync="selectHandlerDialogVisible"
+               :close-on-click-modal='false'
+               width="605px" class="my-dialog">
+      <div class="dialog-content">
+        <div class="ui-form">
+          <select-organization-tree :treeData="treeData" @changePid="changePid"></select-organization-tree>
+        </div>
+      </div>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="handleClose">取 消</el-button>
+        <el-button type="primary" @click="handleClose()">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 <script>
-  import selectOrganizationTree from 'components/treecomponents/selectOrganizationTree.vue' // 选择上级栏目
+  import selectOrganizationTree from 'components/treecomponents/selectOrganizationTree.vue' // 选择组织人员
 export default {  
   name: 'addCheckupQuestion',
   components: {
@@ -82,26 +99,53 @@ export default {
         questionAttr: '',
         checkType: '',
         pictureJson: [],
-        handlerId: '',
-        orgMemberId: ''
+        handlerId:'',
+        orgMemberId:'',
+        handlerName:'',
       },
-      treeData: [{
-        label: '轨道交通十二号线工程施工1标项目经理部',
-        "memberList": [
-          {
-            "handlerId": "1a796a1a6f714dcdb9f6e33c8738495d",
-            "orgMemberId": "a389044d6cbf443d9b50a67bd4bebab6",
-            "orgRole": "2",
-            "name": "陈显增"
-          }
-        ],
-        children: [{
-          label: '敖荣',
-          children: [{
-            label: '财务部'
-          }]
-        }]
-      }],
+      selectHandlerDialogVisible: false,
+      treeData:[],
+    //   treeData: [
+    //   {
+    //     "_id": "da6d40addb2a400a92456f632fa414f6", //组织id, ordId
+    //     "omId": null,
+    //     "role": "-1",
+    //     "name": "十三号线施工1标", //组织名称
+    //     disabled: true,
+    //     "memberList": [ //部门列表
+    //       {
+    //         "_id": null,
+    //         "omId": null,
+    //         "role": "-1",
+    //         "name": "组织负责人",
+    //         disabled: true,
+    //         "memberList": [
+    //           {
+    //             "_id": "501b2db9b9f040ccab456700e199db16", //handlerId
+    //             "omId": "a389044d6cbf443d9b50a67bd4bebab6", //orgMemberId
+    //             "role": "0", //orgRole
+    //             "name": "敖荣" //name
+    //           }
+    //         ]
+    //       },
+    //       {
+    //         "_id": "4f5a1288a1a64e94a77e209dd8d0743f",
+    //         "omId": null,
+    //         "role": "-1",
+    //         "name": "财务部",
+    //         disabled: true,
+    //         "memberList": [
+    //           {
+    //             "_id": "1a796a1a6f714dcdb9f6e33c8738495d",
+    //             "omId": "a389044d6cbf443d9b50a67bd4bebab6",
+    //             "role": "2",
+    //             "name": "陈显增"
+    //           }
+    //         ]
+    //       }
+    //     ]
+    //   }
+    // ],
       questionAttrOptions: [],
       checkTypeOptions: [],
       imgList: [],
@@ -111,14 +155,14 @@ export default {
         queDesc: [{ required: true, message: '请输入问题描述', trigger: 'blur'}],
         requireTime: [{ required: true, message: '请输入要求时间', trigger: 'blur' }],
         questionAttr: [{ required: true, message: '请选择问题属性', trigger: 'change'}],
-        checkType: [{ required: true, message: '请选择检查类型', trigger: 'change'}]     
+        checkType: [{ required: true, message: '请选择检查类型', trigger: 'change'}],
+        handlerName: [{ required: true, message: '请选择指派人员', trigger: 'change'}]
       }               
     }
   },
   mounted() {
     this.getQuestionAttr()
     this.getCheckupType()
-    // this.getAssignChecking()
   },  
   created() {
   },
@@ -131,13 +175,23 @@ export default {
       }
       this.$api.assignChecking(params).then(response => {
         this.treeData = response.data;
+        // console.log(this.treeData);
       })
     },
     // 选中的人员
     changePid(val) {
-      console.log("menuId："+ val.id)
-      this.questionForm.handlerId = val.id
-      this.questionForm.orgMemberId = val.id
+      // console.log("handler:"+val)
+      this.questionForm.handlerId = val._id
+      this.questionForm.orgMemberId = val.omId
+      this.questionForm.handlerName = val.name
+    },
+    handleShowHandler (){
+      this.selectHandlerDialogVisible = true
+      this.getAssignChecking()
+    },
+    // 关闭选择指派人弹窗
+    handleClose(){
+      this.selectHandlerDialogVisible = false
     },
     // 获取问题属性列表
     getQuestionAttr() {
@@ -200,9 +254,11 @@ export default {
     // 提交
     handleSubmit() {
       //  console.log( this.questionForm) 
-      //   console.log("this.questionForm.pictureJson"+ this.questionForm.pictureJson) 
+      //   console.log("this.questionForm.pictureJson"+ this.questionForm.pictureJson)
+
        this.$refs.questionForm.validate(valid => {
         if (valid) {
+          delete this.questionForm.handlerName
           this.$api.inputQuestion(this.questionForm).then(response => {
             if (response.errorCode === '1') {
    

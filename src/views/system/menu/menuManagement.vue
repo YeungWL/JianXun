@@ -81,12 +81,12 @@
                   <i class="iconfont icon-edit editicon"></i>
                 </span>
                 <span class="btn" title="停用"  v-if='scope.row.isDeleted == "N"'
-                      @click="handelDelete(scope.row,'Y')">停用
-                  <!--<i class="iconfont icon-shanchu delicon"></i>-->
+                      @click="handelDelete(scope.row,'Y')">
+                  <i class="iconfont icon-tingyong iconred"></i>
                 </span>
                 <span class="btn" title="启用"  v-else
-                      @click="handelDelete(scope.row,'N')">启用
-                  <!--<i class="iconfont icon-shanchu delicon"></i>-->
+                      @click="handelDelete(scope.row,'N')">
+                   <i class="iconfont icon-qiyong iconblue"></i>
                 </span>                
                 <!--<span class="btn" title="删除"
                     @click="handelDelete(scope.row)">

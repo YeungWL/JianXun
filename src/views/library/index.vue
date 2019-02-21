@@ -35,7 +35,7 @@ export default {
     // console.log(this.$route.name)
     switch (this.$route.name) {
       case 'publicLibrary': this.activeIndex = '1-1'; break
-      case 'projectLibrary': this.activeIndex = '1-2'; break
+      case 'pjLibrary': this.activeIndex = '1-2'; break
       case 'orgLibrary': this.activeIndex = '1-3'; break
     }
   },
@@ -45,7 +45,7 @@ export default {
       this.activeIndex = key
       switch (key) {
         case '1-1': this.$router.push({ path: '/library/publicLibrary' }); break
-        case '1-2': this.$router.push({ path: '/library/projectLibrary' }); break
+        case '1-2': this.$router.push({ path: '/library/pjLibrary' }); break
         case '1-3': this.$router.push({ path: '/library/orgLibrary' }); break
 
       }

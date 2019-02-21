@@ -148,13 +148,13 @@
   </div>
 </template>
 <script>
-  import ckeditor from 'components/ckeditor/ckeditor'
+  import ckeditor from 'components/ckeditor/ckeditor';
   import axios from "axios";
   import userUpload from 'components/upload/userUpload.vue'
   // import  logoImg from 'assets/images/jianxun_logo.png'
   export default {
     name: 'addCourse',
-    components:{ ckeditor,userUpload },// ckeditor组件
+    components:{ ckeditor,userUpload },//组件
     data() {
       return {
         addCourseForm: {
@@ -236,7 +236,9 @@
 
             // console.log(this.mediaUploadFile);
             // 访问CKEditor中的iframe，获取里头body元素，直接插入数据，解决直接赋值无效问题
+
             var _html = this.addCourseForm.content;
+
             CKEDITOR.instances.editor.setData(_html,{
               callback:function(){
                 var  _input_value = CKEDITOR.instances.editor.getData();
@@ -252,6 +254,8 @@
                 }
               }
             });
+
+
             // CKEDITOR.instances.editor.setData(this.addCourseForm.content)
           }
         })
@@ -610,8 +614,8 @@
       // 上传课件封面
       setFileChange(file, name) {
         let _this = this
-        let imgurl = _this.$refs.img.dataUrl
-        file["src"] =  imgurl
+        // let imgurl = _this.$refs.img.dataUrl
+        // file["src"] =  imgurl
         // console.log(file);
         let formData = new FormData();
         formData.append("file", file);
@@ -628,7 +632,7 @@
           if (response.data.errorCode === "1") {
             _this.$message.success(response.data.resultMsg)
             _this.logoUrl = response.data.data.path
-            // console.log(" _this.addCourseForm.logoUrl"+response.data.data.path);
+            console.log(" _this.addCourseForm.logoUrl"+response.data.data.path);
           } else {
             _this.$message.warning(response.data.resultMsg)
           }

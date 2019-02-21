@@ -85,7 +85,6 @@
                   :data="courseTableData">
                   <el-table-column type="selection" min-width="57"></el-table-column>
                   <el-table-column prop="title" label="课件名称" min-width="180" show-overflow-tooltip></el-table-column>
-                  </el-table-column>
                 </el-table>
               </div>
             </el-tab-pane>
@@ -96,7 +95,6 @@
                   :data="courseTableData">
                 <el-table-column type="selection" min-width="57"></el-table-column>
                 <el-table-column prop="title" label="课件名称" min-width="180" show-overflow-tooltip></el-table-column>
-                </el-table-column>
                </el-table>
              </div>
              <div class="btn-group mt20">          

@@ -1,7 +1,8 @@
 <!--用户头像上传，后续改造单，多图-->
 <template>
   <div class="img-inputer" :class="[themeClass, sizeClass, nhe ? 'nhe': '', ]" ref="box">
-    <i class="iconfont img-inputer__icon" v-html="iconUnicode"></i>
+    <!--<i class="iconfont img-inputer__icon" v-html="iconUnicode"></i>-->
+    <el-button type="text" icon="el-icon-plus" class="img-inputer__icon"></el-button>
     <p class="img-inputer__placeholder">{{placeholder}}</p>
 
     <div class="img-inputer__preview-box" v-if="imgSelected">

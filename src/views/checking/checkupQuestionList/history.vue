@@ -29,7 +29,7 @@
             <el-form-item label="检查时间："  class="flex-50">
                <el-input v-model="questionForm.createTime" :readonly="readonly"></el-input>
             </el-form-item>
-            <el-form-item label="图片："  class="flex-100">
+            <el-form-item label="现场照片："  class="flex-100">
               <div class="imgbox" v-for="(item,index) in questionForm.replyPictures">
                 <a href="javascript:;" @click="handlePhotoPreview(questionForm.replyPictures)"><img :src="item.path"></a>
               </div>
@@ -50,7 +50,7 @@
               <el-form-item label="整改时间：" >
                 <el-input v-model="item.replyTime" :readonly="readonly"></el-input>
               </el-form-item>
-              <el-form-item label="图片："  class="flex-100" v-if="item.replyPictures.length != 0">
+              <el-form-item label="现场照片："  class="flex-100" v-if="item.replyPictures.length != 0">
                 <div class="imgbox" v-for="j in item.replyPictures">
                   <a href="javascript:;" @click="handlePhotoPreview(item.replyPictures)"><img :src="j.path"></a>
                 </div>
@@ -68,7 +68,7 @@
               <el-form-item label="复查时间：" >
                 <el-input v-model="item.replyTime" :readonly="readonly"></el-input>
               </el-form-item>
-              <el-form-item label="图片："  class="flex-100" v-if="item.replyPictures.length != 0">
+              <el-form-item label="现场照片："  class="flex-100" v-if="item.replyPictures.length != 0">
                 <div class="imgbox" v-for="j in item.replyPictures">
                   <a href="javascript:;" @click="handlePhotoPreview(item.replyPictures)"><img :src="j.path"></a>
                 </div>

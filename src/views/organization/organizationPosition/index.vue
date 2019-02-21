@@ -69,7 +69,7 @@
       </el-table>
     </div>
 
-    <!-- 添加人员的dialog -->
+    <!-- 分配岗位的dialog -->
     <el-dialog title="添加人员" width="450px" :visible.sync="dialogFormVisible">
       <el-form ref="createForm" :model="createForm" label-width="80px">
         <div class="select">
@@ -436,6 +436,7 @@ export default {
     selected(val) {
       this.role = val
       this.radioDisabled = false
+      this.createForm.radio2 = ''
       // if (this.role === '2') {
       //   this.show = false
       // } else {

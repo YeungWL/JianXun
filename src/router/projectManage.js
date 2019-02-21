@@ -10,7 +10,8 @@ const projectOrg = resolve => require(['@/views/project/projectOrg/projectOrg'],
 const projectMsg = resolve => require(['@/views/project/projectMsg/projectMsg'], resolve)
 export default {
   path: '/project',
-  component: _ => import('../views/project/index.vue'),
+   component: project,
+  // component: _ => import('../views/project/index.vue'),
   redirect: '/project/projectList',
   name: '项目管理',
   meta: {
@@ -18,7 +19,8 @@ export default {
   },
   children: [{
       path: '/project/projectList',
-      component: _ => import('../views/project/projectList/projectList.vue'),
+       component: projectList,
+      // component: _ => import('../views/project/projectList/projectList.vue'),
       name: 'projectList',
       meta: {
         requireAuth: true

@@ -7,7 +7,7 @@ Vue.use(Router)// Vue全局使用Router
 
 // 路由器配置
 const RouterConfig = {
-  mode:'history',//去掉#号
+  // mode:'history',//去掉#号
   routes: routers
 }
 

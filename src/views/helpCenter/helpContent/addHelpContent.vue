@@ -9,37 +9,66 @@
     <div class="page-main" style="width:70%">
       <section  class="dialog-content">
         <div class="ui-form" >
-          <el-form ref="addCententForm" :rules="rules" label-width="100px" :model="addCententForm" class="flex-form">
+          <el-form ref="addContentForm" :rules="rules" label-width="100px" :model="addContentForm" class="flex-form">
             <el-form-item label="内容标题："  class="flex-100" prop="title">
-              <el-input v-model="addCententForm.title" ></el-input>
+              <el-input v-model="addContentForm.title" ></el-input>
             </el-form-item>
-            <el-form-item label="归属栏目" prop="parentId">
-              <root-tree v-model="addCententForm.parentId" :treeData="treeData" @changePid="changePid"></root-tree>
-              <span class="gray">若不选，则是一级栏目</span>
-            </el-form-item> 
+            <el-form-item label="归属栏目" prop="columnId">
+              <select-column-tree v-model="addContentForm.columnId" :treeData="treeData" @changePid="changePid"></select-column-tree>
+            </el-form-item>
             <el-form-item label="内容类型："  class="flex-100" prop="type">
-              <el-radio-group v-model="addCententForm.type">
-                <el-radio :label="1">内容文章</el-radio>
-                <el-radio :label="2">外链内容</el-radio>
-                <el-radio :label="3">广告位</el-radio>
+              <el-radio-group v-model="addContentForm.type">
+                <el-radio :label="1" :disabled="typeDisable">内容文章</el-radio>
+                <el-radio :label="2" :disabled="typeDisable">外链文章</el-radio>
+                <el-radio :label="3" :disabled="typeDisable">广告位</el-radio>
               </el-radio-group>
             </el-form-item>
-            <div class="el-form-item flex-100" v-show="addCententForm.type === 1">    
-              <el-form-item label="内容："  class="flex-100" prop="content">
-                <ckeditor :height="200" :init-data="addCententForm.content"></ckeditor>
+            <div class="el-form-item flex-100" v-show="addContentForm.type === 1">
+              <el-form-item label="内容："  class="flex-100" prop="content" v-if="addContentForm.type === 1" :rules="addContentForm.type === 1?[{ required: true, message: '请输入内容', trigger: 'blur'}]:rules.content">
+                <ckeditor :height="200" :init-data="addContentForm.content"></ckeditor>
               </el-form-item>
             </div>
-            <div class="el-form-item flex-100" v-show="addCententForm.type === 2"> 
+            <div class="el-form-item flex-100">
                <!--外链内容URL功能正在开发中，敬请期待！-->
-                 <el-form-item label="外链内容URL"  class="flex-100" prop="url">
-                    <el-input type="text" v-model="addCententForm.url"></el-input>
+                 <el-form-item label="外链内容url"  class="flex-100" prop="hrefUrl" v-if="addContentForm.type === 2" :rules="addContentForm.type === 2?[{ required: true, message: '请输入url', trigger: 'blur'}]:rules.hrefUrl">
+                    <el-input type="text" v-model="addContentForm.hrefUrl" ></el-input>
                   </el-form-item>
             </div>
-            <div class="el-form-item flex-100" v-show="addCententForm.type === 3"> 
+            <div class="el-form-item flex-100" v-show="addContentForm.type === 3">
                <!--广告位功能正在开发中，敬请期待！-->
             </div>
-            <el-form-item label="发布者：" prop="author">
-              <el-input v-model="addCententForm.author" ></el-input>
+            <div class="el-form-item flex-100">
+              <el-form-item label="摘要：" class="flex-100" prop="summary" >
+                <textarea v-model="addContentForm.summary" placeholder="最多可输入128个字符" maxlength="128"></textarea>
+              </el-form-item>
+            </div>
+            <el-form-item label="发布者：" prop="publisher">
+              <el-input v-model="addContentForm.publisher" ></el-input>
+            </el-form-item>
+            <el-form-item label="缩略图："  prop="imageUrl" class="flex-100">
+              <user-upload v-if="addContentForm.imageUrl"
+                           :imgSrc="addContentForm.imageUrl"
+                           ref="img"
+                           accept="image/*"
+                           theme="light"
+                           size="small"
+                           @onChange="setFileChange"></user-upload>
+              <user-upload v-else
+                           ref="img"
+                           accept="image/*"
+                           theme="light"
+                           size="small"
+                           @onChange="setFileChange"></user-upload>
+              <!--<div>点击上图提交要更换的图片</div>-->
+            </el-form-item>
+            <el-form-item label="上传附件："  class="flex-100" >
+              <el-button size="small" type="primary" icon="el-icon-plus" @click="handleUploadFile" >点击上传</el-button>
+              <span class="upload_span">提示：附件格式支持doc\docx\xls\xlsx\ppt\pptx\pdf\txt\png\jpg\jpeg\gif\dwg\bmp\tif\cdr\psd</span>
+              <input type="file" name="chapter_pdf[]" ref="pdf" @change="handleFileChange" style="display:none">
+              <div v-for="(item,index) in resoureUploadFile" :key="item.name">
+                {{item.name}}
+                <el-button class="my_button" icon="el-icon-delete" title="删除" @click="handleDeleteFile(item.path, item.attachId, index)" type size="small"></el-button>
+              </div>
             </el-form-item>
             <el-form-item   class="flex-100">
               <el-button type="primary" @click="handleSubmit">确定</el-button>
@@ -74,30 +103,38 @@
 </template>
 <script>
 import ckeditor from 'components/ckeditor/ckeditor';// ckeditor组件
-import rootTree from 'components/treecomponents/rootTree.vue';// 选择上级栏目组件
+import selectColumnTree from 'components/treecomponents/selectColumnTree.vue';// 选择上级栏目
 import axios from "axios";
+import userUpload from 'components/upload/userUpload.vue'
 export default {  
-  name: 'addCentent',
-  components:{ ckeditor, rootTree },
+  name: 'addContent',
+  components:{ ckeditor, selectColumnTree, userUpload },
   data() {
     return {
-      addCententForm: {
+      addContentForm: {
+        contentId:'',
         title: '',
+        summary:'', // 内容摘要
         type: 1,
-        parentId:'0',
+        columnId:'',
         content: '',
-        author:'',
+        hrefUrl:'', // 外链内容地址
+        imageUrl: '', // 缩略图
+        publisher:'',
         attachList: []
       },
+      imageUrl:'',
+      typeDisable: false,
       treeData: [], // 全部栏目
-      content:'',
       resoureUploadFile: [],
       fileFormatDialogVisible: false,
       rules: {
         title: [{ required: true, message: '请输入标题', trigger: 'blur'}],
+        columnId: [{ required: true, message: '请选择归属栏目', trigger: 'change'}],
         type: [{ required: true, message: '请选择类型', trigger: 'blur'}],
         content: [{ required: true, message: '请输入内容', trigger: 'blur' }],
-        author: [{ required: true, message: '请输入发布者', trigger: 'blur' }]  
+        publisher: [{ required: true, message: '请输入发布者', trigger: 'blur' }],
+        hrefUrl: [{ required: true, message: '请输入URL', trigger: 'blur' }],
       }               
     }
   },  
@@ -107,27 +144,44 @@ export default {
   mounted() {
     this.getMenuList(); // 获取所有栏目
     if( this.$route.query.type === "update"){
-     this.editCenterPage()
+     this.getContentInfo()
+      this.typeDisable = true; // 禁止选择课件类型
     }  
   },
   computed: {
-    // type() {
-    //   return this.$route.query.type ? "update" : "create";
-    // }
   },
   methods: {
+    // 获取所有栏目数据
+    getMenuList() {
+      this.$api.columnListAll().then(response => {
+        if (response.errorCode === '1') {
+          this.treeData = response.data;
+        }
+      })
+    },
+    // 获取选中栏目的id
+    changePid(val) {
+      // console.log("columnId："+ val.id)
+      this.addContentForm.columnId = val.id
+    },
     // 获取信息
-    editCenterPage() {
+    getContentInfo() {
         this.$api
-          .editCenterPage({ courseId: this.$route.query.id })
+          .getContentInfo({ contentId: this.$route.query.id })
           .then(response => {
             if (response.errorCode === '1') {
-                this.addCententForm['courseId'] = response.data.courseId;
-                this.addCententForm.courseName = response.data.courseName;
-                this.addCententForm.content = response.data.content;
+                this.addContentForm.contentId = response.data.id;
+                this.addContentForm.columnId = response.data.columnId;
+                this.addContentForm.title = response.data.title;
+                this.addContentForm.publisher = response.data.publisher;
+                this.addContentForm.content = response.data.content;
+                this.addContentForm.type = response.data.type;
+                this.addContentForm.imageUrl = response.data.imagePath;
+                this.addContentForm.hrefUrl= response.data.hrefUrl;
+                this.addContentForm.summary = response.data.summary;
                 this.resoureUploadFile = response.data.attachList;
                 // 访问CKEditor中的iframe，获取里头body元素，直接插入数据，解决直接赋值无效问题
-                var _html = this.addCententForm.content;
+                var _html = this.addContentForm.content;
                 CKEDITOR.instances.editor.setData(_html,{
                   callback:function(){
                    var  _input_value = CKEDITOR.instances.editor.getData();
@@ -142,9 +196,39 @@ export default {
                   }
                 });
                 // CKEDITOR.instances.editor.setData(this.addCententForm.content)
+            } else {
+              this.$message.warning(response.data.resultMsg)
             }
           })
-    },    
+    },
+    // 上传缩略图
+    setFileChange(file, name) {
+      let _this = this
+      let formData = new FormData();
+      formData.append("file", file);
+      formData.append("token", this.getToken());
+      formData.append("accessToken", localStorage.getItem("accessToken"));
+      axios({
+        url: this.baseURL() + "/jianzhumobile/mobile/cms/uploadPic.do",
+        method: "post",
+        data: formData,
+        headers: {
+          "Content-Type": "multipart/form-data"
+        }
+      }).then(response => {
+        if (response.data.errorCode === "1") {
+          _this.$message.success(response.data.resultMsg)
+          _this.imageUrl = response.data.data.path
+          // _this.addContentForm.imageUrl = response.data.data.path // 获取缩略图url
+          console.log("imageUrl"+ _this.imageUrl);
+        } else {
+          _this.$message.warning(response.data.resultMsg)
+        }
+      }).catch(error => {
+        console.log(error)
+        return false
+      })
+    },
     // 点击上传文件
     handleUploadFile() {
       this.$refs.pdf.value = "";
@@ -153,7 +237,7 @@ export default {
     // 文件改变
     handleFileChange(e) {
       let file = e.target.files[0];
-      var size = file.size / 1024; 
+      let size = file.size / 1024;
       if (this.resoureUploadFile.length >= 10) {
         this.$message({
           message: "附件最多上传10个",
@@ -170,12 +254,14 @@ export default {
       }
       let formData = new FormData();
       formData.append("file", file);
+      formData.append("attachDesc", '');
       formData.append("token", this.getToken());
       formData.append("accessToken", localStorage.getItem("accessToken"));
+      console.log(formData);
       // 接口跨域问题
       axios({
           url:
-          this.baseURL() + "/jianzhumobile/mobile/eduExam/uploading.do",
+          this.baseURL() + "/jianzhumobile/mobile/cms/uploading.do",
           method: "post",
           data: formData,
           headers: {
@@ -190,10 +276,10 @@ export default {
             name: response.data.data.name, 
             path: response.data.data.path, 
             fileSize: response.data.data.fileSize, 
-            filePath: ""
+            // filePath: ""
           }
           this.resoureUploadFile.push(itemData);
-          this.addCententForm.attachList = JSON.stringify(this.resoureUploadFile)
+          this.addContentForm.attachList = JSON.stringify(this.resoureUploadFile)
           // console.log(response.data)
         } else {
           this.$message.warning(response.data.resultMsg)
@@ -207,7 +293,7 @@ export default {
     // 删除文件
     handleDeleteFile(path, attachId, index) {
         this.$api
-          .canCelAttach({path: path, attachId: attachId})
+          .contentCancelAttach({path: path, attachId: attachId})
           .then(response => {
             if (response.errorCode === '1') {
               this.$message.success(response.resultMsg);
@@ -228,12 +314,13 @@ export default {
     // 新增课件
     create() {
       // 获取输入内容
-      this.addCententForm.content = CKEDITOR.instances.editor.getData()
-      // console.log(this.addCententForm+"addCententForm")
-       this.$refs.addCententForm.validate(valid => {
+      this.addContentForm.content = CKEDITOR.instances.editor.getData()
+      // console.log(this.addContentForm)
+       this.$refs.addContentForm.validate(valid => {
         if (valid) {
-          delete this.addCententForm.courseId
-          this.$api.savaeCourse(this.addCententForm).then(response => {
+          this.addContentForm.imageUrl = this.imageUrl // 获取缩略图url
+          delete this.addContentForm.contentId
+          this.$api.contentAdd(this.addContentForm).then(response => {
             if (response.errorCode === '1') {
               this.$message.success(response.resultMsg)
               this.goBack();
@@ -247,11 +334,12 @@ export default {
     // 编辑课件
     update() {
       // 获取输入内容
-      this.addCententForm.content = CKEDITOR.instances.editor.getData()
+      this.addContentForm.content = CKEDITOR.instances.editor.getData()
       // console.log(this.addCententForm.content+"content")
-       this.$refs.addCententForm.validate(valid => {
+       this.$refs.addContentForm.validate(valid => {
         if (valid) {
-          this.$api.editSaveCourse(this.addCententForm).then(response => {
+          this.addContentForm.imageUrl = this.imageUrl // 获取缩略图url
+          this.$api.contentEdit(this.addContentForm).then(response => {
             if (response.errorCode === '1') {
               this.$message.success(response.resultMsg)
               this.goBack();
@@ -262,29 +350,6 @@ export default {
         }
        })
     },
-    // 获取所有栏目
-    getMenuList() {
-      let params = {   
-        menuName: '',
-        menuCode:'',
-        parentId: '',
-        isLeaf: '2' 
-      }
-      this.$api.menuList(params).then(response => {
-        this.treeData = response.data;
-      })
-    },
-    // 获取选中栏目的数据
-    changePid(val) {
-      // console.log("menuId："+ val.menuId)
-      this.menuForm.parentId = val.menuId
-    },
-    // 获取点击的栏目父级id，更新右侧列表数据  
-    getChannelId(data, node) { 
-      this.listQuery.parentId = data.id
-      this.menuForm.parentId = data.id
-      this.getList(this.listQuery)
-    },                        
     // 返回
     goBack() {
       this.$router.go(-1);
@@ -326,6 +391,16 @@ export default {
     border-bottom: 1px dashed #ddd; 
     padding-bottom:20px;
     margin-bottom:20px;
+  }
+  textarea{
+    margin-right: 10px;
+    height: 70px;
+    line-height: 20px;
+    width: 300px;
+    border-radius: 4px;
+    border: 1px solid #dcdfe6;
+    padding: 5px;
+    resize: none;
   }
 }
 </style>

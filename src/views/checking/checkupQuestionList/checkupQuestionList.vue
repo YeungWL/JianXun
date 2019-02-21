@@ -29,6 +29,12 @@
                   :data="tableData">
           <!--<el-table-column type="selection" min-width="57"></el-table-column>-->
           <el-table-column prop="title" label="问题名称" min-width="180" show-overflow-tooltip>
+            <template slot-scope="scope">
+              <span v-if='scope.row.isRead === "2"' >{{scope.row.title}}</span>
+              <span v-else-if='scope.row.isRead === "1"' class="red">{{scope.row.title}}</span>
+              <span v-else-if='scope.row.status === "1"' class="blue">{{scope.row.title}}</span>
+              <span v-else-if='scope.row.status === "2"' class="green">{{scope.row.title}}</span>
+            </template>
           </el-table-column>
           <el-table-column prop="questionAttr" label="问题属性" min-width="80" >
             <template slot-scope="scope">
@@ -38,9 +44,10 @@
           <el-table-column prop="checkType" label="检查类别" min-width="80" show-overflow-tooltip></el-table-column>
           <el-table-column prop="status" label="状态" min-width="100" show-overflow-tooltip>
             <template slot-scope="scope">
-              <span v-if='scope.row.status === "0"' class="red">未整改</span>
+              <span v-if='scope.row.isRead === "2"' >未整改</span>
+              <span v-else-if='scope.row.isRead === "1"' class="red">未整改</span>
               <span v-else-if='scope.row.status === "1"' class="blue">已整改</span>
-              <span v-else class="green">已复查</span>
+              <span v-else-if='scope.row.status === "2"' class="green">已复查</span>
             </template>
           </el-table-column>
           <el-table-column prop="createTime" label="创建时间" min-width="150" sortable></el-table-column>
@@ -232,25 +239,6 @@ export default {
     }        
   },   
   methods: {
-    handleType(tab, event) {
-        // console.log(tab, event);
-        if (tab.name === '2'){
-          this.getToDoList()
-        }
-    },
-    // 获取用户待办问题列表
-    getToDoList(){
-      this.loading = true
-      this.$api.toDoList().then(response => {
-        if (response.errorCode === '1') {
-          this.loading = false
-          this.toDoTableData = response.data
-          this.toDoTotal = response.totalRecords
-        } else {
-          this.$message.warning(response.resultMsg)
-        }
-      })
-    },
     // 选择项目
     selectOrgList(projectOrgId) {
       // 重新选择后先清除掉缓存，加载新的值，默认显示该项目下第一个组织
@@ -556,7 +544,7 @@ export default {
     handleUpdate(questionId,status) {   
       this.$router.push({
         path: "/checking/rectifyCheckupQuestion",
-        query: { questionId: questionId, status: status }
+        query: { questionId: questionId, status: status, orgId: this.listQuery.orgId, projectId: this.listQuery.projectId}
       })
     }, 
     // 查看历史记录   

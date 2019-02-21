@@ -17,8 +17,8 @@
           </el-form-item> 
           <div class="btn-group fr">
             <el-button type="primary"  icon="el-icon-search" @click="handleSearch">高级查询</el-button> 
-            <el-button type="primary" icon="el-icon-plus" @click="handleCreate" v-show="addCheckupQuestionStatus">新增</el-button>
-            <el-button icon="el-icon-setting" v-show="isChargeManShow&&checkupOrgPermissionStatus"  @click="handleSetting">设置</el-button>
+            <!--<el-button type="primary" icon="el-icon-plus" @click="handleCreate" v-show="addCheckupQuestionStatus">新增</el-button>-->
+            <!--<el-button icon="el-icon-setting" v-show="isChargeManShow&&checkupOrgPermissionStatus"  @click="handleSetting">设置</el-button>-->
           </div>                        
         </el-form>
       </div>
@@ -29,6 +29,12 @@
                     :data="toDoTableData">
             <!--<el-table-column type="selection" min-width="57"></el-table-column>-->
             <el-table-column prop="title" label="问题名称" min-width="180" show-overflow-tooltip>
+              <template slot-scope="scope">
+                <span v-if='scope.row.isRead === "2"' >{{scope.row.title}}</span>
+                <span v-else-if='scope.row.isRead === "1"' class="red">{{scope.row.title}}</span>
+                <span v-else-if='scope.row.status === "1"' class="blue">{{scope.row.title}}</span>
+                <span v-else-if='scope.row.status === "2"' class="green">{{scope.row.title}}</span>
+              </template>
             </el-table-column>
             <el-table-column prop="questionAttr" label="问题属性" min-width="80" >
               <template slot-scope="scope">
@@ -38,9 +44,10 @@
             <el-table-column prop="checkType" label="检查类别" min-width="80" show-overflow-tooltip></el-table-column>
             <el-table-column prop="status" label="状态" min-width="100" show-overflow-tooltip>
               <template slot-scope="scope">
-                <span v-if='scope.row.status === "0"' class="red">未整改</span>
+                <span v-if='scope.row.isRead === "2"' >未整改</span>
+                <span v-else-if='scope.row.isRead === "1"' class="red">未整改</span>
                 <span v-else-if='scope.row.status === "1"' class="blue">已整改</span>
-                <span v-else class="green">已复查</span>
+                <span v-else-if='scope.row.status === "2"' class="green">已复查</span>
               </template>
             </el-table-column>
             <el-table-column prop="createTime" label="创建时间" min-width="150" sortable></el-table-column>
@@ -68,12 +75,12 @@
 
 
       <!-- 容量 -->
-      <div class="progress-bar">
-        <div class="title"><i class="el-icon-question"></i>当前容量:</div>
-        <div  class="progress"><el-progress :percentage="usedCapacity" color="#8e71c7" :show-text="false"></el-progress></div>
-        <span class="progress-size">{{usedCapacity}}M/{{totalCapacity}}M</span>
-        <span type="text" class="btn">扩容</span>
-      </div>
+      <!--<div class="progress-bar">-->
+        <!--<div class="title"><i class="el-icon-question"></i>当前容量:</div>-->
+        <!--<div  class="progress"><el-progress :percentage="usedCapacity" color="#8e71c7" :show-text="false"></el-progress></div>-->
+        <!--<span class="progress-size">{{usedCapacity}}M/{{totalCapacity}}M</span>-->
+        <!--<span type="text" class="btn">扩容</span>-->
+      <!--</div>-->
 
     <!-- 高级查询 -->
     <el-dialog title="高级查询"
@@ -261,8 +268,8 @@ export default {
         }
       }
       this.getList()
-      this.isChargeMan(projectOrgId)
-      this.getCapacity(projectOrgId)
+      // this.isChargeMan(projectOrgId)
+      // this.getCapacity(projectOrgId)
 
     },       
     // 获取用户参与的项目列表
@@ -321,7 +328,7 @@ export default {
         if (response.errorCode === '1') { 
           this.loading = false  
           // this.fullscreenLoading = false;          
-          this.tableData = response.data
+          this.toDoTableData = response.data
           this.total = response.totalRecords
           this.searchDialogVisible = false
           localStorage.setItem('projectId', this.listQuery.projectId) 
@@ -541,7 +548,7 @@ export default {
     handleUpdate(questionId,status) {   
       this.$router.push({
         path: "/checking/rectifyCheckupQuestion",
-        query: { questionId: questionId, status: status }
+        query: { questionId: questionId, status: status, orgId: this.listQuery.orgId, projectId: this.listQuery.projectId}
       })
     }, 
     // 查看历史记录   

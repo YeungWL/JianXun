@@ -1,7 +1,7 @@
 <template>
   <div class="page-content-body clealfix">
    <!-- 树组件 -->
-    <column-tree @change="getChannelId"  :copy="true" ></column-tree>
+    <column-tree @change="getChannelId"  :copy="true"></column-tree>
     <div class="content-right">
       <div class="page-header clearfix">
         <el-form class="search-form" :inline="true" :model="listQuery" ref="form" >
@@ -131,9 +131,7 @@ export default {
       listQuery: { 
         name: '',
         code:'',
-        parentId:'',
-        currentPage: 1,
-        pageSize: 10,
+        parentId:''
       },    
       menuForm: {
         id: '',
@@ -188,7 +186,7 @@ export default {
         // 获取翻页数据
         this.listQuery.currentPage = currentPage;
         this.listQuery.pageSize = pageSize;
-        this.getList(this.listQuery);
+        this.getList();
     },
     // 搜索按钮
     handleSearch() {
@@ -202,12 +200,14 @@ export default {
     // 获取所有栏目数据
     getMenuList() {
       this.$api.columnListAll().then(response => {
-        this.treeData = response.data;
+        if (response.errorCode === '1') {
+          this.treeData = response.data;
+        }
       })
     },
     // 获取选中栏目的数据
     changePid(val) {
-      console.log("menuId："+ val.id)
+      // console.log("menuId："+ val.id)
       this.menuForm.parentId = val.id
     },
     // 获取点击的栏目父级id，更新右侧列表数据  
